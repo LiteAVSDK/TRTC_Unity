@@ -6,6 +6,8 @@
 - [跑通 TRTC Unity Demo](./DemoQuickStart-zh_CN.md)
 - [快速集成 TRTC Unity SDK](../SDK/README-zh_CN.md)
 - [TRTC Unity SDK API](./API-zh_CN.md)
+- [屏幕分享(Android)](./ScreenSharing(Android)-zh_CN.md)
+- [屏幕分享(iOS)](./ScreenSharing(iOS)-zh_CN.md)
 - [TRTC Unity SDK 错误码](./ErrorCode-zh_CN.md)
 
 # 其他

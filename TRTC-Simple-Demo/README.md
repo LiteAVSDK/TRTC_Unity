@@ -6,7 +6,7 @@ This product is to quickly integrate TRTC SDK in Unity to realize audio and vide
 # Links to related documents
 
 - [Demo Quick Start](./DemoQuickStart.md)
-- [SDK Quick Integration](./SdkQuickIntegration.md)
+- [SDK Quick Integration](../SDK/README.md)
 - [TRTC Unity SDK API](./API.md)
 - [Screen Sharing(Android)](./ScreenSharing(Android).md)
 - [Screen Sharing(iOS)](./ScreenSharing(iOS).md)

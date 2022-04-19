@@ -49,7 +49,8 @@ The demo includes the following features:
 3. Use Xcode to open the generated 'Unity-iPhone.xcodeproj' project
 4. Download [TRTC SDK](https://comm.qq.com/trtc/TRTC_9.7.0.11440_iOS.zip).You need to manually add the dynamic libraries.
 Click General, expand Frameworks, Libraries, and Embedded Content, and click the + icon at the bottom to add the dynamic libraries required in turn:  FFmpeg.xcframework, and SoundTouch.xcframework. Click Embed & Sign.
-5. connects IOS device for debugging
+![](https://imgcache.qq.com/operation/dianshi/other/unity.ca7b6e717bf7b34e4f08a7e688ff59bf49d92217.png)
+5. Connects IOS device for debugging
 
 #### Windows
 1. Open Unity Editor, go to **File** > **Build Settings**, and select **PC, Mac & Linux Standalone** for **Platform** and **Windows** for **Target Platform**.

@@ -8,6 +8,7 @@ Logs
 .vs
 .csproj.user
 Library
+Packages
 UserSettings/EditorUserSettings.asset
 Assets/TRTCSDK/SDK/Include/obj/xdoc/cache
 *.cache

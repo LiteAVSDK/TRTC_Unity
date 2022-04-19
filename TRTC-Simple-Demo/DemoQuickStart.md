@@ -43,9 +43,13 @@ The demo includes the following features:
 3. Call `enterRoom` first and go on to test other APIs. The data display window shows whether the call is successful, and the other window displays the callback information.
 
 #### iOS
-1. Open Unity Editor, go to **File** > **Build Settings**, and select **iOS** for **Platform**.
-![](https://main.qcloudimg.com/raw/3a0ef43000fe53e8e7ff58b6cc243785.png)
-2. Connect to a real iPhone, and click **Build And Run**. You need to select a new folder to save your iOS build. When the build is completed, the folder containing the Xcode project will open in a new window.
+1. Open 'TRTC Build Configuration'（You can find it in the navigation bar at the top of the unity editor）
+2. Click 'IOS'，Wait for project generation to complete
+![](https://imgcache.qq.com/operation/dianshi/other/ios-en.a177d686f175b086b565565c66e35b9a07accaed.png)
+3. Use Xcode to open the generated 'Unity-iPhone.xcodeproj' project
+4. Download [TRTC SDK](https://comm.qq.com/trtc/TRTC_9.7.0.11440_iOS.zip).You need to manually add the dynamic libraries.
+Click General, expand Frameworks, Libraries, and Embedded Content, and click the + icon at the bottom to add the dynamic libraries required in turn:  FFmpeg.xcframework, and SoundTouch.xcframework. Click Embed & Sign.
+5. connects IOS device for debugging
 
 #### Windows
 1. Open Unity Editor, go to **File** > **Build Settings**, and select **PC, Mac & Linux Standalone** for **Platform** and **Windows** for **Target Platform**.

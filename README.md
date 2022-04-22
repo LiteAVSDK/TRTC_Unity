@@ -17,10 +17,10 @@ Leveraging Tencent's many years of experience in network and audio/video technol
 ```
 
 ## Contact Us
-- If you have questions, see [FAQs](https://cloud.tencent.com/document/product/647/43018).
+- If you have questions, see [FAQs](https://intl.cloud.tencent.com/document/product/647/42298).
 
 - To learn about how the TRTC SDK can be used in different scenarios, see [Sample Code](https://intl.cloud.tencent.com/document/product/647/42963).
 
-- For complete API documentation, see [SDK API Documentation](http://doc.qcloudtrtc.com/md_introduction_trtc_Android_%E6%A6%82%E8%A7%88.html).
+- For complete API documentation, see [SDK API Documentation](https://intl.cloud.tencent.com/document/product/647/40139).
 - [Contact us](https://intl.cloud.tencent.com/contact-us) for technical support.
 - To report bugs in our sample code, please create an issue.

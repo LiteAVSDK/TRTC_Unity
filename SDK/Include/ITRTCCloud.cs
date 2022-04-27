@@ -299,7 +299,7 @@ namespace trtc
         /// 3.3 Pause/Resume publishing local video
         /// 
         /// <para>After a user pauses publishing local video, other users in the room will receive the `onUserVideoAvailable(userId, false)` callback.</para>
-		/// <para>After a user resumes publishing local video, other users in the room will receive the `onUserVideoAvailable(userId, true)` callback.</para>
+        /// <para>After a user resumes publishing local video, other users in the room will receive the `onUserVideoAvailable(userId, true)` callback.</para>
         /// </summary>
         /// <param name="mute">`true`: pause; `false` (default): resume</param>
         public abstract void muteLocalVideo(bool mute);
@@ -357,7 +357,7 @@ namespace trtc
         /// <summary>
         /// Pause/Resume receiving the videos of all remote users
         /// </summary>
-		/// <para>This API will pause/resume receiving the videos of all remote users, but will not release the resources used to display the videos. After pause, the last video frames before the pause will be displayed.</para>
+        /// <para>This API will pause/resume receiving the videos of all remote users, but will not release the resources used to display the videos. After pause, the last video frames before the pause will be displayed.</para>
         /// <param name="mute">Whether to pause receiving video</param>
         public abstract void muteAllRemoteVideoStreams(bool mute);
 
@@ -428,7 +428,7 @@ namespace trtc
         /// <remarks>
         /// The TRTC SDK does not enable local mic capturing automatically.
         /// </remarks>
-		/// <param name="quality">Audio quality. For details, please see `TRTCAudioQuality`.</param>
+        /// <param name="quality">Audio quality. For details, please see `TRTCAudioQuality`.</param>
         public abstract void startLocalAudio(TRTCAudioQuality quality);
 
         /// <summary>
@@ -442,7 +442,7 @@ namespace trtc
         /// 4.4 Mute/Unmute local audio
         ///
         /// <para>After local audio is muted, other users in the room will receive the `onUserAudioAvailable(userId, false)` callback.</para>
-		/// <para>After local audio is unmuted, other users in the room will receive the `onUserAudioAvailable(userId, true)` callback.</para>
+        /// <para>After local audio is unmuted, other users in the room will receive the `onUserAudioAvailable(userId, true)` callback.</para>
         /// <para>Different from `stopLocalAudio`, `muteLocalAudio(true)` does not stop the sending of audio or video data. Data packets continue to be sent, although without audio and at extremely low bitrate.</para>
         /// <para>As MP4 and other video formats have high requirements on audio continuity, `stopLocalAudio` may make an MP4 recording file fail to be played smoothly.</para>
         /// <para>`muteLocalAudio` has less impact on the compatibility of MP4 recording files. Therefore, you are advised to use `muteLocalAudio` in scenarios with high requirements on recording quality.</para>
@@ -455,7 +455,7 @@ namespace trtc
         /// </summary>
         /// <param name="userId">ID of the remote user</param>
         /// <param name="mute">`true`: mute; `false`: unmute</param>
-		/// <remarks>
+        /// <remarks>
         /// If `mute` is `true`, the SDK will stop receiving and playing the remote user’s audio; if `mute` is `false`, it will start receiving and playing the remote user’s audio.
         /// </remarks>
         public abstract void muteRemoteAudio(string userId, bool mute);
@@ -464,7 +464,7 @@ namespace trtc
         /// 4.6 Mute/Unmute all users' audio
         /// </summary>
         /// <param name="mute">`true`: mute; `false`: unmute</param>
-		/// <remarks>
+        /// <remarks>
         /// If `mute` is `true`, the SDK will stop receiving and playing all remote users’ audio; if `mute` is `false`, it will start receiving and playing all remote users’ audio.
         /// </remarks>
         public abstract void muteAllRemoteAudio(bool mute);
@@ -670,7 +670,7 @@ namespace trtc
         /// Information of shareable sources
         /// </remarks>
         /// <returns>Only screen-type sources are returned currently.</returns>
-        public abstract TRTCScreenCaptureSourceInfo[] getScreenCaptureSources();
+        public abstract TRTCScreenCaptureSourceInfo[] getScreenCaptureSources(int thumbnailWidth, int thumbnailHeight);
 
         /// <summary>
         /// 9.6 Set screen sharing parameters (can be called during screen sharing)

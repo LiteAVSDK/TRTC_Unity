@@ -358,22 +358,37 @@ namespace trtc
             #endif
         }
 
-        public override TRTCScreenCaptureSourceInfo[] getScreenCaptureSources()
+        public override TRTCScreenCaptureSourceInfo[] getScreenCaptureSources(int thumbnailWidth, int thumbnailHeight)
         {
 #if UNITY_STANDALONE_WIN
-            int count = ITRTCCloudNative.TRTCUnityGetScreenCaptureSourceCount(mNativeObj);
+            int count = ITRTCCloudNative.TRTCUnityGetScreenCaptureSourceCount(mNativeObj, thumbnailWidth, thumbnailHeight);
             TRTCScreenCaptureSourceInfo[] sourceInfoLists = new TRTCScreenCaptureSourceInfo[count];
             for (int i = 0; i < count; ++i)
             {
                 IntPtr type = Marshal.AllocHGlobal(4);
                 StringBuilder sourceName = new StringBuilder(512);
+                // StringBuilder imageBuffer = new StringBuilder(1600);
+                int imageBufferSize = thumbnailWidth * thumbnailHeight * 4;
+                byte[] imageBuffer = new byte[imageBufferSize];
                 IntPtr isMainWnd = Marshal.AllocHGlobal(4);
-                sourceInfoLists[i].sourceId = ITRTCCloudNative.TRTCUnityGetScreenCaptureSourceInfo(mNativeObj, i, type, sourceName, sourceName.Capacity, isMainWnd);
+                IntPtr imageLength = Marshal.AllocHGlobal(4);
+                sourceInfoLists[i].sourceId = ITRTCCloudNative.TRTCUnityGetScreenCaptureSourceInfo(mNativeObj, i, type, sourceName, sourceName.Capacity, isMainWnd, imageBuffer, imageLength, thumbnailWidth, thumbnailHeight);
                 sourceInfoLists[i].type = (TRTCScreenCaptureSourceType)(Marshal.ReadInt32(type));
                 sourceInfoLists[i].sourceName = sourceName.ToString();
                 sourceInfoLists[i].isMainScreen = Convert.ToBoolean(Marshal.ReadInt32(isMainWnd));
+
+                TRTCImageBuffer thumbBGRA = new TRTCImageBuffer();
+
+                thumbBGRA.buffer = imageBuffer;
+                thumbBGRA.length = Marshal.ReadInt32(imageLength);
+                thumbBGRA.width = thumbnailWidth;
+                thumbBGRA.height = thumbnailHeight;
+
+                sourceInfoLists[i].thumbBGRA = thumbBGRA;
+
                 Marshal.FreeHGlobal(type);
                 Marshal.FreeHGlobal(isMainWnd);
+                Marshal.FreeHGlobal(imageLength);
             }
             return sourceInfoLists;
 #else

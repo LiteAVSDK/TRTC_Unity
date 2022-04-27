@@ -1637,7 +1637,35 @@ namespace trtc
         /// Whether the main screen is shared. This parameter is available only if the type of the screen sharing source is screen (`TRTCScreenCaptureSourceTypeScreen`).
         /// </summary>
         public bool isMainScreen;
+
+        /// <summary>
+        /// thumbnail
+        /// </summary>
+        public TRTCImageBuffer thumbBGRA;
     };
+
+    public struct TRTCImageBuffer
+    {
+        /// <summary>
+        /// image content in BGRA format
+        /// </summary>
+        public byte[] buffer;
+
+        /// <summary>
+        /// buffer size
+        /// </summary>
+        public int length;
+
+        /// <summary>
+        /// image width
+        /// </summary>
+        public int width;
+
+        /// <summary>
+        /// image height
+        /// </summary>
+        public int height;
+    }
 
     /// <summary>
     /// Information about audio and video devices (desktop platform only)

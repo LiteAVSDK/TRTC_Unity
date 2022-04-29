@@ -431,9 +431,8 @@ namespace TRTCCUnityDemo
                     TRTCScreenCaptureSourceInfo[] sources = mTRTCCloud.getScreenCaptureSources(thumbnailWidth, thumbnailHeight);
                     if (sources.Length > 0)
                     {
-                        LogManager.Log(String.Format("getScreenCaptureSources {0}, {1}, {2}, {3}, {4}", sources[0].thumbBGRA.buffer, sources[0].thumbBGRA.length, sources[0].thumbBGRA.width, sources[0].thumbBGRA.height, sources[0].sourceName));
-                        
-                        mTRTCCloud.selectScreenCaptureTarget(sources[0], new Rect(0, 0, 640, 360), new TRTCScreenCaptureProperty());
+                        // LogManager.Log(String.Format("getScreenCaptureSources {0}, {1}, {2}, {3}, {4}", sources.Length, sources[0].thumbBGRA.length, sources[0].thumbBGRA.width, sources[0].thumbBGRA.height, sources[0].sourceName));
+                        mTRTCCloud.selectScreenCaptureTarget(sources[0], new Rect(0, 0, 0, 0), new TRTCScreenCaptureProperty());
                         mTRTCCloud.startScreenCapture(TRTCVideoStreamType.TRTCVideoStreamTypeSub, ref videoEncParam);
                         userTableView.AddUser("", TRTCVideoStreamType.TRTCVideoStreamTypeSub);
                         userTableView.UpdateVideoAvailable("", TRTCVideoStreamType.TRTCVideoStreamTypeSub, true);

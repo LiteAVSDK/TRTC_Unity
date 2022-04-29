@@ -1610,10 +1610,20 @@ namespace trtc
     public enum TRTCScreenCaptureSourceType
     {
         TRTCScreenCaptureSourceTypeUnknown = -1,
+
+        /// <summary>
+        /// The screen sharing target is the window of an application.
+        /// </summary>
+        TRTCScreenCaptureSourceTypeWindow = 0,
         /// <summary>
         /// The entire desktop (on Windows) is shared.
         /// </summary>
         TRTCScreenCaptureSourceTypeScreen = 1,
+
+        /// <summary>
+        /// The screen sharing target is a user-defined data source.
+        /// </summary>
+        TRTCScreenCaptureSourceTypeCustom = 2,
     };
 
     /// <summary>

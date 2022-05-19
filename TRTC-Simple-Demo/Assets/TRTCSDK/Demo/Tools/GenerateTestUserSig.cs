@@ -27,7 +27,7 @@ namespace TRTCCUnityDemo
         /// <summary>
         /// Tencent Cloud `SDKAppID`. Set it to the `SDKAppID` of your account.
         /// 
-        /// You can view your `SDKAppID` after creating an application in the [TRTC console](https://console.cloud.tencent.com/rav).
+        /// You can view your `SDKAppID` after creating an application in the [TRTC console](https://console.cloud.tencent.com/trtc).
         /// </summary>
         /// <remarks>
         /// `SDKAppID` uniquely identifies a Tencent Cloud account.

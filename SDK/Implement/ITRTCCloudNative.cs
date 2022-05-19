@@ -16,7 +16,7 @@ namespace trtc
     {
        #region DllImport
 #if UNITY_IPHONE && !UNITY_EDITOR
-		public const string MyLibName = "__Internal";
+        public const string MyLibName = "__Internal";
 #elif UNITY_ANDROID && !UNITY_EDITOR
         public const string MyLibName = "native-lib";
 #elif UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
@@ -401,11 +401,11 @@ namespace trtc
         [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void TRTCUnityResumeScreenCapture(IntPtr instance);
         [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int TRTCUnityGetScreenCaptureSourceCount(IntPtr instance);
+        public static extern int TRTCUnityGetScreenCaptureSourceCount(IntPtr instance, int thumbnail_width, int thumbnail_height);
 #if UNITY_STANDALONE_WIN
         [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr TRTCUnityGetScreenCaptureSourceInfo(IntPtr instance, int index,
-            IntPtr type, StringBuilder source_name, int source_name_size, IntPtr is_main_screen);
+            IntPtr type, StringBuilder source_name, int source_name_size, IntPtr is_main_screen, byte[] image_buffer, IntPtr image_length, int thumbnail_width, int thumbnail_height);
 #endif
         [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void TRTCUnitySelectScreenCaptureTarget(IntPtr instance, int type, IntPtr source_id, string source_name,

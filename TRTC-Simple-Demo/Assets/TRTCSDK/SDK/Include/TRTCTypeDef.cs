@@ -1610,10 +1610,20 @@ namespace trtc
     public enum TRTCScreenCaptureSourceType
     {
         TRTCScreenCaptureSourceTypeUnknown = -1,
+
+        /// <summary>
+        /// The screen sharing target is the window of an application.
+        /// </summary>
+        TRTCScreenCaptureSourceTypeWindow = 0,
         /// <summary>
         /// The entire desktop (on Windows) is shared.
         /// </summary>
         TRTCScreenCaptureSourceTypeScreen = 1,
+
+        /// <summary>
+        /// The screen sharing target is a user-defined data source.
+        /// </summary>
+        TRTCScreenCaptureSourceTypeCustom = 2,
     };
 
     /// <summary>
@@ -1637,7 +1647,35 @@ namespace trtc
         /// Whether the main screen is shared. This parameter is available only if the type of the screen sharing source is screen (`TRTCScreenCaptureSourceTypeScreen`).
         /// </summary>
         public bool isMainScreen;
+
+        /// <summary>
+        /// thumbnail
+        /// </summary>
+        public TRTCImageBuffer thumbBGRA;
     };
+
+    public struct TRTCImageBuffer
+    {
+        /// <summary>
+        /// image content in BGRA format
+        /// </summary>
+        public byte[] buffer;
+
+        /// <summary>
+        /// buffer size
+        /// </summary>
+        public int length;
+
+        /// <summary>
+        /// image width
+        /// </summary>
+        public int width;
+
+        /// <summary>
+        /// image height
+        /// </summary>
+        public int height;
+    }
 
     /// <summary>
     /// Information about audio and video devices (desktop platform only)

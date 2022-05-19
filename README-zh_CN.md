@@ -22,7 +22,7 @@
 
 - 如果你想了解TRTC SDK在复杂场景下的应用，可以参考[更多场景案例](https://cloud.tencent.com/document/product/647/57486)；
 
-- 完整的 API 文档见 [SDK 的 API 文档](https://github.com/LiteAVSDK/TRTC_Unity/blob/main/TRTC-Simple-Demo/API-zh_CN.md)
+- 完整的 API 文档见 [SDK 的 API 文档](https://github.com/LiteAVSDK/TRTC_Unity/blob/main/TRTC-Simple-Demo/API-zh_CN.md)；
 
 - 如果需要售后技术支持, 你可以加qq群764231117咨询；你也可以点击[这里](https://cloud.tencent.com/document/product/647/19906)；
 

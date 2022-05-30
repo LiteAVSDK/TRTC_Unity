@@ -29,11 +29,14 @@
 打开 File —> Project Setting 面板，修改Build 类型。
 ![](https://imgcache.qq.com/operation/dianshi/other/newBuild.af51c956404867ac237269e78da8ee8e2c556bd1.png)
 7. 授权摄像头和麦克风使用权限
-使用 SDK 的音视频功能，需要授权麦克风和摄像头的使用权限。在 App 的 Info.plist 中添加以下两项，分别对应麦克风和摄像头在系统弹出授权对话框时的提示信息。
 
-Privacy - Microphone Usage Description，并填入麦克风使用目的提示语。
-Privacy - Camera Usage Description，并填入摄像头使用目的提示语。
-![](https://main.qcloudimg.com/raw/54cc6989a8225700ff57494cba819c7b.jpg)
+  使用 SDK 的音视频功能，需要授权麦克风和摄像头的使用权限。在 App 的 Info.plist 中添加以下两项，分别对应麦克风和摄像头在系统弹出授权对话框时的提示信息。
+
+  * Privacy - Microphone Usage Description，并填入麦克风使用目的提示语。
+  
+  * Privacy - Camera Usage Description，并填入摄像头使用目的提示语。
+  
+  ![](https://main.qcloudimg.com/raw/54cc6989a8225700ff57494cba819c7b.jpg)
 
 ### macos 相关问题
 1. 提示` "macosliteav.bundle" 已损怀，无法打开。您应该将它移到废纸篓 `

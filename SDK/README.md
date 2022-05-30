@@ -28,6 +28,14 @@ This document describes how to quickly integrate TRTC SDK for Unity into your pr
 6. Error prompt ` The Legacy Build System will be removed in a future release. You can configure the selected build system and this deprecation message in File > Project Settings.`
 open File —> Project Setting，change Build type。
 ![](https://imgcache.qq.com/operation/dianshi/other/newBuild.af51c956404867ac237269e78da8ee8e2c556bd1.png)
+7. Granting Camera and Mic Permissions
+
+To use the audio/video features of the SDK, you need to grant it mic and camera permissions. Add the two items below to Info.plist of your application. Their content is what users see in the mic and camera access pop-up windows.
+
+* Privacy - Microphone Usage Description, plus a statement specifying why mic access is needed
+* Privacy - Camera Usage Description, plus a statement specifying why camera access is needed
+
+![](https://main.qcloudimg.com/raw/7c483aae65f64cd2bf35b55d9c896a52.png)
 
 ### What should I do if a network access error occurs on Android?
 Copy `/Assets/Plugins/AndroidManifest.xml` to the same directory of your project.

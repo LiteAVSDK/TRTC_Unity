@@ -30,7 +30,6 @@ class ITRTCVideoRenderCallback;
  * 系统音量类型（仅适用于移动设备）
  *
  * @deprecated v9.5 版本开始不推荐使用。
- *
  * 现代智能手机中一般都具备两套系统音量类型，即“通话音量”和“媒体音量”。
  * - 通话音量：手机专门为接打电话所设计的音量类型，自带回声抵消（AEC）功能，并且支持通过蓝牙耳机上的麦克风进行拾音，缺点是音质比较一般。
  *            当您通过手机侧面的音量按键下调手机音量时，如果无法将其调至零（也就是无法彻底静音），说明您的手机当前出于通话音量。
@@ -76,10 +75,19 @@ enum TXAudioRoute {
  * 该枚举值用于定义三种类型的音视频设备，即摄像头、麦克风和扬声器，以便让一套设备管理接口可以操控三种不同类型的设备。
  */
 enum TXMediaDeviceType {
-    TXMediaDeviceTypeUnknown = -1,  ///< undefined device type
-    TXMediaDeviceTypeMic = 0,       ///< microphone
-    TXMediaDeviceTypeSpeaker = 1,   ///< speaker or earpiece
-    TXMediaDeviceTypeCamera = 2,    ///< camera
+
+    ///未定义的设备类型
+    TXMediaDeviceTypeUnknown = -1,
+
+    ///麦克风类型设备
+    TXMediaDeviceTypeMic = 0,
+
+    ///扬声器类型设备
+    TXMediaDeviceTypeSpeaker = 1,
+
+    ///摄像头类型设备
+    TXMediaDeviceTypeCamera = 2,
+
 };
 
 /**
@@ -156,12 +164,14 @@ class ITXDeviceInfo {
     }
 
    public:
-    /// device name (UTF-8)
-    virtual const char* getDeviceName() = 0;
-    /// device PID (UTF-8)
-    virtual const char* getDevicePID() = 0;
     /// release function, don't use delete!!!
     virtual void release() = 0;
+
+    ///设备 id （UTF-8）
+    virtual const char* getDevicePID() = 0;
+
+    ///设备名称 （UTF-8）
+    virtual const char* getDeviceName() = 0;
 };
 
 /**
@@ -175,41 +185,22 @@ class ITXDeviceCollection {
     }
 
    public:
-    /**
-     * 设备数量
-     *
-     * @return 设备数量
-     */
+    ///设备数量
     virtual uint32_t getCount() = 0;
 
-    /**
-     * 设备名字 (UTF-8)
-     *
-     * @param index 设备索引，值为 [0,getCount)
-     * @return 设备名字 (UTF-8)
-     */
+    ///设备名字 (UTF-8)，index 为设备索引，值为 [0,getCount)。返回值为设备名称 （UTF-8）
     virtual const char* getDeviceName(uint32_t index) = 0;
 
-    /**
-     * 设备唯一标识 (UTF-8)
-     *
-     * @param index 设备索引，值为 [0,getCount)
-     */
+    ///设备唯一标识 (UTF-8) index 为设备索引，值为 [0,getCount)
     virtual const char* getDevicePID(uint32_t index) = 0;
 
-    /**
-     * 设备信息（json格式）
-     *
-     * @note
-     *  - 示例：{"SupportedResolution":[{"width":640,"height":480},{"width":320,"height":240}]}
-     * @param index 设备索引，值为 [0,getCount)
-     * @return 返回 json 格式的设备信息
-     */
+    ///设备信息（json格式）
+    ///@note
+    /// - 示例：{"SupportedResolution":[{"width":640,"height":480},{"width":320,"height":240}]}
+    /// param index 设备索引，值为 [0,getCount)，return 返回 json 格式的设备信息
     virtual const char* getDeviceProperties(uint32_t index) = 0;
 
-    /**
-     * 释放设备列表，请不要使用 delete 释放资源 !!!
-     */
+    ///释放设备列表，请不要使用 delete 释放资源 !!!
     virtual void release() = 0;
 };
 /// @}
@@ -224,7 +215,6 @@ class ITXDeviceObserver {
      * 本地设备的通断状态发生变化（仅适用于桌面系统）
      *
      * 当本地设备（包括摄像头、麦克风以及扬声器）被插入或者拔出时，SDK 便会抛出此事件回调。
-     *
      * @param deviceId 设备 ID
      * @param type 设备类型
      * @param state 通断状态，0：设备已添加；1：设备已被移除；2：设备已启用。
@@ -270,7 +260,7 @@ class ITXDeviceManager {
     /**
      * 1.4 设置摄像头的缩放倍数（仅适用于移动端）
      *
-     * @param zoomRatio 取值范围1 - 5，取值为1表示最远视角（正常镜头），取值为5表示最近视角（放大镜头）。
+     * @param zoomRatio 取值范围1 - 5，取值为1表示最远视角（正常镜头），取值为5表示最近视角（放大镜头）。最大值推荐为5，若超过5，视频数据会变得模糊不清。
      */
     virtual int setCameraZoomRatio(float zoomRatio) = 0;
 
@@ -293,9 +283,9 @@ class ITXDeviceManager {
      * 1. 在本地摄像头的预览画面上，允许用户单击操作。
      * 2. 在用户的单击位置显示一个矩形方框，以示摄像头会在此处对焦。
      * 3. 随后将用户点击位置的坐标通过本接口传递给 SDK，之后 SDK 会操控摄像头按照用户期望的位置进行对焦。
-     * @note 使用该接口的前提是先通过 {@link enableCameraAutoFocus} 关闭自动对焦功能。
      * @param position 对焦位置，请传入期望对焦点的坐标值
      * @return 0：操作成功；负数：操作失败。
+     * @note 使用该接口的前提是先通过 {@link enableCameraAutoFocus} 关闭自动对焦功能。
      */
     virtual int setCameraFocusPosition(float x, float y) = 0;
 
@@ -354,7 +344,6 @@ class ITXDeviceManager {
      * 2.4 设置当前设备的音量（仅适用于桌面端）
      *
      * 这里的音量指的是麦克风的采集音量或者扬声器的播放音量，摄像头是不支持设置音量的。
-     *
      * @param volume 音量大小，取值范围为0 - 100，默认值：100。
      * @note 如果将 volume 设置成 100 之后感觉音量还是太小，可以将 volume 最大设置成 150，但超过 100 的 volume 会有爆音的风险，请谨慎操作。
      */

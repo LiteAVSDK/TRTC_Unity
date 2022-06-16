@@ -30,7 +30,6 @@ NS_ASSUME_NONNULL_BEGIN
  * 系统音量类型（仅适用于移动设备）
  *
  * @deprecated v9.5 版本开始不推荐使用。
- *
  * 现代智能手机中一般都具备两套系统音量类型，即“通话音量”和“媒体音量”。
  * - 通话音量：手机专门为接打电话所设计的音量类型，自带回声抵消（AEC）功能，并且支持通过蓝牙耳机上的麦克风进行拾音，缺点是音质比较一般。
  *            当您通过手机侧面的音量按键下调手机音量时，如果无法将其调至零（也就是无法彻底静音），说明您的手机当前出于通话音量。
@@ -81,10 +80,19 @@ typedef NS_ENUM(NSInteger, TXAudioRoute) {
  */
 #if TARGET_OS_MAC && !TARGET_OS_IPHONE
 typedef NS_ENUM(NSInteger, TXMediaDeviceType) {
-    TXMediaDeviceTypeUnknown = -1,     ///< undefined device type
-    TXMediaDeviceTypeAudioInput = 0,   ///< microphone
-    TXMediaDeviceTypeAudioOutput = 1,  ///< speaker or earpiece
-    TXMediaDeviceTypeVideoCamera = 2,  ///< camera
+
+    ///未定义的设备类型
+    TXMediaDeviceTypeUnknown = -1,
+
+    ///麦克风类型设备
+    TXMediaDeviceTypeAudioInput = 0,
+
+    ///扬声器类型设备
+    TXMediaDeviceTypeAudioOutput = 1,
+
+    ///摄像头类型设备
+    TXMediaDeviceTypeVideoCamera = 2,
+
 };
 #endif
 
@@ -115,30 +123,34 @@ typedef NS_ENUM(NSInteger, TXMediaDeviceState) {
  */
 #if TARGET_OS_MAC && !TARGET_OS_IPHONE
 LITEAV_EXPORT @interface TXMediaDeviceInfo : NSObject
-/// device type
+
+///设备类型
 @property(assign, nonatomic) TXMediaDeviceType type;
-/// device id
+
+///设备 id （UTF-8）
 @property(copy, nonatomic, nullable) NSString *deviceId;
-/// device name
+
+///设备名称 （UTF-8）
 @property(copy, nonatomic, nullable) NSString *deviceName;
-/// device properties
+
+///设备属性
 @property(copy, nonatomic, nullable) NSString *deviceProperties;
+
 @end
 #endif
 /// @}
+
+#if TARGET_OS_MAC && !TARGET_OS_IPHONE
+@protocol TXDeviceObserver <NSObject>
 
 /**
  * 本地设备的通断状态发生变化（仅适用于桌面系统）
  *
  * 当本地设备（包括摄像头、麦克风以及扬声器）被插入或者拔出时，SDK 便会抛出此事件回调。
- *
  * @param deviceId 设备 ID
  * @param type 设备类型
  * @param state 通断状态，0：设备已添加；1：设备已被移除；2：设备已启用。
  */
-#if TARGET_OS_MAC && !TARGET_OS_IPHONE
-@protocol TXDeviceObserver <NSObject>
-
 - (void)onDeviceChanged:(NSString *)deviceId type:(TXMediaDeviceType)mediaType state:(TXMediaDeviceState)mediaState;
 
 @end
@@ -178,7 +190,7 @@ LITEAV_EXPORT @interface TXDeviceManager : NSObject
 /**
  * 1.4 设置摄像头的缩放倍数（仅适用于移动端）
  *
- * @param zoomRatio 取值范围1 - 5，取值为1表示最远视角（正常镜头），取值为5表示最近视角（放大镜头）。
+ * @param zoomRatio 取值范围1 - 5，取值为1表示最远视角（正常镜头），取值为5表示最近视角（放大镜头）。最大值推荐为5，若超过5，视频数据会变得模糊不清。
  */
 - (NSInteger)setCameraZoomRatio:(CGFloat)zoomRatio;
 
@@ -201,9 +213,9 @@ LITEAV_EXPORT @interface TXDeviceManager : NSObject
  * 1. 在本地摄像头的预览画面上，允许用户单击操作。
  * 2. 在用户的单击位置显示一个矩形方框，以示摄像头会在此处对焦。
  * 3. 随后将用户点击位置的坐标通过本接口传递给 SDK，之后 SDK 会操控摄像头按照用户期望的位置进行对焦。
- * @note 使用该接口的前提是先通过 {@link enableCameraAutoFocus} 关闭自动对焦功能。
  * @param position 对焦位置，请传入期望对焦点的坐标值
  * @return 0：操作成功；负数：操作失败。
+ * @note 使用该接口的前提是先通过 {@link enableCameraAutoFocus} 关闭自动对焦功能。
  */
 - (NSInteger)setCameraFocusPosition:(CGPoint)position;
 
@@ -267,7 +279,6 @@ LITEAV_EXPORT @interface TXDeviceManager : NSObject
  * 2.4 设置当前设备的音量（仅适用于桌面端）
  *
  * 这里的音量指的是麦克风的采集音量或者扬声器的播放音量，摄像头是不支持设置音量的。
- *
  * @param volume 音量大小，取值范围为0 - 100，默认值：100。
  * @note 如果将 volume 设置成 100 之后感觉音量还是太小，可以将 volume 最大设置成 150，但超过 100 的 volume 会有爆音的风险，请谨慎操作。
  */

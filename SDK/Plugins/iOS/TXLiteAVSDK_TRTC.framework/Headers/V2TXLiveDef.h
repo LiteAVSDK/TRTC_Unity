@@ -19,15 +19,21 @@ typedef NSView TXView;
 typedef NSImage TXImage;
 #endif
 
+/////////////////////////////////////////////////////////////////////////////////
+//
+//                              支持协议
+//
+/////////////////////////////////////////////////////////////////////////////////
+
 /**
- * @brief 支持协议
+ * 支持协议
  */
 typedef NS_ENUM(NSUInteger, V2TXLiveMode) {
 
     /// 支持协议: RTMP
     V2TXLiveMode_RTMP,
 
-    /// 支持协议: TRTC
+    ///支持协议: TRTC
     V2TXLiveMode_RTC
 
 };
@@ -41,20 +47,20 @@ typedef NS_ENUM(NSUInteger, V2TXLiveMode) {
 /// @{
 
 /**
- * @brief 视频分辨率
+ * 视频分辨率
  */
 typedef NS_ENUM(NSInteger, V2TXLiveVideoResolution) {
 
-    /// 分辨率 160*160，码率范围：100Kbps ~ 150Kbps，帧率：15fps
+    ///分辨率 160*160，码率范围：100Kbps ~ 150Kbps，帧率：15fps
     V2TXLiveVideoResolution160x160,
 
-    /// 分辨率 270*270，码率范围：200Kbps ~ 300Kbps，帧率：15fps
+    ///分辨率 270*270，码率范围：200Kbps ~ 300Kbps，帧率：15fps
     V2TXLiveVideoResolution270x270,
 
-    /// 分辨率 480*480，码率范围：350Kbps ~ 525Kbps，帧率：15fps
+    ///分辨率 480*480，码率范围：350Kbps ~ 525Kbps，帧率：15fps
     V2TXLiveVideoResolution480x480,
 
-    /// 分辨率 320*240，码率范围：250Kbps ~ 375Kbps，帧率：15fps
+    ///分辨率 320*240，码率范围：250Kbps ~ 375Kbps，帧率：15fps
     V2TXLiveVideoResolution320x240,
 
     /// 分辨率 480*360，码率范围：400Kbps ~ 600Kbps，帧率：15fps
@@ -63,13 +69,13 @@ typedef NS_ENUM(NSInteger, V2TXLiveVideoResolution) {
     /// 分辨率 640*480，码率范围：600Kbps ~ 900Kbps，帧率：15fps
     V2TXLiveVideoResolution640x480,
 
-    /// 分辨率 320*180，码率范围：250Kbps ~ 400Kbps，帧率：15fps
+    ///分辨率 320*180，码率范围：250Kbps ~ 400Kbps，帧率：15fps
     V2TXLiveVideoResolution320x180,
 
     /// 分辨率 480*270，码率范围：350Kbps ~ 550Kbps，帧率：15fps
     V2TXLiveVideoResolution480x270,
 
-    /// 分辨率 640*360，码率范围：500Kbps ~ 900Kbps，帧率：15fps
+    ///分辨率 640*360，码率范围：500Kbps ~ 900Kbps，帧率：15fps
     V2TXLiveVideoResolution640x360,
 
     /// 分辨率 960*540，码率范围：800Kbps ~ 1500Kbps，帧率：15fps
@@ -84,8 +90,9 @@ typedef NS_ENUM(NSInteger, V2TXLiveVideoResolution) {
 };
 
 /**
- * @brief 视频宽高比模式。
+ * 视频宽高比模式
  *
+ * @info 视频宽高比模式
  * @note
  * - 横屏模式下的分辨率: V2TXLiveVideoResolution640x360 + V2TXLiveVideoResolutionModeLandscape = 640 × 360
  * - 竖屏模式下的分辨率: V2TXLiveVideoResolution640x360 + V2TXLiveVideoResolutionModePortrait  = 360 × 640
@@ -135,27 +142,26 @@ LITEAV_EXPORT @interface V2TXLiveVideoEncoderParam : NSObject
 @property(nonatomic, assign) int minVideoBitrate;
 
 - (instancetype _Nonnull)initWith:(V2TXLiveVideoResolution)resolution;
-
 @end
 
 /**
- * @brief 本地摄像头镜像类型。
+ * 本地摄像头镜像类型
  */
 typedef NS_ENUM(NSInteger, V2TXLiveMirrorType) {
 
-    /// 系统默认镜像类型，前置摄像头镜像，后置摄像头不镜像
+    ///系统默认镜像类型，前置摄像头镜像，后置摄像头不镜像
     V2TXLiveMirrorTypeAuto,
 
     /// 前置摄像头和后置摄像头，都切换为镜像模式
     V2TXLiveMirrorTypeEnable,
 
-    /// 前置摄像头和后置摄像头，都切换为非镜像模式
+    ///前置摄像头和后置摄像头，都切换为非镜像模式
     V2TXLiveMirrorTypeDisable
 
 };
 
 /**
- * @brief 视频画面填充模式。
+ * 视频画面填充模式
  */
 typedef NS_ENUM(NSInteger, V2TXLiveFillMode) {
 
@@ -163,12 +169,15 @@ typedef NS_ENUM(NSInteger, V2TXLiveFillMode) {
     V2TXLiveFillModeFill,
 
     /// 图像长边填满屏幕，短边区域会被填充黑色，画面的内容完整
-    V2TXLiveFillModeFit
+    V2TXLiveFillModeFit,
+
+    /// 图像拉伸铺满，因此长度和宽度可能不会按比例变化
+    V2TXLiveFillModeScaleFill
 
 };
 
 /**
- * @brief 视频画面顺时针旋转角度。
+ * 视频画面顺时针旋转角度
  */
 typedef NS_ENUM(NSInteger, V2TXLiveRotation) {
 
@@ -187,7 +196,7 @@ typedef NS_ENUM(NSInteger, V2TXLiveRotation) {
 };
 
 /**
- * @brief 视频帧的像素格式。
+ * 视频帧的像素格式
  */
 typedef NS_ENUM(NSInteger, V2TXLivePixelFormat) {
 
@@ -209,8 +218,9 @@ typedef NS_ENUM(NSInteger, V2TXLivePixelFormat) {
 };
 
 /**
- * @brief 视频数据包装格式。
+ * 视频数据包装格式
  *
+ * @info 视频数据包装格式。
  * @note 在自定义采集和自定义渲染功能，您需要用到下列枚举值来指定您希望以什么样的格式来包装视频数据。
  * - PixelBuffer：直接使用效率最高，iOS 系统提供了众多 API 获取或处理 PixelBuffer
  * - NSData：     当使用自定义渲染时，PixelBuffer拷贝一次到NSData。当使用自定义采集时，NSData拷贝一次到PixelBuffer。因此，性能会受到一定程度的影响
@@ -223,17 +233,19 @@ typedef NS_ENUM(NSInteger, V2TXLiveBufferType) {
     /// 直接使用效率最高，iOS 系统提供了众多 API 获取或处理 PixelBuffer
     V2TXLiveBufferTypePixelBuffer,
 
-    /// 会有一定的性能消耗，SDK 内部是直接处理 PixelBuffer 的，所以会存在 NSData 和 PixelBuffer 之间类型转换所产生的内存拷贝开销
+    ///会有一定的性能消耗，SDK 内部是直接处理 PixelBuffer 的，所以会存在 NSData 和 PixelBuffer 之间类型转换所产生的内存拷贝开销
     V2TXLiveBufferTypeNSData,
 
-    /// 直接操作纹理 ID，性能最好
+    ///直接操作纹理 ID，性能最好
     V2TXLiveBufferTypeTexture
 
 };
 
 /**
- * @brief 视频帧信息。
- *        V2TXLiveVideoFrame 用来描述一帧视频画面的裸数据，它可以是一帧编码前的画面，也可以是一帧解码后的画面。
+ * 视频帧信息
+ *
+ * @info 视频帧信息。
+ *         V2TXLiveVideoFrame 用来描述一帧视频画面的裸数据，它可以是一帧编码前的画面，也可以是一帧解码后的画面。
  * @note  自定义采集和自定义渲染时使用。自定义采集时，需要使用 V2TXLiveVideoFrame 来包装待发送的视频帧；自定义渲染时，会返回经过 V2TXLiveVideoFrame 包装的视频帧。
  */
 LITEAV_EXPORT @interface V2TXLiveVideoFrame : NSObject
@@ -276,7 +288,7 @@ LITEAV_EXPORT @interface V2TXLiveVideoFrame : NSObject
 /// @{
 
 /**
- * @brief 声音音质。
+ * 声音音质
  */
 typedef NS_ENUM(NSInteger, V2TXLiveAudioQuality) {
 
@@ -292,7 +304,7 @@ typedef NS_ENUM(NSInteger, V2TXLiveAudioQuality) {
 };
 
 /**
- * @brief 音频帧数据
+ * 音频帧数据
  */
 LITEAV_EXPORT @interface V2TXLiveAudioFrame : NSObject
 
@@ -318,7 +330,7 @@ LITEAV_EXPORT @interface V2TXLiveAudioFrame : NSObject
 /// @{
 
 /**
- * @brief 推流器的统计数据。
+ * 推流器的统计数据
  */
 LITEAV_EXPORT @interface V2TXLivePusherStatistics : NSObject
 
@@ -346,7 +358,7 @@ LITEAV_EXPORT @interface V2TXLivePusherStatistics : NSObject
 @end
 
 /**
- * @brief 播放器的统计数据。
+ * 播放器的统计数据
  */
 LITEAV_EXPORT @interface V2TXLivePlayerStatistics : NSObject
 
@@ -383,7 +395,7 @@ LITEAV_EXPORT @interface V2TXLivePlayerStatistics : NSObject
 /// @{
 
 /**
- * @brief 直播流的连接状态。
+ * 直播流的连接状态
  */
 typedef NS_ENUM(NSInteger, V2TXLivePushStatus) {
 
@@ -403,7 +415,7 @@ typedef NS_ENUM(NSInteger, V2TXLivePushStatus) {
 /// @}
 
 /**
- * @brief 声音播放模式（音频路由）
+ * 声音播放模式（音频路由）
  */
 typedef NS_ENUM(NSInteger, V2TXAudioRoute) {
 
@@ -416,7 +428,7 @@ typedef NS_ENUM(NSInteger, V2TXAudioRoute) {
 };
 
 /**
- * @brief 混流输入类型配置
+ * 混流输入类型配置
  */
 typedef NS_ENUM(NSInteger, V2TXLiveMixInputType) {
 
@@ -432,7 +444,7 @@ typedef NS_ENUM(NSInteger, V2TXLiveMixInputType) {
 };
 
 /**
- * @brief 云端混流中每一路子画面的位置信息
+ * 云端混流中每一路子画面的位置信息
  */
 LITEAV_EXPORT @interface V2TXLiveMixStream : NSObject
 
@@ -463,7 +475,7 @@ LITEAV_EXPORT @interface V2TXLiveMixStream : NSObject
 @end
 
 /**
- * @brief 云端混流（转码）配置
+ * 云端混流（转码）配置
  */
 LITEAV_EXPORT @interface V2TXLiveTranscodingConfig : NSObject
 
@@ -530,7 +542,7 @@ LITEAV_EXPORT @interface V2TXLiveTranscodingConfig : NSObject
 /// @{
 
 /**
- * @brief 日志级别枚举值
+ * 日志级别枚举值
  */
 typedef NS_ENUM(NSInteger, V2TXLiveLogLevel) {
 
@@ -557,6 +569,9 @@ typedef NS_ENUM(NSInteger, V2TXLiveLogLevel) {
 
 };
 
+/**
+ * Log配置
+ */
 LITEAV_EXPORT @interface V2TXLiveLogConfig : NSObject
 
 /// 【字段含义】设置 Log 级别

@@ -43,7 +43,8 @@ typedef enum TXLiteAVError
     ERR_UNSUPPORTED_RESOLUTION                      = -1305,    ///< 不支持的视频分辨率
 	ERR_PIXEL_FORMAT_UNSUPPORTED                    = -1327,    ///< 自定视频采集：设置的 pixel format 不支持
     ERR_BUFFER_TYPE_UNSUPPORTED                     = -1328,    ///< 自定视频采集：设置的 buffer type 不支持
-    
+    ERR_NO_AVAILABLE_HEVC_DECODERS                  = -2304,    ///< 找不到可用的 HEVC 解码器
+
     /////////////////////////////////////////////////////////////////////////////////
     //       音频相关错误码
     /////////////////////////////////////////////////////////////////////////////////
@@ -132,6 +133,11 @@ typedef enum TXLiteAVWarning
     WARNING_SPEAKER_DEVICE_ABNORMAL                 = 1205,     ///<  音频播放设备不可用（例如被占用或者PC判定无效设备）
     WARNING_AUDIO_FRAME_DECODE_FAIL                 = 2102,     ///<  当前音频帧解码失败
     WARNING_AUDIO_RECORDING_WRITE_FAIL              = 7001,     ///<  音频录制写入文件失败
+
+    /////////////////////////////////////////////////////////////////////////////////
+    //       网络相关警告码
+    /////////////////////////////////////////////////////////////////////////////////
+    WARNING_IGNORE_UPSTREAM_FOR_AUDIENCE            = 6001,     ///<  当前是观众角色，不支持发布音视频，需要先切换成主播角色
 } TXLiteAVWarning;
 
 
@@ -154,6 +160,7 @@ typedef enum TXLiteAVWarning
 #define   ERR_SERVER_INFO_SERVICE_SUSPENDED              ERR_TRTC_SERVICE_SUSPENDED
 #define   ERR_SERVER_INFO_ECDH_GET_TINYID                ERR_TRTC_USER_SIG_CHECK_FAILED
 #define   ERR_SERVER_CENTER_NO_PRIVILEDGE_PUSH_SUB_VIDEO ERR_SCREEN_SHARE_NOT_AUTHORIZED
+#define   ERR_SERVER_CENTER_ANOTHER_USER_PUSH_SUB_VIDEO  ERR_SCREEN_SHRAE_OCCUPIED_BY_OTHER
 #define   ERR_PUBLISH_CDN_STREAM_REQUEST_TIME_OUT        ERR_TRTC_PUSH_THIRD_PARTY_CLOUD_TIMEOUT
 #define   ERR_PUBLISH_CDN_STREAM_SERVER_FAILED           ERR_TRTC_PUSH_THIRD_PARTY_CLOUD_FAILED
 #define   ERR_CLOUD_MIX_TRANSCODING_REQUEST_TIME_OUT     ERR_TRTC_MIX_TRANSCODING_TIMEOUT

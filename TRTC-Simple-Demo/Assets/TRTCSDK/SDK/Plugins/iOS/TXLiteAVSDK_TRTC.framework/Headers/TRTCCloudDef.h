@@ -18,16 +18,44 @@
 
 /**
  * [VIEW] 用于渲染视频画面的渲染控件
- *
  * TRTC 中有很多需要操控视频画面的接口，这些接口都需要您指定视频渲染控件。
+ * 1. ObjectiveC 接口 iOS 和 MAC
  * - 在 iOS 系统中，您可以直接使用 UIView 作为视频渲染控件，SDK 会在您提供的 UIView 上绘制视频画面。
  * - 在 Mac 系统中，您可以直接使用 NSView 作为视频渲染控件，SDK 会在您提供的 NSView 上绘制视频画面。
  * 示例代码如下：
- * <pre>
  * UIView *videoView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 360, 640)];
  * [self.view addSubview:videoView];
  * [trtcCloud startLocalPreview:YES view:_localView];
- * </pre>
+ * 2. 在 Android 平台中，您可以使用我们提供的 TXCloudVideoView 作为视频渲染控件，它支持 SurfaceView 和 TextureView 两种渲染方案。
+ * - 当用于渲染本地的视频画面时：TXCloudVideoView 会优先使用 SurfaceView，该方案性能较好，但是不支持对 View 做动画或者变形特效。
+ * - 当用于渲染远端的视频画面时：TXCloudVideoView 会优先使用 TextureView，该方案灵活度高，能够更好地支持动画或者变形特效。
+ * 如果您希望强制使用某一种方案，可以按照如下方法进行编码：
+ * 用法一：强制使用 TextureView：
+ * TXCloudVideoView localView = findViewById(R.id.trtc_tc_cloud_view_main);
+ * localView.addVideoView(new TextureView(context));
+ * mTRTCCloud.startLocalPreview(true, localView);
+ * 用法二：强制使用 SurfaceView：
+ * SurfaceView surfaceView = new SurfaceView(this);
+ * TXCloudVideoView localView = new TXCloudVideoView(surfaceView);
+ * mTRTCCloud.startLocalPreview(true, localView);
+ * 3. 全平台方案 View
+ * 由于全平台 C++ 接口需要使用统一的参数类型，所以您需要在调用这些接口时，将渲染控件统一转换成 TXView 类型的指针：
+ * - iOS 平台：您可以使用 UIView 对象作为渲染控件，在调用 C++ 接口时请传入 UIView 对象的指针（需强转为 void* 类型）。
+ * - Mac 平台：您可以使用 NSView 对象作为渲染控件，在调用 C++ 接口时请传入 NSView 对象的指针（需强转为 void* 类型）。
+ * - Android 平台：在调用 C++ 接口时请传入指向 TXCloudVideoView 对象的 jobject 指针（需强转为 void* 类型）。
+ * - Windows 平台：您可以使用窗口句柄 HWND 作为渲染控件，在调用 C++ 接口时需要将 HWND 强转为 void* 类型。
+ * 代码示例一：在 QT 下使用 C++ 全平台接口
+ * QWidget *videoView;
+ * // The relevant code for setting the videoView is omitted here...
+ * getTRTCShareInstance()->startLocalPreview(reinterpret_cast<TXView>(videoView->winId()));
+ * 代码示例二：在 Android 平台下，通过 JNI 调用 C++ 全平台接口
+ * native void nativeStartLocalPreview(String userId, int streamType, TXCloudVideoView view);
+ * //...
+ * Java_com_example_test_MainActivity_nativeStartRemoteView(JNIEnv *env, jobject thiz, jstring user_id, jint stream_type, jobject view) {
+ *     const char *user_id_chars = env->GetStringUTFChars(user_id, nullptr);
+ *     trtc_cloud->startRemoteView(user_id_chars, (liteav::TRTCVideoStreamType)stream_type, view);
+ *     env->ReleaseStringUTFChars(user_id, user_id_chars);
+ * }
  */
 #if TARGET_OS_IPHONE || TARGET_OS_SIMULATOR
 #import <UIKit/UIKit.h>
@@ -276,7 +304,9 @@ typedef NS_ENUM(NSUInteger, TRTCVideoMirrorType) {
 
 };
 
-/// Old version of TRTCVideoMirrorType, reserved for compatibility with older interface.
+/**
+ * 已废弃，请用 TRTCVideoMirrorType
+ */
 typedef NS_ENUM(NSUInteger, TRTCLocalVideoMirrorType) {
     TRTCLocalVideoMirrorType_Auto = TRTCVideoMirrorTypeAuto,
     TRTCLocalVideoMirrorType_Enable = TRTCVideoMirrorTypeEnable,
@@ -782,7 +812,8 @@ typedef NS_ENUM(NSUInteger, TRTCRecordType) {
  */
 typedef NS_ENUM(NSUInteger, TRTCMixInputType) {
 
-    ///不指定，SDK 会根据另一个参数 pureAudio 的数值决定混流输入类型
+    ///默认值
+    ///考虑到针对老版本的兼容性，如果您指定了 inputType 为 Undefined，SDK 会根据另一个参数 pureAudio 的数值决定混流输入类型
     TRTCMixInputTypeUndefined = 0,
 
     ///混入音频和视频
@@ -793,6 +824,10 @@ typedef NS_ENUM(NSUInteger, TRTCMixInputType) {
 
     ///只混入音频
     TRTCMixInputTypePureAudio = 3,
+
+    ///混入水印
+    ///此时您无需指定 userId 字段，但需要指定 image 字段，推荐使用 png 格式的图片。
+    TRTCMixInputTypeWatermark = 4,
 
 };
 
@@ -911,6 +946,7 @@ LITEAV_EXPORT @interface TRTCParams : NSObject
 ///【字段含义】业务数据字段（选填），部分高级特性才需要用到此字段。
 ///【推荐取值】请不要自行设置该字段。
 @property(nonatomic, copy, nullable) NSString *bussInfo;
+
 @end
 
 /**
@@ -959,6 +995,7 @@ LITEAV_EXPORT @interface TRTCVideoEncParam : NSObject
 ///【推荐取值】该功能适用于不需要云端录制的场景，开启后 SDK 会根据当前网络情况，智能选择出一个合适的分辨率，避免出现“大分辨率+小码率”的低效编码模式。
 ///【特别说明】默认值：关闭。如有云端录制的需求，请不要开启此功能，因为如果视频分辨率发生变化后，云端录制出的 MP4 在普通的播放器上无法正常播放。
 @property(nonatomic, assign) BOOL enableAdjustRes;
+
 @end
 
 /**
@@ -979,6 +1016,7 @@ LITEAV_EXPORT @interface TRTCNetworkQosParam : NSObject
 ///【推荐取值】云端控制
 ///【特别说明】请设置为云端控制模式（TRTCQosControlModeServer）
 @property(nonatomic, assign) TRTCQosControlMode controlMode;
+
 @end
 
 /**
@@ -1087,6 +1125,7 @@ LITEAV_EXPORT @interface TRTCSpeedTestResult : NSObject
 
 ///下行带宽（kbps，-1：无效值）。
 @property(nonatomic) NSInteger availableDownBandwidth;
+
 @end
 
 /**
@@ -1145,6 +1184,7 @@ LITEAV_EXPORT @interface TRTCAudioFrame : NSObject
 
 ///【字段含义】音频额外数据，远端用户通过 `onLocalProcessedAudioFrame` 写入的数据会通过该字段回调
 @property(nonatomic, retain, nullable) NSData *extraData;
+
 @end
 
 /**
@@ -1174,11 +1214,33 @@ LITEAV_EXPORT @interface TRTCMixUser : NSObject
 ///【特别说明】已废弃，推荐使用8.5版本开始新引入的字段：inputType。
 @property(nonatomic, assign) BOOL pureAudio;
 
-///【字段含义】指定该路流的混合内容（只混合音频、只混合视频、混合音频和视频），该字段是对 pureAudio 字段的升级。
-///【推荐取值】默认值：TRTCMixInputTypeUndefined，代表参考 pureAudio 的取值。
-///   - 如果您是第一次使用 TRTC，之前并没有对 pureAudio 字段进行过设置，您可以根据实际需要设置该字段，不建议您再设置 pureAudio。
-///   - 如果您之前在老版本中已经使用了 pureAudio 字段，并期望保持其设置，则可以将 inputType 设置为 TRTCMixInputTypeUndefined。
+///【字段含义】指定该路流的混合内容（只混音频、只混视频、混合音视频、混入水印）
+///【默认取值】默认值：TRTCMixInputTypeUndefined
+///【特别说明】
+///   - 当指定 inputType 为 TRTCMixInputTypeUndefined 并设置 pureAudio 为 YES 时，等效于设置 inputType 为 TRTCMixInputTypePureAudio。
+///   - 当指定 inputType 为 TRTCMixInputTypeUndefined 并设置 pureAudio 为 NO 时，等效于设置 inputType 为 TRTCMixInputTypeAudioVideo。
+///   - 当指定 inputType 为 TRTCMixInputTypeWatermark 时，您可以不指定 userId 字段，但需要指定 image 字段。
 @property(nonatomic, assign) TRTCMixInputType inputType;
+
+///【字段含义】该画面在输出时的显示模式
+///【推荐取值】默认值：视频流默认为0。0为裁剪，1为缩放，2为缩放并显示黑底。
+///【特别说明】水印图和占位图暂时不支持设置 renderMode，默认强制拉伸处理
+@property(nonatomic, assign) int renderMode;
+
+///【字段含义】占位图或水印图
+///   - 占位图是指当对应 userId 混流内容为纯音频时，混合后的画面中显示的是占位图片。
+///   - 水印图是指一张贴在混合后画面中的半透明图片，这张图片会一直覆盖于混合后的画面上。
+///   - 当指定 inputType 为 TRTCMixInputTypePureAudio 时，image 为占位图，此时需要您指定 userId。
+///   - 当指定 inputType 为 TRTCMixInputTypeWatermark 时，image 为水印图，此时不需要您指定 userId。
+///【推荐取值】默认值：空值，即不设置占位图或者水印图。
+///【特别说明】
+///   - 您可以将 image 设置为控制台中的某一个素材 ID，这需要您事先在 “[控制台](https://console.cloud.tencent.com/trtc) => 应用管理 => 功能配置 => 素材管理” 中单击 [新增图片] 按钮进行上传。
+///   - 上传成功后可以获得对应的“图片ID”，然后将“图片ID”转换成字符串类型并设置给 image 字段即可（比如假设“图片ID” 为 63，可以设置 image = @"63"）
+///   - 您也可以将 image 设置为图片的 URL 地址，腾讯云的后台服务器会将该 URL 地址指定的图片混合到最终的画面中。
+///   - URL 链接长度限制为 512 字节。图片大小限制不超过 2MB。
+///   - 图片格式支持 png、jpg、jpeg、bmp 格式，推荐使用 png 格式的半透明图片作为水印。
+///   - image 仅在 inputType 为 TRTCMixInputTypePureAudio 或者 TRTCMixInputTypeWatermark 时才生效。
+@property(nonatomic, copy, nullable) NSString *image;
 
 @end
 
@@ -1227,9 +1289,12 @@ LITEAV_EXPORT @interface TRTCTranscodingConfig : NSObject
 
 ///【字段含义】指定混合画面的背景图片
 ///【推荐取值】默认值：空值，即不设置背景图片。
-///【特别说明】背景图需要您事先在 “[控制台](https://console.cloud.tencent.com/trtc) => 应用管理 => 功能配置 => 素材管理” 中单击【新增图片】按钮进行上传。
-///           上传成功后可以获得对应的“图片ID”，然后将“图片ID”转换成字符串类型并设置到 backgroundImage 里即可。
-///           例如：假设“图片ID” 为 63，可以设置 backgroundImage = @"63";
+///【特别说明】
+///   - 您可以将 image 设置为控制台中的某一个素材 ID，这需要您事先在 “[控制台](https://console.cloud.tencent.com/trtc) => 应用管理 => 功能配置 => 素材管理” 中单击 [新增图片] 按钮进行上传。
+///   - 上传成功后可以获得对应的“图片ID”，然后将“图片ID”转换成字符串类型并设置给 image 字段即可（比如假设“图片ID” 为 63，可以设置 image = @"63"）
+///   - 您也可以将 image 设置为图片的 URL 地址，腾讯云的后台服务器会将该 URL 地址指定的图片混合到最终的画面中。
+///   - URL 链接长度限制为 512 字节。图片大小限制不超过 2MB。
+///   - 图片格式支持 png、jpg、jpeg、bmp 格式。
 @property(nonatomic, copy, nullable) NSString *backgroundImage;
 
 ///【字段含义】指定云端转码的目标音频采样率
@@ -1453,8 +1518,8 @@ LITEAV_EXPORT @interface TRTCScreenCaptureSourceInfo : NSObject
 LITEAV_EXPORT @interface TRTCAudioParallelParams : NSObject
 
 ///【字段含义】最大并发播放数。默认值：0
-///如果 maxCount > 0，且实际人数 > maxCount，会实时智能选出 maxCount 路数据进行播放，这会极大的降低性能消耗。
-///如果 maxCount = 0，SDK 不限制并发播放数，在上麦人数比较多的房间可能会引发性能问题。
+///- 如果 maxCount > 0，且实际人数 > maxCount，会实时智能选出 maxCount 路数据进行播放，这会极大的降低性能消耗。
+///- 如果 maxCount = 0，SDK 不限制并发播放数，在上麦人数比较多的房间可能会引发性能问题。
 @property(assign, nonatomic) UInt32 maxCount;
 
 ///【字段含义】指定用户必定能并发播放。

@@ -20,7 +20,7 @@ typedef NS_ENUM(NSInteger, TXRecordResultCode) {
 };
 
 /// 录制结果
-@interface TXRecordResult : NSObject
+LITEAV_EXPORT @interface TXRecordResult : NSObject
 /// 错误码
 @property(nonatomic, assign) TXRecordResultCode retCode;
 /// 错误描述信息

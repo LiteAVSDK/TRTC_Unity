@@ -114,7 +114,7 @@
 /**
  * 截图回调
  *
- * @note  调用 [snapshot](@ref V2TXLivePlayer#snapshot) 截图之后，会收到这个回调通知
+ * @note  调用 {@link snapshot} 截图之后，会收到这个回调通知
  * @param player 回调该通知的播放器对象
  * @param image  已截取的视频画面
  */
@@ -125,7 +125,7 @@
  *
  * @param player     回调该通知的播放器对象
  * @param videoFrame 视频帧数据 {@link V2TXLiveVideoFrame}
- * @note  需要您调用 [enableObserveVideoFrame](@ref V2TXLivePlayer#enableObserveVideoFrame:pixelFormat:bufferType:) 开启回调开关
+ * @note  需要您调用 {@link enableObserveVideoFrame} 开启回调开关
  */
 - (void)onRenderVideoFrame:(id<V2TXLivePlayer>)player frame:(V2TXLiveVideoFrame *)videoFrame;
 

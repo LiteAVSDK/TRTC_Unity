@@ -24,6 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * 美颜（磨皮）算法
+ *
  * TRTC 内置多种不同的磨皮算法，您可以选择最适合您产品定位的方案。
  */
 typedef NS_ENUM(NSInteger, TXBeautyStyle) {
@@ -38,13 +39,18 @@ typedef NS_ENUM(NSInteger, TXBeautyStyle) {
     TXBeautyStylePitu = 2
 };
 
+/////////////////////////////////////////////////////////////////////////////////
+//
+//                    美颜相关接口
+//
+/////////////////////////////////////////////////////////////////////////////////
+
 LITEAV_EXPORT @interface TXBeautyManager : NSObject
 
 /**
  * 设置美颜（磨皮）算法
  *
  * TRTC 内置多种不同的磨皮算法，您可以选择最适合您产品定位的方案：
- *
  * @param beautyStyle 美颜风格，TXBeautyStyleSmooth：光滑；TXBeautyStyleNature：自然；TXBeautyStylePitu：优图。
  */
 - (void)setBeautyStyle:(TXBeautyStyle)beautyStyle;
@@ -89,24 +95,24 @@ LITEAV_EXPORT @interface TXBeautyManager : NSObject
  *
  * 该数值越高，色彩滤镜的作用强度越明显，经过滤镜处理后的视频画面跟原画面的颜色差异越大。
  * 我默认的滤镜浓度是0.5，如果您觉得默认的滤镜效果不明显，可以设置为 0.5 以上的数字，最大值为1。
- *
  * @param strength 从0到1，数值越大滤镜效果越明显，默认值为0.5。
  */
 - (void)setFilterStrength:(float)strength;
 
 /**
- * 设置绿幕背景视频，该接口仅在 [企业版 SDK](https://cloud.tencent.com/document/product/647/32689#Enterprise) 中生效
+ * 设置绿幕背景视频
  *
+ * 该接口仅在 [企业版 SDK](https://cloud.tencent.com/document/product/647/32689#Enterprise) 中生效
  * 此接口所开启的绿幕功能不具备智能去除背景的能力，需要被拍摄者的背后有一块绿色的幕布来辅助产生特效。
- *
  * @param path MP4格式的视频文件路径; 设置空值表示关闭特效。
  * @return 0：成功；-5：当前 License 对应 feature 不支持。
  */
 - (int)setGreenScreenFile:(nullable NSString *)path;
 
 /**
- * 设置大眼级别，该接口仅在 [企业版 SDK](https://cloud.tencent.com/document/product/647/32689#Enterprise) 中生效
+ * 设置大眼级别
  *
+ * 该接口仅在 [企业版 SDK](https://cloud.tencent.com/document/product/647/32689#Enterprise) 中生效
  * @param eyeScaleLevel 大眼级别，取值范围0 - 9；0表示关闭，9表示效果最明显。
  * @return 0：成功；-5：当前 License 对应 feature 不支持。
  */
@@ -115,8 +121,9 @@ LITEAV_EXPORT @interface TXBeautyManager : NSObject
 #endif
 
 /**
- * 设置瘦脸级别，该接口仅在 [企业版 SDK](https://cloud.tencent.com/document/product/647/32689#Enterprise) 中生效
+ * 设置瘦脸级别
  *
+ * 该接口仅在 [企业版 SDK](https://cloud.tencent.com/document/product/647/32689#Enterprise) 中生效
  * @param faceSlimLevel 瘦脸级别，取值范围0 - 9；0表示关闭，9表示效果最明显。
  * @return 0：成功；-5：当前 License 对应 feature 不支持。
  */
@@ -125,8 +132,9 @@ LITEAV_EXPORT @interface TXBeautyManager : NSObject
 #endif
 
 /**
- * 设置 V 脸级别，该接口仅在 [企业版 SDK](https://cloud.tencent.com/document/product/647/32689#Enterprise) 中生效
+ * 设置 V 脸级别
  *
+ * 该接口仅在 [企业版 SDK](https://cloud.tencent.com/document/product/647/32689#Enterprise) 中生效
  * @param faceVLevel V脸级别，取值范围0 - 9；0表示关闭，9表示效果最明显。
  * @return 0：成功；-5：当前 License 对应 feature 不支持。
  */
@@ -135,8 +143,9 @@ LITEAV_EXPORT @interface TXBeautyManager : NSObject
 #endif
 
 /**
- * 设置下巴拉伸或收缩，该接口仅在 [企业版 SDK](https://cloud.tencent.com/document/product/647/32689#Enterprise) 中生效
+ * 设置下巴拉伸或收缩
  *
+ * 该接口仅在 [企业版 SDK](https://cloud.tencent.com/document/product/647/32689#Enterprise) 中生效
  * @param chinLevel 下巴拉伸或收缩级别，取值范围-9 - 9；0 表示关闭，小于0表示收缩，大于0表示拉伸。
  * @return 0：成功；-5：当前 License 对应 feature 不支持。
  */
@@ -145,8 +154,9 @@ LITEAV_EXPORT @interface TXBeautyManager : NSObject
 #endif
 
 /**
- * 设置短脸级别，该接口仅在 [企业版 SDK](https://cloud.tencent.com/document/product/647/32689#Enterprise) 中生效
+ * 设置短脸级别
  *
+ * 该接口仅在 [企业版 SDK](https://cloud.tencent.com/document/product/647/32689#Enterprise) 中生效
  * @param faceShortLevel 短脸级别，取值范围0 - 9；0表示关闭，9表示效果最明显。
  * @return 0：成功；-5：当前 License 对应 feature 不支持。
  */
@@ -155,8 +165,9 @@ LITEAV_EXPORT @interface TXBeautyManager : NSObject
 #endif
 
 /**
- * 设置窄脸级别，该接口仅在 [企业版 SDK](https://cloud.tencent.com/document/product/647/32689#Enterprise) 中生效
+ * 设置窄脸级别
  *
+ * 该接口仅在 [企业版 SDK](https://cloud.tencent.com/document/product/647/32689#Enterprise) 中生效
  * @param level 窄脸级别，取值范围0 - 9；0表示关闭，9表示效果最明显。
  * @return 0：成功；-5：当前 License 对应 feature 不支持。
  */
@@ -165,8 +176,9 @@ LITEAV_EXPORT @interface TXBeautyManager : NSObject
 #endif
 
 /**
- * 设置瘦鼻级别，该接口仅在 [企业版 SDK](https://cloud.tencent.com/document/product/647/32689#Enterprise) 中生效
+ * 设置瘦鼻级别
  *
+ * 该接口仅在 [企业版 SDK](https://cloud.tencent.com/document/product/647/32689#Enterprise) 中生效
  * @param noseSlimLevel 瘦鼻级别，取值范围0 - 9；0表示关闭，9表示效果最明显。
  * @return 0：成功；-5：当前 License 对应 feature 不支持。
  */
@@ -175,8 +187,9 @@ LITEAV_EXPORT @interface TXBeautyManager : NSObject
 #endif
 
 /**
- * 设置亮眼级别，该接口仅在 [企业版 SDK](https://cloud.tencent.com/document/product/647/32689#Enterprise) 中生效
+ * 设置亮眼级别
  *
+ * 该接口仅在 [企业版 SDK](https://cloud.tencent.com/document/product/647/32689#Enterprise) 中生效
  * @param eyeLightenLevel 亮眼级别，取值范围0 - 9；0表示关闭，9表示效果最明显。
  * @return 0：成功；-5：当前 License 对应 feature 不支持。
  */
@@ -185,8 +198,9 @@ LITEAV_EXPORT @interface TXBeautyManager : NSObject
 #endif
 
 /**
- * 设置牙齿美白级别，该接口仅在 [企业版 SDK](https://cloud.tencent.com/document/product/647/32689#Enterprise) 中生效
+ * 设置牙齿美白级别
  *
+ * 该接口仅在 [企业版 SDK](https://cloud.tencent.com/document/product/647/32689#Enterprise) 中生效
  * @param toothWhitenLevel 白牙级别，取值范围0 - 9；0表示关闭，9表示效果最明显。
  * @return 0：成功；-5：当前 License 对应 feature 不支持。
  */
@@ -195,8 +209,9 @@ LITEAV_EXPORT @interface TXBeautyManager : NSObject
 #endif
 
 /**
- * 设置祛皱级别，该接口仅在 [企业版 SDK](https://cloud.tencent.com/document/product/647/32689#Enterprise) 中生效
+ * 设置祛皱级别
  *
+ * 该接口仅在 [企业版 SDK](https://cloud.tencent.com/document/product/647/32689#Enterprise) 中生效
  * @param wrinkleRemoveLevel 祛皱级别，取值范围0 - 9；0表示关闭，9表示效果最明显。
  * @return 0：成功；-5：当前 License 对应 feature 不支持。
  */
@@ -205,8 +220,9 @@ LITEAV_EXPORT @interface TXBeautyManager : NSObject
 #endif
 
 /**
- * 设置祛眼袋级别，该接口仅在 [企业版 SDK](https://cloud.tencent.com/document/product/647/32689#Enterprise) 中生效
+ * 设置祛眼袋级别
  *
+ * 该接口仅在 [企业版 SDK](https://cloud.tencent.com/document/product/647/32689#Enterprise) 中生效
  * @param pounchRemoveLevel 祛眼袋级别，取值范围0 - 9；0表示关闭，9表示效果最明显。
  * @return 0：成功；-5：当前 License 对应 feature 不支持。
  */
@@ -215,8 +231,9 @@ LITEAV_EXPORT @interface TXBeautyManager : NSObject
 #endif
 
 /**
- * 设置法令纹去除级别，该接口仅在 [企业版 SDK](https://cloud.tencent.com/document/product/647/32689#Enterprise) 中生效
+ * 设置法令纹去除级别
  *
+ * 该接口仅在 [企业版 SDK](https://cloud.tencent.com/document/product/647/32689#Enterprise) 中生效
  * @param smileLinesRemoveLevel 法令纹级别，取值范围0 - 9；0表示关闭，9表示效果最明显。
  * @return 0：成功；-5：当前 License 对应 feature 不支持。
  */
@@ -225,8 +242,9 @@ LITEAV_EXPORT @interface TXBeautyManager : NSObject
 #endif
 
 /**
- * 设置发际线调整级别，该接口仅在 [企业版 SDK](https://cloud.tencent.com/document/product/647/32689#Enterprise) 中生效
+ * 设置发际线调整级别
  *
+ * 该接口仅在 [企业版 SDK](https://cloud.tencent.com/document/product/647/32689#Enterprise) 中生效
  * @param foreheadLevel 发际线级别，取值范围-9 - 9；0表示关闭，9表示效果最明显。
  * @return 0：成功；-5：当前 License 对应 feature 不支持。
  */
@@ -235,8 +253,9 @@ LITEAV_EXPORT @interface TXBeautyManager : NSObject
 #endif
 
 /**
- * 设置眼距，该接口仅在 [企业版 SDK](https://cloud.tencent.com/document/product/647/32689#Enterprise) 中生效
+ * 设置眼距.
  *
+ * 该接口仅在 [企业版 SDK](https://cloud.tencent.com/document/product/647/32689#Enterprise) 中生效
  * @param eyeDistanceLevel 眼距级别，取值范围-9 - 9；0表示关闭，小于0表示拉伸，大于0表示收缩。
  * @return 0：成功；-5：当前 License 对应 feature 不支持。
  */
@@ -245,8 +264,9 @@ LITEAV_EXPORT @interface TXBeautyManager : NSObject
 #endif
 
 /**
- * 设置眼角调整级别，该接口仅在 [企业版 SDK](https://cloud.tencent.com/document/product/647/32689#Enterprise) 中生效
+ * 设置眼角调整级别
  *
+ * 该接口仅在 [企业版 SDK](https://cloud.tencent.com/document/product/647/32689#Enterprise) 中生效
  * @param eyeAngleLevel 眼角调整级别，取值范围-9 - 9；0表示关闭，9表示效果最明显。
  * @return 0：成功；-5：当前 License 对应 feature 不支持。
  */
@@ -255,8 +275,9 @@ LITEAV_EXPORT @interface TXBeautyManager : NSObject
 #endif
 
 /**
- * 设置嘴型调整级别，该接口仅在 [企业版 SDK](https://cloud.tencent.com/document/product/647/32689#Enterprise) 中生效
+ * 设置嘴型调整级别
  *
+ * 该接口仅在 [企业版 SDK](https://cloud.tencent.com/document/product/647/32689#Enterprise) 中生效
  * @param mouthShapeLevel 嘴型级别，取值范围-9 - 9；0表示关闭，小于0表示拉伸，大于0表示收缩。
  * @return 0：成功；-5：当前 License 对应 feature 不支持。
  */
@@ -265,8 +286,9 @@ LITEAV_EXPORT @interface TXBeautyManager : NSObject
 #endif
 
 /**
- * 设置鼻翼调整级别，该接口仅在 [企业版 SDK](https://cloud.tencent.com/document/product/647/32689#Enterprise) 中生效
+ * 设置鼻翼调整级别
  *
+ * 该接口仅在 [企业版 SDK](https://cloud.tencent.com/document/product/647/32689#Enterprise) 中生效
  * @param noseWingLevel 鼻翼调整级别，取值范围-9 - 9；0表示关闭，小于0表示拉伸，大于0表示收缩。
  * @return 0：成功；-5：当前 License 对应 feature 不支持。
  */
@@ -275,8 +297,9 @@ LITEAV_EXPORT @interface TXBeautyManager : NSObject
 #endif
 
 /**
- * 设置鼻子位置，该接口仅在 [企业版 SDK](https://cloud.tencent.com/document/product/647/32689#Enterprise) 中生效
+ * 设置鼻子位置
  *
+ * 该接口仅在 [企业版 SDK](https://cloud.tencent.com/document/product/647/32689#Enterprise) 中生效
  * @param nosePositionLevel 鼻子位置级别，取值范围-9 - 9；0表示关闭，小于0表示抬高，大于0表示降低。
  * @return 0：成功；-5：当前 License 对应 feature 不支持。
  */
@@ -285,8 +308,9 @@ LITEAV_EXPORT @interface TXBeautyManager : NSObject
 #endif
 
 /**
- * 设置嘴唇厚度，该接口仅在 [企业版 SDK](https://cloud.tencent.com/document/product/647/32689#Enterprise) 中生效
+ * 设置嘴唇厚度
  *
+ * 该接口仅在 [企业版 SDK](https://cloud.tencent.com/document/product/647/32689#Enterprise) 中生效
  * @param lipsThicknessLevel 嘴唇厚度级别，取值范围-9 - 9；0表示关闭，小于0表示拉伸，大于0表示收缩。
  * @return 0：成功；-5：当前 License 对应 feature 不支持。
  */
@@ -295,8 +319,9 @@ LITEAV_EXPORT @interface TXBeautyManager : NSObject
 #endif
 
 /**
- * 设置脸型，该接口仅在 [企业版 SDK](https://cloud.tencent.com/document/product/647/32689#Enterprise) 中生效
+ * 设置脸型
  *
+ * 该接口仅在 [企业版 SDK](https://cloud.tencent.com/document/product/647/32689#Enterprise) 中生效
  * @param   faceBeautyLevel 美型级别，取值范围0 - 9；0表示关闭，1 - 9值越大，效果越明显。
  * @return 0：成功；-5：当前 License 对应 feature 不支持。
  */
@@ -305,8 +330,9 @@ LITEAV_EXPORT @interface TXBeautyManager : NSObject
 #endif
 
 /**
- * 选择 AI 动效挂件，该接口仅在 [企业版 SDK](https://cloud.tencent.com/document/product/647/32689#Enterprise) 中生效
+ * 选择 AI 动效挂件
  *
+ * 该接口仅在 [企业版 SDK](https://cloud.tencent.com/document/product/647/32689#Enterprise) 中生效
  * @param tmplName 动效挂件名称
  * @param tmplDir 动效素材文件所在目录
  */
@@ -315,9 +341,10 @@ LITEAV_EXPORT @interface TXBeautyManager : NSObject
 #endif
 
 /**
- * 是否在动效素材播放时静音，该接口仅在 [企业版 SDK](https://cloud.tencent.com/document/product/647/32689#Enterprise) 中生效
- * 有些挂件本身会有声音特效，通过此 API 可以关闭这些特效播放时所带的声音效果。
+ * 是否在动效素材播放时静音
  *
+ * 该接口仅在 [企业版 SDK](https://cloud.tencent.com/document/product/647/32689#Enterprise) 中生效
+ * 有些挂件本身会有声音特效，通过此 API 可以关闭这些特效播放时所带的声音效果。
  * @param motionMute YES：静音；NO：不静音。
  */
 #if TARGET_OS_IPHONE

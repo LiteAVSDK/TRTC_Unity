@@ -149,11 +149,10 @@ class ITRTCCloudCallback {
      * 出于性能方面的考虑，在 TRTC 两种不同的应用场景（即 AppScene，在 enterRoom 时通过第二个参数指定）下，该通知的行为会有差别：
      *  - 直播类场景（TRTCAppSceneLIVE 和 TRTCAppSceneVoiceChatRoom）：该场景下的用户区分主播和观众两种角色，只有主播进入房间时才会触发该通知，观众进入房间时不会触发该通知。
      *  - 通话类场景（TRTCAppSceneVideoCall 和 TRTCAppSceneAudioCall）：该场景下的用户没有角色的区分（可认为都是主播），任何用户进入房间都会触发该通知。
-     *
+     * @param userId 远端用户的用户标识
      * @note
      * 1. 事件回调 onRemoteUserEnterRoom 和 onRemoteUserLeaveRoom 只适用于维护当前房间里的“用户列表”，有此事件回调不代表一定有视频画面。
      * 2. 如果需要显示远程画面，请监听代表某个用户是否有视频画面的 onUserVideoAvailable() 事件回调。
-     * @param userId 远端用户的用户标识
      */
     virtual void onRemoteUserEnterRoom(const char* userId) {
     }
@@ -190,11 +189,9 @@ class ITRTCCloudCallback {
      *
      * “辅路画面”一般被用于承载屏幕分享的画面。当您收到 onUserSubStreamAvailable(userId, true) 通知时，表示该路画面已经有可播放的视频帧到达。
      * 此时，您需要调用 {@link startRemoteSubStreamView} 接口订阅该用户的远程画面，订阅成功后，您会继续收到该用户的首帧画面渲染回调 onFirstVideoFrame(userid)。
-     *
-     * @note 显示辅路画面使用的函数是 {@link startRemoteSubStreamView} 而非 {@link startRemoteView}。
-     *
      * @param userId 远端用户的用户标识
      * @param available 该用户是否发布（或取消发布）了辅路视频画面，true: 发布；false：取消发布。
+     * @note 显示辅路画面使用的函数是 {@link startRemoteSubStreamView} 而非 {@link startRemoteView}。
      */
     virtual void onUserSubStreamAvailable(const char* userId, bool available) {
     }
@@ -205,11 +202,9 @@ class ITRTCCloudCallback {
      * 当您收到 onUserAudioAvailable(userId, true) 通知时，表示该用户发布了自己的声音，此时 SDK 的表现为：
      * - 在自动订阅模式下，您无需做任何操作，SDK 会自动播放该用户的声音。
      * - 在手动订阅模式下，您可以通过 {@link muteRemoteAudio}(userid, false) 来播放该用户的声音。
-     *
-     * @note SDK 默认使用自动订阅模式，您可以通过 {@link setDefaultStreamRecvMode} 设置为手动订阅，但需要在您进入房间之前调用才生效。
-     *
      * @param userId 远端用户的用户标识
      * @param available 该用户是否发布（或取消发布）了自己的音频，true: 发布；false：取消发布。
+     * @note SDK 默认使用自动订阅模式，您可以通过 {@link setDefaultStreamRecvMode} 设置为手动订阅，但需要在您进入房间之前调用才生效。
      */
     virtual void onUserAudioAvailable(const char* userId, bool available) {
     }
@@ -220,15 +215,13 @@ class ITRTCCloudCallback {
      * SDK 会在渲染自己本地或远端用户的首帧画面时抛出该事件，您可以通过回调事件中的 userId 参数来判断事件来自于“本地”还是来自于“远端”。
      * - 如果 userId 为空值，代表 SDK 已经开始渲染自己本地的视频画面，不过前提是您已经调用了 {@link startLocalPreview} 或 {@link startScreenCapture}。
      * - 如果 userId 不为空，代表 SDK 已经开始渲染远端用户的视频画面，不过前提是您已经调用了 {@link startRemoteView} 订阅了该用户的视频画面。
-     *
-     * @note
-     * 1. 只有当您调用了 {@link startLocalPreview} 或 {@link startScreenCapture} 之后，才会触发自己本地的首帧画面事件回调。
-     * 2. 只有当您调用了 {@link startRemoteView} 或 {@link startRemoteSubStreamView} 之后，才会触发远端用户的首帧画面事件回调。
-     *
      * @param userId 本地或远端的用户标识，如果 userId 为空值代表自己本地的首帧画面已到来，userId 不为空则代表远端用户的首帧画面已到来。
      * @param streamType 视频流类型：主路（Main）一般用于承载摄像头画面，辅路（Sub）一般用于承载屏幕分享画面。
      * @param width  画面的宽度。
      * @param height 画面的高度。
+     * @note
+     * 1. 只有当您调用了 {@link startLocalPreview} 或 {@link startScreenCapture} 之后，才会触发自己本地的首帧画面事件回调。
+     * 2. 只有当您调用了 {@link startRemoteView} 或 {@link startRemoteSubStreamView} 之后，才会触发远端用户的首帧画面事件回调。
      */
     virtual void onFirstVideoFrame(const char* userId, const TRTCVideoStreamType streamType, const int width, const int height) {
     }
@@ -305,11 +298,9 @@ class ITRTCCloudCallback {
      * 该统计回调每间隔2秒抛出一次，用于通知 SDK 感知到的当前网络的上行和下行质量。
      * SDK 会使用一组内嵌的自研算法对当前网络的延迟高低、带宽大小以及稳定情况进行评估，并计算出一个的评估结果：
      * 如果评估结果为 1（Excellent） 代表当前的网络情况非常好，如果评估结果为 6（Down）代表当前网络无法支撑 TRTC 的正常通话。
-     *
-     * @note 回调参数 localQuality 和 remoteQuality 中的 userId 如果为空置，代表本组数据统计的是自己本地的网络质量，否则是代表远端用户的网络质量。
-     *
      * @param localQuality 上行网络质量
      * @param remoteQuality 下行网络质量
+     * @note 回调参数 localQuality 和 remoteQuality 中的 userId 如果为空置，代表本组数据统计的是自己本地的网络质量，否则是代表远端用户的网络质量。
      */
     virtual void onNetworkQuality(TRTCQualityInfo localQuality, TRTCQualityInfo* remoteQuality, uint32_t remoteQualityCount) {
     }
@@ -322,8 +313,8 @@ class ITRTCCloudCallback {
      * - 音频统计信息：音频的采样率（samplerate）、声道（channel）和比特率（bitrate）等信息。
      * - 网络统计信息：SDK 和云端一次往返（SDK => Cloud => SDK）的网络耗时（rtt）、丢包率（loss）、上行流量（sentBytes）和下行流量（receivedBytes）等信息。
      *
-     * @note 如果您只需要获知当前网络质量的好坏，并不需要花太多时间研究本统计回调，更推荐您使用 {@link onNetworkQuality} 来解决问题。
      * @param statistics 统计数据，包括自己本地的统计信息和远端用户的统计信息，详情请参考 {@link TRTCStatistics}。
+     * @note 如果您只需要获知当前网络质量的好坏，并不需要花太多时间研究本统计回调，更推荐您使用 {@link onNetworkQuality} 来解决问题。
      */
     virtual void onStatistics(const TRTCStatistics& statistics) {
     }
@@ -413,11 +404,9 @@ class ITRTCCloudCallback {
      * SDK 可以评估每一路音频的音量大小，并每隔一段时间抛出该事件回调，您可以根据音量大小在 UI 上做出相应的提示，比如“波形图”或“音量槽”。
      * 要完成这个功能， 您需要先调用 {@link enableAudioVolumeEvaluation} 开启这个能力并设定事件抛出的时间间隔。
      * 需要补充说明的是，无论当前房间中是否有人说话，SDK 都会按照您设定的时间间隔定时抛出此事件回调，只不过当没有人说话时，userVolumes 为空，totalVolume 为 0。
-     *
-     * @note userVolumes 为一个数组，对于数组中的每一个元素，当 userId 为空时表示本地麦克风采集的音量大小，当 userId 不为空时代表远端用户的音量大小。
-     *
      * @param userVolumes 是一个数组，用于承载所有正在说话的用户的音量大小，取值范围 0 - 100。
      * @param totalVolume 所有远端用户的总音量大小, 取值范围 0 - 100。
+     * @note userVolumes 为一个数组，对于数组中的每一个元素，当 userId 为空时表示本地麦克风采集的音量大小，当 userId 不为空时代表远端用户的音量大小。
      */
     virtual void onUserVoiceVolume(TRTCVolumeInfo* userVolumes, uint32_t userVolumesCount, uint32_t totalVolume) {
     }
@@ -444,11 +433,9 @@ class ITRTCCloudCallback {
  * 在有些型号的键盘以及笔记本电脑上，用户还可以通过按下“禁用麦克风”按钮（图标是一个话筒上上叠加了一道代表禁用的斜线）来将麦克风静音。
  *
  * 当用户通过系统设置界面或者通过键盘上的快捷键设定操作系统的麦克风采集音量时，SDK 便会抛出此事件。
- *
- * @note 您需要调用 {@link enableAudioVolumeEvaluation} 接口并设定（interval>0）开启次事件回调，设定（interval == 0）关闭此事件回调。
- *
  * @param volume 系统采集音量，取值范围 0 - 100，用户可以在系统的声音设置面板上进行拖拽调整。
  * @param muted 麦克风是否被用户禁用了：true 被禁用，false 被启用。
+ * @note 您需要调用 {@link enableAudioVolumeEvaluation} 接口并设定（interval>0）开启次事件回调，设定（interval == 0）关闭此事件回调。
  */
 #if TARGET_PLATFORM_DESKTOP
     virtual void onAudioDeviceCaptureVolumeChanged(uint32_t volume, bool muted) {
@@ -462,11 +449,9 @@ class ITRTCCloudCallback {
  * 在有些型号的键盘以及笔记本电脑上，用户还可以通过按下“静音”按钮（图标是一个喇叭上叠加了一道代表禁用的斜线）来将系统静音。
  *
  * 当用户通过系统设置界面或者通过键盘上的快捷键设定操作系统的播放音量时，SDK 便会抛出此事件。
- *
- * @note 您需要调用 {@link enableAudioVolumeEvaluation} 接口并设定（interval>0）开启次事件回调，设定（interval == 0）关闭此事件回调。
- *
  * @param volume 系统播放音量，取值范围 0 - 100，用户可以在系统的声音设置面板上进行拖拽调整。
  * @param muted 系统是否被用户静音了：true 被静音，false 已恢复。
+ * @note 您需要调用 {@link enableAudioVolumeEvaluation} 接口并设定（interval>0）开启次事件回调，设定（interval == 0）关闭此事件回调。
  */
 #if TARGET_PLATFORM_DESKTOP
     virtual void onAudioDevicePlayoutVolumeChanged(uint32_t volume, bool muted) {
@@ -541,11 +526,11 @@ class ITRTCCloudCallback {
      * 当您使用 {@link sendCustomCmdMsg} 发送自定义 UDP 消息时，即使设置了可靠传输（reliable），也无法确保100@%不丢失，只是丢消息概率极低，能满足常规可靠性要求。
      * 在发送端设置了可靠运输（reliable）后，SDK 都会通过此回调通知过去时间段内（通常为5s）传输途中丢失的自定义消息数量统计信息。
      *
-     * @note  只有在发送端设置了可靠传输（reliable），接收方才能收到消息的丢失回调
      * @param userId 用户标识
      * @param cmdID 命令 ID
      * @param errCode 错误码
      * @param missed 丢失的消息数量
+     * @note  只有在发送端设置了可靠传输（reliable），接收方才能收到消息的丢失回调
      */
     virtual void onMissCustomCmdMsg(const char* userId, int32_t cmdID, int32_t errCode, int32_t missed) {
     }
@@ -599,10 +584,9 @@ class ITRTCCloudCallback {
      *
      * 当您调用 {@link startPublishCDNStream} 开始向非腾讯云直播 CDN 上发布音视频流时，SDK 会立刻将这一指令同步给云端服务器。
      * 随后 SDK 会收到来自云端服务器的处理结果，并将指令的执行结果通过本事件回调通知给您。
-     *
-     * @note 当您收到成功的事件回调时，只是说明您的发布指令已经同步到腾讯云后台服务器，但如果目标 CDN 厂商的服务器不接收该条视频流，依然可能导致发布失败。
      * @param err 0表示成功，其余值表示失败
      * @param errMsg 具体错误原因
+     * @note 当您收到成功的事件回调时，只是说明您的发布指令已经同步到腾讯云后台服务器，但如果目标 CDN 厂商的服务器不接收该条视频流，依然可能导致发布失败。
      */
     virtual void onStartPublishCDNStream(int errCode, const char* errMsg) {
     }
@@ -745,6 +729,8 @@ class ITRTCCloudCallback {
      * @param width  截图画面的宽度
      * @param height 截图画面的高度
      * @param format 截图数据格式，目前只支持 TRTCVideoPixelFormat_BGRA32
+     * @param bmp 截图结果，如果 bmp 为 null 代表本次截图操作失败。
+     * @note 全平台 C++ 接口和 Java 接口在参数上是不一样的，C++ 接口用 7 个参数描述一个截图画面，Java 接口只用一个 Bitmap 描述一个截图画面
      */
     virtual void onSnapshotComplete(const char* userId, TRTCVideoStreamType type, char* data, uint32_t length, uint32_t width, uint32_t height, TRTCVideoPixelFormat format) {
     }
@@ -878,11 +864,6 @@ class ITRTCVideoFrameCallback {
      *
      * 如果您选购了第三方美颜组件，就需要在 TRTCCloud 中设置第三方美颜回调，之后 TRTC 就会将原本要进行预处理的视频帧通过此回调接口抛送给您。
      * 之后您就可以将 TRTC 抛出的视频帧交给第三方美颜组件进行图像处理，由于抛出的数据是可读且可写的，因此第三方美颜的处理结果也可以同步给 TRTC 进行后续的编码和发送。
-     *
-     * @param srcFrame 用于承载 TRTC 采集到的摄像头画面
-     * @param dstFrame 用于接收第三方美颜处理过的视频画面
-     * @note 目前仅支持 OpenGL 纹理方案（ PC 仅支持 TRTCVideoBufferType_Buffer 格式）。
-     *
      * 情况一：美颜组件自身会产生新的纹理
      * 如果您使用的美颜组件会在处理图像的过程中产生一帧全新的纹理（用于承载处理后的图像），那请您在回调函数中将 dstFrame.textureId 设置为新纹理的 ID：
      *
@@ -900,6 +881,9 @@ class ITRTCVideoFrameCallback {
      *     return 0;
      * }
      * ```
+     * @param srcFrame 用于承载 TRTC 采集到的摄像头画面
+     * @param dstFrame 用于接收第三方美颜处理过的视频画面
+     * @note 目前仅支持 OpenGL 纹理方案（ PC 仅支持 TRTCVideoBufferType_Buffer 格式）。
      */
     virtual int onProcessVideoFrame(TRTCVideoFrame* srcFrame, TRTCVideoFrame* dstFrame) {
         return 0;

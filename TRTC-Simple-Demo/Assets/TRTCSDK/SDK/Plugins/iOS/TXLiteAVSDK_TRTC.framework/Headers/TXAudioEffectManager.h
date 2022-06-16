@@ -26,17 +26,40 @@ NS_ASSUME_NONNULL_BEGIN
  * 0：关闭；1：KTV；2：小房间；3：大会堂；4：低沉；5：洪亮；6：金属声；7：磁性；8：空灵；9：录音棚；10：悠扬。
  */
 typedef NS_ENUM(NSInteger, TXVoiceReverbType) {
-    TXVoiceReverbType_0 = 0,    ///< disable
-    TXVoiceReverbType_1 = 1,    ///< KTV
-    TXVoiceReverbType_2 = 2,    ///< small room
-    TXVoiceReverbType_3 = 3,    ///< great hall
-    TXVoiceReverbType_4 = 4,    ///< deep voice
-    TXVoiceReverbType_5 = 5,    ///< loud voice
-    TXVoiceReverbType_6 = 6,    ///< metallic sound
-    TXVoiceReverbType_7 = 7,    ///< magnetic sound
-    TXVoiceReverbType_8 = 8,    ///< ethereal
-    TXVoiceReverbType_9 = 9,    ///< studio
-    TXVoiceReverbType_10 = 10,  ///< melodious
+
+    ///关闭特效
+    TXVoiceReverbType_0 = 0,
+
+    /// KTV
+    TXVoiceReverbType_1 = 1,
+
+    ///小房间
+    TXVoiceReverbType_2 = 2,
+
+    ///大会堂
+    TXVoiceReverbType_3 = 3,
+
+    ///低沉
+    TXVoiceReverbType_4 = 4,
+
+    ///洪亮
+    TXVoiceReverbType_5 = 5,
+
+    ///金属声
+    TXVoiceReverbType_6 = 6,
+
+    ///磁性
+    TXVoiceReverbType_7 = 7,
+
+    ///空灵
+    TXVoiceReverbType_8 = 8,
+
+    ///录音棚
+    TXVoiceReverbType_9 = 9,
+
+    ///悠扬
+    TXVoiceReverbType_10 = 10,
+
 };
 
 /**
@@ -46,18 +69,43 @@ typedef NS_ENUM(NSInteger, TXVoiceReverbType) {
  * 0：关闭；1：熊孩子；2：萝莉；3：大叔；4：重金属；5：感冒；6：外语腔；7：困兽；8：肥宅；9：强电流；10：重机械；11：空灵。
  */
 typedef NS_ENUM(NSInteger, TXVoiceChangeType) {
-    TXVoiceChangeType_0 = 0,    ///< disable
-    TXVoiceChangeType_1 = 1,    ///< naughty kid
-    TXVoiceChangeType_2 = 2,    ///< Lolita
-    TXVoiceChangeType_3 = 3,    ///< uncle
-    TXVoiceChangeType_4 = 4,    ///< heavy metal
-    TXVoiceChangeType_5 = 5,    ///< catch cold
-    TXVoiceChangeType_6 = 6,    ///< foreign accent
-    TXVoiceChangeType_7 = 7,    ///< caged animal trapped beast
-    TXVoiceChangeType_8 = 8,    ///< indoorsman
-    TXVoiceChangeType_9 = 9,    ///< strong current
-    TXVoiceChangeType_10 = 10,  ///< heavy machinery
-    TXVoiceChangeType_11 = 11,  ///< intangible
+
+    ///关闭
+    TXVoiceChangeType_0 = 0,
+
+    ///熊孩子
+    TXVoiceChangeType_1 = 1,
+
+    ///萝莉
+    TXVoiceChangeType_2 = 2,
+
+    ///大叔
+    TXVoiceChangeType_3 = 3,
+
+    ///重金属
+    TXVoiceChangeType_4 = 4,
+
+    ///感冒
+    TXVoiceChangeType_5 = 5,
+
+    ///外语腔
+    TXVoiceChangeType_6 = 6,
+
+    ///困兽
+    TXVoiceChangeType_7 = 7,
+
+    ///肥宅
+    TXVoiceChangeType_8 = 8,
+
+    ///强电流
+    TXVoiceChangeType_9 = 9,
+
+    ///重机械
+    TXVoiceChangeType_10 = 10,
+
+    ///空灵
+    TXVoiceChangeType_11 = 11,
+
 };
 
 /// @}
@@ -71,13 +119,19 @@ typedef NS_ENUM(NSInteger, TXVoiceChangeType) {
 
 // Playback progress block of background music
 
-///背景音乐开始播放
+/**
+ * 背景音乐开始播放
+ */
 typedef void (^TXAudioMusicStartBlock)(NSInteger errCode);
 
-///背景音乐的播放进度
+/**
+ * 背景音乐的播放进度
+ */
 typedef void (^TXAudioMusicProgressBlock)(NSInteger progressMs, NSInteger durationMs);
 
-///背景音乐已经播放完毕
+/**
+ * 背景音乐已经播放完毕
+ */
 typedef void (^TXAudioMusicCompleteBlock)(NSInteger errCode);
 
 /// @}
@@ -123,6 +177,7 @@ LITEAV_EXPORT @interface TXAudioMusicParam : NSObject
 
 ///【字段含义】音乐结束播放时间点，单位毫秒，0表示播放至文件结尾。
 @property(nonatomic) NSInteger endTimeMS;
+
 @end
 /// @}
 
@@ -147,10 +202,8 @@ LITEAV_EXPORT @interface TXAudioEffectManager : NSObject
  * 1.1 开启耳返
  *
  * 主播开启耳返后，可以在耳机里听到麦克风采集到的自己发出的声音，该特效适用于主播唱歌的应用场景中。
- *
  * 需要您注意的是，由于蓝牙耳机的硬件延迟非常高，所以在主播佩戴蓝牙耳机时无法开启此特效，请尽量在用户界面上提示主播佩戴有线耳机。
  * 同时也需要注意，并非所有的手机开启此特效后都能达到优秀的耳返效果，我们已经对部分耳返效果不佳的手机屏蔽了该特效。
- *
  * @note 仅在主播佩戴耳机时才能开启此特效，同时请您提示主播佩戴有线耳机。
  * @param enable YES：开启；NO：关闭。
  */
@@ -160,7 +213,6 @@ LITEAV_EXPORT @interface TXAudioEffectManager : NSObject
  * 1.2 设置耳返音量
  *
  * 通过该接口您可以设置耳返特效中声音的音量大小。
- *
  * @param volume 音量大小，取值范围为0 - 100，默认值：100。
  * @note 如果将 volume 设置成 100 之后感觉音量还是太小，可以将 volume 最大设置成 150，但超过 100 的 volume 会有爆音的风险，请谨慎操作。
  */
@@ -170,7 +222,6 @@ LITEAV_EXPORT @interface TXAudioEffectManager : NSObject
  * 1.3 设置人声的混响效果
  *
  * 通过该接口您可以设置人声的混响效果，具体特效请参考枚举定义{@link TXVoiceReverbType}。
- *
  * @note 设置的效果在退出房间后会自动失效，如果下次进房还需要对应特效，需要调用此接口再次进行设置。
  */
 - (void)setVoiceReverbType:(TXVoiceReverbType)reverbType;
@@ -179,7 +230,6 @@ LITEAV_EXPORT @interface TXAudioEffectManager : NSObject
  * 1.4 设置人声的变声特效
  *
  * 通过该接口您可以设置人声的变声特效，具体特效请参考枚举定义{@link TXVoiceChangeType}。
- *
  * @note 设置的效果在退出房间后会自动失效，如果下次进房还需要对应特效，需要调用此接口再次进行设置。
  */
 - (void)setVoiceChangerType:(TXVoiceChangeType)changerType;
@@ -188,7 +238,6 @@ LITEAV_EXPORT @interface TXAudioEffectManager : NSObject
  * 1.5 设置语音音量
  *
  * 该接口可以设置语音音量的大小，一般配合音乐音量的设置接口 {@link setAllMusicVolume} 协同使用，用于调谐语音和音乐在混音前各自的音量占比。
- *
  * @param volume 音量大小，取值范围为0 - 100，默认值：100。
  * @note 如果将 volume 设置成 100 之后感觉音量还是太小，可以将 volume 最大设置成 150，但超过 100 的 volume 会有爆音的风险，请谨慎操作。
  */
@@ -198,7 +247,6 @@ LITEAV_EXPORT @interface TXAudioEffectManager : NSObject
  * 1.6 设置语音音调
  *
  * 该接口可以设置语音音调，用于实现变调不变速的目的。
- *
  * @param pitch 音调，取值范围为-1.0f~1.0f，默认值：0.0f。
  */
 - (void)setVoicePitch:(double)pitch;
@@ -216,16 +264,14 @@ LITEAV_EXPORT @interface TXAudioEffectManager : NSObject
  * 2.1 开始播放背景音乐
  *
  * 每个音乐都需要您指定具体的 ID，您可以通过该 ID 对音乐的开始、停止、音量等进行设置。
- *
- * @note
- * 1. 如果要多次播放同一首背景音乐，请不要每次播放都分配一个新的 ID，我们推荐使用相同的 ID。
- * 2. 若您希望同时播放多首不同的音乐，请为不同的音乐分配不同的 ID 进行播放。
- * 3. 如果使用同一个 ID 播放不同音乐，SDK 会先停止播放旧的音乐，再播放新的音乐。
- *
  * @param musicParam 音乐参数
  * @param startBlock 播放开始回调
  * @param progressBlock 播放进度回调
  * @param completeBlock 播放结束回调
+ * @note
+ * 1. 如果要多次播放同一首背景音乐，请不要每次播放都分配一个新的 ID，我们推荐使用相同的 ID。
+ * 2. 若您希望同时播放多首不同的音乐，请为不同的音乐分配不同的 ID 进行播放。
+ * 3. 如果使用同一个 ID 播放不同音乐，SDK 会先停止播放旧的音乐，再播放新的音乐。
  */
 - (void)startPlayMusic:(TXAudioMusicParam *)musicParam onStart:(TXAudioMusicStartBlock _Nullable)startBlock onProgress:(TXAudioMusicProgressBlock _Nullable)progressBlock onComplete:(TXAudioMusicCompleteBlock _Nullable)completeBlock;
 
@@ -256,7 +302,6 @@ LITEAV_EXPORT @interface TXAudioEffectManager : NSObject
  * 该接口可以设置所有背景音乐的本地音量和远端音量。
  * - 本地音量：即主播本地可以听到的背景音乐的音量大小。
  * - 远端音量：即观众端可以听到的背景音乐的音量大小。
- *
  * @param volume 音量大小，取值范围为0 - 100，默认值：100。
  * @note 如果将 volume 设置成 100 之后感觉音量还是太小，可以将 volume 最大设置成 150，但超过 100 的 volume 会有爆音的风险，请谨慎操作。
  */
@@ -266,7 +311,6 @@ LITEAV_EXPORT @interface TXAudioEffectManager : NSObject
  * 2.6 设置某一首背景音乐的远端音量的大小
  *
  * 该接口可以细粒度地控制每一首背景音乐的远端音量，也就是观众端可听到的背景音乐的音量大小。
- *
  * @param id     音乐 ID
  * @param volume 音量大小，取值范围为0 - 100；默认值：100
  * @note 如果将 volume 设置成 100 之后感觉音量还是太小，可以将 volume 最大设置成 150，但超过 100 的 volume 会有爆音的风险，请谨慎操作。
@@ -277,7 +321,6 @@ LITEAV_EXPORT @interface TXAudioEffectManager : NSObject
  * 2.7 设置某一首背景音乐的本地音量的大小
  *
  * 该接口可以细粒度地控制每一首背景音乐的本地音量，也就是主播本地可以听到的背景音乐的音量大小。
- *
  * @param id     音乐 ID
  * @param volume 音量大小，取值范围为0 - 100，默认值：100。
  * @note 如果将 volume 设置成 100 之后感觉音量还是太小，可以将 volume 最大设置成 150，但超过 100 的 volume 会有爆音的风险，请谨慎操作。
@@ -319,12 +362,11 @@ LITEAV_EXPORT @interface TXAudioEffectManager : NSObject
 /**
  * 2.12 设置背景音乐的播放进度（单位：毫秒）
  *
+ * @param id  音乐 ID
+ * @param pts 单位: 毫秒
  * @note 请尽量避免过度频繁地调用该接口，因为该接口可能会再次读写音乐文件，耗时稍高。
  *       因此，当用户拖拽音乐的播放进度条时，请在用户完成拖拽操作后再调用本接口。
  *       因为 UI 上的进度条控件往往会以很高的频率反馈用户的拖拽进度，如不做频率限制，会导致较差的用户体验。
- *
- * @param id  音乐 ID
- * @param pts 单位: 毫秒
  */
 - (void)seekMusicToPosInMS:(int32_t)id pts:(NSInteger)pts;
 

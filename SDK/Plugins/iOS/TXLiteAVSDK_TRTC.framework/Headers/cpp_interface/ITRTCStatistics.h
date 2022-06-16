@@ -18,6 +18,9 @@ namespace liteav {
 /// @name 本地的音视频统计指标
 /// @{
 
+/**
+ * 本地的音视频统计指标
+ */
 struct TRTCLocalStatistics {
     ///【字段含义】本地视频的宽度，单位 px
     uint32_t width;
@@ -57,6 +60,9 @@ struct TRTCLocalStatistics {
 /// @name 远端的音视频统计指标
 /// @{
 
+/**
+ * 远端的音视频统计指标
+ */
 struct TRTCRemoteStatistics {
     ///【字段含义】用户 ID
     const char* userId;
@@ -152,11 +158,14 @@ struct TRTCRemoteStatistics {
 /// @name 网络和性能的汇总统计指标
 /// @{
 
+/**
+ * 网络和性能的汇总统计指标
+ */
 struct TRTCStatistics {
-    ///【字段含义】当前应用的 CPU 使用率，单位 (%)
+    ///【字段含义】当前应用的 CPU 使用率，单位 (%)，Android 8.0 以上不支持
     uint32_t appCpu;
 
-    ///【字段含义】当前系统的 CPU 使用率，单位 (%)
+    ///【字段含义】当前系统的 CPU 使用率，单位 (%)，Android 8.0 以上不支持
     uint32_t systemCpu;
 
     ///【字段含义】从 SDK 到云端的上行丢包率，单位 (%)

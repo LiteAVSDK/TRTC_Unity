@@ -72,6 +72,7 @@ public static class IosPostProcess
             proj.AddFrameworkToProject(frameTarget, Utf8string("CoreTelephony.framework"), true);
             proj.AddFrameworkToProject(frameTarget, Utf8string("OpenGLES.framework"), true);
             proj.AddFrameworkToProject(frameTarget, Utf8string("CoreImage.framework"), true);
+            proj.AddFrameworkToProject(frameTarget, Utf8string("MobileCoreServices.framework"), true);
 
 
             string targetGuid = proj.GetUnityMainTargetGuid();
@@ -100,6 +101,7 @@ public static class IosPostProcess
             proj.AddFrameworkToProject(targetGuid, Utf8string("CoreTelephony.framework"), true);
             proj.AddFrameworkToProject(targetGuid, Utf8string("OpenGLES.framework"), true);
             proj.AddFrameworkToProject(targetGuid, Utf8string("CoreImage.framework"), true);
+            proj.AddFrameworkToProject(targetGuid, Utf8string("MobileCoreServices.framework"), true);
 
             proj.WriteToFile(projPath);
             UpdatePermission(buildPath + "/Info.plist");

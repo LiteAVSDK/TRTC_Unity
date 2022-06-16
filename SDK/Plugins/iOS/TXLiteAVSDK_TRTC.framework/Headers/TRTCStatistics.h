@@ -17,6 +17,9 @@
 /// @name 本地的音视频统计指标
 /// @{
 
+/**
+ * 本地的音视频统计指标
+ */
 LITEAV_EXPORT @interface TRTCLocalStatistics : NSObject
 
 ///【字段含义】本地视频的宽度，单位 px
@@ -43,6 +46,7 @@ LITEAV_EXPORT @interface TRTCLocalStatistics : NSObject
 ///【字段含义】音频设备采集状态（用于检测音频外设的健康度）
 /// 0：采集设备状态正常；1：检测到长时间静音；2：检测到破音；3：检测到声音异常间断。
 @property(nonatomic, assign) uint32_t audioCaptureState;
+
 @end
 
 /// @}
@@ -54,6 +58,9 @@ LITEAV_EXPORT @interface TRTCLocalStatistics : NSObject
 /// @name 远端的音视频统计指标
 /// @{
 
+/**
+ * 远端的音视频统计指标
+ */
 LITEAV_EXPORT @interface TRTCRemoteStatistics : NSObject
 
 ///【字段含义】用户 ID
@@ -119,6 +126,7 @@ LITEAV_EXPORT @interface TRTCRemoteStatistics : NSObject
 
 ///【字段含义】视频流类型（高清大画面|低清小画面|辅流画面）
 @property(nonatomic, assign) TRTCVideoStreamType streamType;
+
 @end
 
 /// @}
@@ -130,12 +138,15 @@ LITEAV_EXPORT @interface TRTCRemoteStatistics : NSObject
 /// @name 网络和性能的汇总统计指标
 /// @{
 
+/**
+ * 网络和性能的汇总统计指标
+ */
 LITEAV_EXPORT @interface TRTCStatistics : NSObject
 
-///【字段含义】当前应用的 CPU 使用率，单位 (%)
+///【字段含义】当前应用的 CPU 使用率，单位 (%)，Android 8.0 以上不支持
 @property(nonatomic, assign) uint32_t appCpu;
 
-///【字段含义】当前系统的 CPU 使用率，单位 (%)
+///【字段含义】当前系统的 CPU 使用率，单位 (%)，Android 8.0 以上不支持
 @property(nonatomic, assign) uint32_t systemCpu;
 
 ///【字段含义】从 SDK 到云端的上行丢包率，单位 (%)

@@ -19,7 +19,7 @@
 1. 配置 Unity Editor，单击【File】>【Build Setting】，切换至 iOS。
 ![](https://tccweb-1258344699.cos.ap-nanjing.myqcloud.com/sdk/trtc/unity/ios.png)
 2. 连接 iPhone 真机，单击【Build And Run】，需要选择一个新的目录存放编译出来的 iOS 工程，等待编译完成，会有新窗口弹出 Xcode 工程。
-3. 单击 Link Binary with Libraries 项展开，单击底下的“+”号图标去添加依赖库 `libc++.tbd` 、`Accelerate.framework` 	、 `libresolv.tbd`、`AVFoundation.framework`、`VideoToolBox.framework`、`Metal.framework`、`MetalKit.framework`、`SystemConfiguration.framework`、`ReplayKit.framework`、`ACoreMedia.framework`、`CoreTelephony.framework`、`OpenGLES.framework`、`CoreImage.framework`。
+3. 单击 Link Binary with Libraries 项展开，单击底下的“+”号图标去添加依赖库 **libc++.tbd** 、 **libresolv.tbd**、**Accelerate.framework**、**MetalKit.framework**、**MobileCoreServices.framework**、**SystemConfiguration.framework**、**ReplayKit.framework**、**CoreTelephony.framework**。
 ![](https://imgcache.qq.com/operation/dianshi/other/link.743c57b230fa1be24a2226b6cd1c99378eca81ca.png)
 4. 单击 Other Linker Flags 项展开，添加 `-ObjC`
 ![](https://imgcache.qq.com/operation/dianshi/other/8.6-objc.e0df060a638c1056fc07d1cb51c303a9de5b542f.png)

@@ -110,7 +110,25 @@ LITEAV_EXPORT @interface TRTCCloud : NSObject
 - (void)switchRole:(TRTCRoleType)role;
 
 /**
- * 2.4 切换房间
+ * 2.4 切换角色(支持设置权限位)
+ *
+ * 调用本接口可以实现用户在“主播”和“观众”两种角色之间来回切换。
+ * 由于视频直播和语音聊天室需要支持多达10万名观众同时观看，所以设定了“只有主播才能发布自己的音视频”的规则。
+ * 因此，当有些观众希望发布自己的音视频流（以便能跟主播互动）时，就需要先把自己的角色切换成“主播”。
+ * 您可以在进入房间时通过 {@link TRTCParams} 中的 role 字段事先确定用户的角色，也可以在进入房间后通过 switchRole 接口动态切换角色。
+ * @param role 角色，默认为“主播”：
+ * - {@link TRTCRoleAnchor} ：主播，可以发布自己的音视频，同一个房间里最多支持50个主播同时发布音视频。
+ * - {@link TRTCRoleAudience} ：观众，不能发布自己的音视频流，只能观看房间中其他主播的音视频。如果要发布自己的音视频，需要先通过 {@link switchRole} 切换成“主播”，同一个房间内同时最多可以容纳 10 万名观众。
+ * @param privateMapKey 用于权限控制的权限票据，当您希望某个房间只能让特定的 userId 进入或者上行视频时，需要使用 privateMapKey 进行权限保护。
+ * - 仅建议有高级别安全需求的客户使用，更多详情请参见 [开启高级权限控制](https://cloud.tencent.com/document/product/647/32240)。
+ * @note
+ * 1. 该接口仅适用于视频直播（{@link TRTCAppSceneLIVE}）和语音聊天室（{@link TRTCAppSceneVoiceChatRoom}）这两个场景。
+ * 2. 如果您在 {@link enterRoom} 时指定的 scene 为 {@link TRTCAppSceneVideoCall} 或 {@link TRTCAppSceneAudioCall}，请不要调用这个接口。
+ */
+- (void)switchRole:(TRTCRoleType)role privateMapKey:(NSString *)privateMapKey;
+
+/**
+ * 2.5 切换房间
  *
  * 使用该接口可以让用户可以快速从一个房间切换到另一个房间。
  * - 如果用户的身份是“观众”，该接口的调用效果等同于 exitRoom(当前房间) + enterRoom（新的房间）。
@@ -127,7 +145,7 @@ LITEAV_EXPORT @interface TRTCCloud : NSObject
 - (void)switchRoom:(TRTCSwitchRoomConfig *)config;
 
 /**
- * 2.5 请求跨房通话
+ * 2.6 请求跨房通话
  *
  * 默认情况下，只有同一个房间中的用户之间可以进行音视频通话，不同的房间之间的音视频流是相互隔离的。
  * 但您可以通过调用该接口，将另一个房间中某个主播音视频流发布到自己所在的房间中，与此同时，该接口也会将自己的音视频流发布到目标主播的房间中。
@@ -167,14 +185,14 @@ LITEAV_EXPORT @interface TRTCCloud : NSObject
 - (void)connectOtherRoom:(NSString *)param;
 
 /**
- * 2.6 退出跨房通话
+ * 2.7 退出跨房通话
  *
  * 退出结果会通过 **TRTCCloudDelegate** 中的 {@link onDisconnectOtherRoom} 回调通知给您。
  */
 - (void)disconnectOtherRoom;
 
 /**
- * 2.7 设置订阅模式（需要在进入房前设置才能生效）
+ * 2.8 设置订阅模式（需要在进入房前设置才能生效）
  *
  * 您可以通过该接口在“自动订阅”和“手动订阅”两种模式下进行切换：
  * - 自动订阅：默认模式，用户在进入房间后会立刻接收到该房间中的音视频流，音频会自动播放，视频会自动开始解码（依然需要您通过 {@link startRemoteView} 接口绑定渲染控件）。
@@ -191,7 +209,7 @@ LITEAV_EXPORT @interface TRTCCloud : NSObject
 - (void)setDefaultStreamRecvMode:(BOOL)autoRecvAudio video:(BOOL)autoRecvVideo;
 
 /**
- * 2.8 创建子房间示例（用于多房间并发观看）
+ * 2.9 创建子房间示例（用于多房间并发观看）
  *
  * TRTCCloud 一开始被设计成单例模式，限制了多房间并发观看的能力。
  * 通过调用该接口，您可以创建出多个 TRTCCloud 实例，以便同时进入多个不同的房间观看音视频流。
@@ -229,7 +247,7 @@ LITEAV_EXPORT @interface TRTCCloud : NSObject
 - (TRTCCloud *)createSubCloud;
 
 /**
- * 2.9 销毁子房间示例
+ * 2.10 销毁子房间示例
  *
  * @param subCloud 子房间实例
  */
@@ -304,6 +322,49 @@ LITEAV_EXPORT @interface TRTCCloud : NSObject
  *   - 请放心，当您退房时 TRTC 会自动取消混流状态。
  */
 - (void)setMixTranscodingConfig:(nullable TRTCTranscodingConfig *)config;
+
+/**
+ * 3.6  开始发布媒体流
+ *
+ * 该接口会向 TRTC 服务器发送指令，要求其将当前用户的音视频流转推/转码到直播 CDN 或者回推到 TRTC 房间中
+ * 您可以通过 {@link TRTCPublishTarget} 配置中的 {@link TRTCPublishMode} 指定具体的发布模式
+ *
+ * @param target 媒体流发布的目标地址，具体配置参考 {@link TRTCPublishTarget}。支持转推/转码到腾讯或者第三方 CDN，也支持转码回推到 TRTC 房间中。
+ * @param params 媒体流编码输出参数，具体配置参考 {@link TRTCStreamEncoderParam}。转码和回推到 TRTC 房间中时为必填项，您需要指定您预期的转码输出参数。在转推时，为了更好的转推稳定性和 CDN 兼容性，也建议您进行配置。
+ * @param config 媒体流转码配置参数。具体配置参考 {@link TRTCStreamMixingConfig}。转码和回推到 TRTC 房间中时为必填项，您需要指定您预期的转码配置参数。转推模式下则无效。
+ * @note SDK 会通过回调 {@link onStartPublishMediaStream} 带给您后台启动的任务标识（即 taskId）。
+ * @note 同一个任务（TRTCPublishMode 与 TRTCPublishCdnUrl 均相同）仅支持启动一次。若您后续需要更新或者停止该项任务，需要记录并使用返回的 taskId，通过 {@link updatePublishMediaStream} 或者 {@link stopPublishMediaStream} 来操作。
+ * @note target 支持同时配置多个 CDN url（最多同时10个）。若您的同一个转推/转码任务需要发布至多路 CDN，则仅需要在 target 中配置多个 CDN url 即可。同一个转码任务即使有多个转推地址，对应的转码计费仍只收取一份。
+ * @note 使用时需要注意不要多个任务同时往相同的 Url 地址推送，以免引起异常推流状态。一种推荐的方案是 Url 中使用 “sdkappid_roomid_userid_main” 作为区分标识，这中命名方式容易辨认且不会在您的多个应用中发生冲突。
+ */
+- (void)startPublishMediaStream:(TRTCPublishTarget *)target encoderParam:(nullable TRTCStreamEncoderParam *)param mixingConfig:(nullable TRTCStreamMixingConfig *)config;
+
+/**
+ * 3.7 更新发布媒体流
+ *
+ * 该接口会向 TRTC 服务器发送指令，更新通过 {@link startPublishMediaStream} 启动的媒体流
+ *
+ * @param taskId 通过回调 {@link onStartPublishMediaStream} 带给您后台启动的任务标识（即 taskId）
+ * @param target 媒体流发布的目标地址，具体配置参考 {@link TRTCPublishTarget}。支持转推/转码到腾讯或者第三方 CDN，也支持转码回推到 TRTC 房间中。
+ * @param params 媒体流编码输出参数，具体配置参考 {@link TRTCStreamEncoderParam}。转码和回推到 TRTC 房间中时为必填项，您需要指定您预期的转码输出参数。在转推时，为了更好的转推稳定性和 CDN 兼容性，也建议您进行配置。
+ * @param config 媒体流转码配置参数。具体配置参考 {@TRTCStreamMixingConfig}。转码和回推到 TRTC 房间中时为必填项，您需要指定您预期的转码配置参数。转推模式下则无效。
+ * @note 您可以通过本接口来更新发布的 CDN url（支持增删，最多同时 10 个），但您使用时需要注意不要多个任务同时往相同的 Url 地址推送，以免引起异常推流状态
+ * @note 您可以通过 taskId 来更新调整转推/转码任务。例如在 pk 业务中，您可以先通过 {@link startPublishMediaStream} 发起转推，接着在主播发起 pk 时，通过 taskId 和本接口将转推更新为转码任务。此时，CDN
+ * 播放将连续并且不会发生断流（您需要保持媒体流编码输出参数 param 一致）。
+ * @note 同一个任务不支持纯音频、音视频、纯视频之间的切换。
+ */
+- (void)updatePublishMediaStream:(NSString *)taskId publishTarget:(TRTCPublishTarget *)target encoderParam:(nullable TRTCStreamEncoderParam *)param mixingConfig:(nullable TRTCStreamMixingConfig *)config;
+
+/**
+ * 3.8 停止发布媒体流
+ *
+ * 该接口会向 TRTC 服务器发送指令，停止通过 {@link startPublishMediaStream} 启动的媒体流
+ *
+ * @param taskId 通过回调 {@link onStartPublishMediaStream} 带给您后台启动的任务标识（即 taskId）
+ * @note 若您的业务后台并没有保存该 taskId，在您的主播异常退房重进后，如果您需要重新获取 taskId，您可以再次调用 {@link startPublishMediaStream} 启动任务。此时 TRTC 后台会返回任务启动失败，同时带给您上一次启动的 taskId
+ * @note 若 taskId 填空字符串，将会停止所有通过 {@link startPublishMediaStream} 启动的媒体流，如果您只启动了一个媒体流或者想停止所有启动的媒体流，推荐使用这种方式。
+ */
+- (void)stopPublishMediaStream:(NSString *)taskId;
 
 /// @}
 /////////////////////////////////////////////////////////////////////////////////
@@ -660,11 +721,12 @@ LITEAV_EXPORT @interface TRTCCloud : NSObject
 /**
  * 5.12 启用音量大小提示
  *
- * 开启此功能后，SDK 会在 {@link TRTCCloudDelegate} 中的 {@link onUserVoiceVolume} 回调中反馈远端音频的音量大小。
+ * 开启此功能后，SDK 会在 {@link TRTCCloudDelegate} 中的 {@link onUserVoiceVolume} 回调中反馈本地推流用户和远端用户音频的音量大小以及远端用户的最大音量
  * @note 如需打开此功能，请在 startLocalAudio 之前调用才可以生效。
  * @param interval 设置 onUserVoiceVolume 回调的触发间隔，单位为ms，最小间隔为100ms，如果小于等于 0 则会关闭回调，建议设置为300ms；
+ * @param enable_vad true: 打开本地人声检测 ；false: 关闭本地人声检测
  */
-- (void)enableAudioVolumeEvaluation:(NSUInteger)interval;
+- (void)enableAudioVolumeEvaluation:(NSUInteger)interval enable_vad:(BOOL)enable_vad;
 
 /**
  * 5.13 开始录音
@@ -705,6 +767,25 @@ LITEAV_EXPORT @interface TRTCCloud : NSObject
  * @param params 音频并发参数，请参考 {@link TRTCAudioParallelParams}
  */
 - (void)setRemoteAudioParallelParams:(TRTCAudioParallelParams *)params;
+
+/**
+ * 5.19 启用 3D 音效
+ *
+ * 启用 3D 音效。
+ * @param enabled 是否启用 3D 音效，默认为关闭状态。
+ */
+- (void)enable3DSpatialAudioEffect:(BOOL)enabled;
+
+/**
+ * 5.20 设置 3D 音效参数
+ *
+ * 设置 3D 音效参数，注意应当传入长度为 3 的数组。
+ * @param position 音源方位，自身在世界坐标系中的坐标，顺序是前、右、上
+ * @param axisForward 自身坐标系前轴的单位向量
+ * @param axisRight 自身坐标系右轴的单位向量
+ * @param axisUp 自身坐标系上轴的单位向量
+ */
+- (void)updateSelf3DSpatialPosition:(int[_Nonnull 3])position axisForward:(float[_Nonnull 3])axisForward axisRight:(float[_Nonnull 3])axisRight axisUp:(float[_Nonnull 3])axisUp;
 
 /// @}
 /////////////////////////////////////////////////////////////////////////////////
@@ -1421,725 +1502,7 @@ LITEAV_EXPORT @interface TRTCCloud : NSObject
 - (void)callExperimentalAPI:(NSString *)jsonStr;
 
 /// @}
-/////////////////////////////////////////////////////////////////////////////////
-//
-//                    弃用接口（建议使用对应的新接口）
-//
-/////////////////////////////////////////////////////////////////////////////////
-/// @name  弃用接口（建议使用对应的新接口）
-/// @{
-
-/**
- * 设置麦克风的音量大小
- *
- * @deprecated v6.9 版本开始不推荐使用，建议使用 {@link setAudioCaptureVolume} 替代之。
- */
-- (void)setMicVolumeOnMixing:(NSInteger)volume __attribute__((deprecated("use setAudioCaptureVolume instead")));
-
-/**
- * 设置美颜、美白以及红润效果级别
- *
- * @deprecated v6.9 版本开始不推荐使用，建议使用 {@link getBeautyManager} 替代之。
- */
-- (void)setBeautyStyle:(TRTCBeautyStyle)beautyStyle beautyLevel:(NSInteger)beautyLevel whitenessLevel:(NSInteger)whitenessLevel ruddinessLevel:(NSInteger)ruddinessLevel __attribute__((deprecated("use getBeautyManager instead")));
-
-/**
- * 设置大眼级别
- *
- * @deprecated v6.9 版本开始不推荐使用，建议使用 {@link getBeautyManager} 替代之。
- */
-#if TARGET_OS_IPHONE
-- (void)setEyeScaleLevel:(float)eyeScaleLevel __attribute__((deprecated("use getBeautyManager instead")));
-#endif
-
-/**
- * 设置瘦脸级别
- *
- * @deprecated v6.9 版本开始不推荐使用，建议使用 {@link getBeautyManager} 替代之。
- */
-#if TARGET_OS_IPHONE
-- (void)setFaceScaleLevel:(float)faceScaleLevel __attribute__((deprecated("use getBeautyManager instead")));
-#endif
-
-/**
- * 设置 V 脸级别
- *
- * @deprecated v6.9 版本开始不推荐使用，建议使用 {@link getBeautyManager} 替代之。
- */
-#if TARGET_OS_IPHONE
-- (void)setFaceVLevel:(float)faceVLevel __attribute__((deprecated("use getBeautyManager instead")));
-#endif
-
-/**
- * 设置下巴拉伸或收缩幅度
- *
- * @deprecated v6.9 版本开始不推荐使用，建议使用 {@link getBeautyManager} 替代之。
- */
-#if TARGET_OS_IPHONE
-- (void)setChinLevel:(float)chinLevel __attribute__((deprecated("use getBeautyManager instead")));
-#endif
-
-/**
- * 设置短脸级别
- *
- * @deprecated v6.9 版本开始不推荐使用，建议使用 {@link getBeautyManager} 替代之。
- */
-#if TARGET_OS_IPHONE
-- (void)setFaceShortLevel:(float)faceShortlevel __attribute__((deprecated("use getBeautyManager instead")));
-#endif
-
-/**
- * 设置瘦鼻级别
- *
- * @deprecated v6.9 版本开始不推荐使用，建议使用 {@link getBeautyManager} 替代之。
- */
-#if TARGET_OS_IPHONE
-- (void)setNoseSlimLevel:(float)noseSlimLevel __attribute__((deprecated("use getBeautyManager instead")));
-#endif
-
-/**
- * 设置动效贴纸
- *
- * @deprecated v6.9 版本开始不推荐使用，建议使用 {@link getBeautyManager} 替代之。
- */
-#if TARGET_OS_IPHONE
-- (void)selectMotionTmpl:(NSString *)tmplPath __attribute__((deprecated("use getBeautyManager instead")));
-#endif
-
-/**
- * 设置动效静音
- *
- * @deprecated v6.9 版本开始不推荐使用，建议使用 {@link getBeautyManager} 替代之。
- */
-#if TARGET_OS_IPHONE
-- (void)setMotionMute:(BOOL)motionMute __attribute__((deprecated("use getBeautyManager instead")));
-#endif
-
-/**
- * 启动屏幕分享
- *
- * @deprecated v7.2 版本开始不推荐使用，建议使用 startScreenCapture:streamType:encParam: 替代之。
- */
-#if !TARGET_OS_IPHONE && TARGET_OS_MAC
-- (void)startScreenCapture:(nullable NSView *)view __attribute__((deprecated("use startScreenCapture:streamType:encParam: instead")));
-#endif
-
-/**
- * 设置色彩滤镜效果
- *
- * @deprecated v7.2 版本开始不推荐使用，建议使用 {@link getBeautyManager} 替代之。
- */
-- (void)setFilter:(TXImage *)image __attribute__((deprecated("use getBeautyManager instead")));
-
-/**
- * 设置色彩滤镜浓度
- *
- * @deprecated v7.2 版本开始不推荐使用，建议使用 {@link getBeautyManager} 替代之。
- */
-- (void)setFilterConcentration:(float)concentration __attribute__((deprecated("use getBeautyManager instead")));
-
-/**
- * 设置绿幕背景视频
- *
- * @deprecated v7.2 版本开始不推荐使用，建议使用 {@link getBeautyManager} 替代之。
- */
-- (void)setGreenScreenFile:(NSURL *)file __attribute__((deprecated("use getBeautyManager instead")));
-
-/**
- * 启动播放背景音乐
- *
- * @deprecated v7.3 版本开始不推荐使用，建议使用 {@link getAudioEffectManager} 替代之。
- */
-- (void)playBGM:(NSString *)path
-       withBeginNotify:(void (^)(NSInteger errCode))beginNotify
-    withProgressNotify:(void (^)(NSInteger progressMS, NSInteger durationMS))progressNotify
-     andCompleteNotify:(void (^)(NSInteger errCode))completeNotify __attribute__((deprecated("use getAudioEffectManager instead")));
-
-/**
- * 停止播放背景音乐
- *
- * @deprecated v7.3 版本开始不推荐使用，建议使用 {@link getAudioEffectManager} 替代之。
- */
-- (void)stopBGM __attribute__((deprecated("use getAudioEffectManager instead")));
-
-/**
- * 停止播放背景音乐
- *
- * @deprecated v7.3 版本开始不推荐使用，建议使用 {@link getAudioEffectManager} 替代之。
- */
-- (void)pauseBGM __attribute__((deprecated("use getAudioEffectManager instead")));
-
-/**
- * 停止播放背景音乐
- *
- * @deprecated v7.3 版本开始不推荐使用，建议使用 {@link getAudioEffectManager} 替代之。
- */
-- (void)resumeBGM __attribute__((deprecated("use getAudioEffectManager instead")));
-
-/**
- * 获取背景音乐总时长（单位：毫秒）
- *
- * @deprecated v7.3 版本开始不推荐使用，建议使用 {@link TXAudioEffectManager} 中的 {@link getMusicDurationInMS} 替代之。
- */
-- (NSInteger)getBGMDuration:(NSString *)path __attribute__((deprecated("use TXAudioEffectManager#getMusicDurationInMS instead")));
-
-/**
- * 设置背景音乐的播放进度
- *
- * @deprecated v7.3 版本开始不推荐使用，建议使用 {@link TXAudioEffectManager} 中的 {@link seekMusicToPosInMS} 替代之。
- */
-- (int)setBGMPosition:(NSInteger)pos __attribute__((deprecated("use TXAudioEffectManager#seekMusicToPosInMS instead")));
-
-/**
- * 设置背景音乐的音量大小
- *
- * @deprecated v7.3 版本开始不推荐使用，建议使用 {@link TXAudioEffectManager} 中的 {@link setMusicVolume} 替代之。
- */
-- (void)setBGMVolume:(NSInteger)volume __attribute__((deprecated("use TXAudioEffectManager#setMusicVolume instead")));
-
-/**
- * 设置背景音乐的本地播放音量
- *
- * @deprecated v7.3 版本开始不推荐使用，建议使用 {@link TXAudioEffectManager} 中的 {@link setMusicPlayoutVolume} 替代之。
- */
-- (void)setBGMPlayoutVolume:(NSInteger)volume __attribute__((deprecated("use TXAudioEffectManager#setMusicPlayoutVolume instead")));
-
-/**
- * 设置背景音乐的远端播放音量
- *
- * @deprecated v7.3 版本开始不推荐使用，建议使用 {@link TXAudioEffectManager} 中的 {@link setBGMPublishVolume} 替代之。
- */
-- (void)setBGMPublishVolume:(NSInteger)volume __attribute__((deprecated("use TXAudioEffectManager#setBGMPublishVolume instead")));
-
-/**
- * 设置混响效果
- *
- * @deprecated v7.3 版本开始不推荐使用，建议使用 {@link TXAudioEffectManager} 中的 {@link setVoiceReverbType} 替代之。
- */
-- (void)setReverbType:(TRTCReverbType)reverbType __attribute__((deprecated("use TXAudioEffectManager#setVoiceReverbType instead")));
-
-/**
- * 设置变声类型
- *
- * @deprecated v7.3 版本开始不推荐使用，建议使用 {@link TXAudioEffectManager} 中的 {@link setVoiceChangerType} 替代之。
- */
-- (void)setVoiceChangerType:(TRTCVoiceChangerType)voiceChangerType __attribute__((deprecated("use TXAudioEffectManager#setVoiceChangerType instead")));
-
-/**
- * 播放音效
- *
- * @deprecated v7.3 版本开始不推荐使用，建议使用 {@link TXAudioEffectManager} 中的 {@link startPlayMusic} 替代之。
- */
-- (void)playAudioEffect:(TRTCAudioEffectParam *)effect __attribute__((deprecated("use TXAudioEffectManager#startPlayMusic instead")));
-
-/**
- * 设置音效音量
- *
- * @deprecated v7.3 版本开始不推荐使用，建议使用 {@link TXAudioEffectManager} 中的 {@link setMusicPublishVolume} 和 {@link setMusicPlayoutVolume} 替代之。
- */
-- (void)setAudioEffectVolume:(int)effectId volume:(int)volume __attribute__((deprecated("use setMusicPublishVolume/setMusicPlayoutVolume instead")));
-
-/**
- * 停止播放音效
- *
- * @deprecated v7.3 版本开始不推荐使用，建议使用 {@link TXAudioEffectManager} 中的 {@link stopPlayMusic} 替代之。
- */
-- (void)stopAudioEffect:(int)effectId __attribute__((deprecated("use TXAudioEffectManager#stopPlayMusic instead")));
-
-/**
- * 停止所有音效
- *
- * @deprecated v7.3 版本开始不推荐使用，建议使用 {@link TXAudioEffectManager} 中的 {@link stopPlayMusic} 替代之。
- */
-- (void)stopAllAudioEffects __attribute__((deprecated("use TXAudioEffectManager#stopPlayMusic instead")));
-
-/**
- * 设置所有音效音量
- *
- * @deprecated v7.3 版本开始不推荐使用，建议使用 {@link TXAudioEffectManager} 中的 {@link setMusicPublishVolume} 和{@link setMusicPlayoutVolume} 替代之。
- */
-- (void)setAllAudioEffectsVolume:(int)volume __attribute__((deprecated("use setMusicPublishVolume/setMusicPlayoutVolume instead")));
-
-/**
- * 暂停音效
- *
- * @deprecated v7.3 版本开始不推荐使用，建议使用 {@link TXAudioEffectManager} 中的 {@link pauseAudioEffect} 替代之。
- */
-- (void)pauseAudioEffect:(int)effectId __attribute__((deprecated("use TXAudioEffectManager#pauseAudioEffect instead")));
-
-/**
- * 暂停音效
- *
- * @deprecated v7.3 版本开始不推荐使用，建议使用 {@link TXAudioEffectManager} 中的 {@link resumePlayMusic} 替代之。
- */
-- (void)resumeAudioEffect:(int)effectId __attribute__((deprecated("use TXAudioEffectManager#resumePlayMusic instead")));
-
-/**
- * 开启（或关闭）耳返
- *
- * @deprecated v7.3 版本开始不推荐使用，建议使用 {@link TXAudioEffectManager} 中的 {@link setVoiceEarMonitor} 替代之。
- */
-#if TARGET_OS_IPHONE
-- (void)enableAudioEarMonitoring:(BOOL)enable __attribute__((deprecated("use TXAudioEffectManager#setVoiceEarMonitor instead")));
-#endif
-
-/**
- * 开始显示远端视频画面
- *
- * @deprecated v8.0 版本开始不推荐使用，建议使用 {@link startRemoteView}:streamType:view: 替代之。
- */
-- (void)startRemoteView:(NSString *)userId view:(TXView *)view __attribute__((deprecated("use startRemoteView:streamType:view: instead")));
-
-/**
- * 停止显示远端视频画面，同时不再拉取该远端用户的视频数据流
- *
- * @deprecated v8.0 版本开始不推荐使用，建议使用 {@link stopRemoteView}:streamType: 替代之。
- */
-- (void)stopRemoteView:(NSString *)userId __attribute__((deprecated("use stopRemoteView:streamType: instead")));
-
-/**
- * 设置远端图像的渲染模式
- *
- * @deprecated v8.0 版本开始不推荐使用，建议使用 {@link setRemoteRenderParams}:streamType:params 替代之。
- */
-- (void)setRemoteViewFillMode:(NSString *)userId mode:(TRTCVideoFillMode)mode __attribute__((deprecated("use setRemoteRenderParams:streamType:params: instead")));
-
-/**
- * 设置远端图像的顺时针旋转角度
- *
- * @deprecated v8.0 版本开始不推荐使用，建议使用 {@link setRemoteRenderParams}:streamType:params: 替代之。
- */
-- (void)setRemoteViewRotation:(NSString *)userId rotation:(TRTCVideoRotation)rotation __attribute__((deprecated("use setRemoteRenderParams:streamType:params: instead")));
-
-/**
- * 设置本地图像的渲染模式
- *
- * @deprecated v8.0 版本开始不推荐使用，建议使用 {@link setLocalRenderParams} 替代之。
- */
-- (void)setLocalViewFillMode:(TRTCVideoFillMode)mode __attribute__((deprecated("use setLocalRenderParams instead")));
-
-/**
- * 设置本地图像的顺时针旋转角度
- *
- * @deprecated v8.0 版本开始不推荐使用，建议使用 {@link setLocalRenderParams} 替代之。
- */
-- (void)setLocalViewRotation:(TRTCVideoRotation)rotation __attribute__((deprecated("use setLocalRenderParams instead")));
-
-/**
- * 设置本地摄像头预览画面的镜像模式
- *
- * @deprecated v8.0 版本开始不推荐使用，建议使用 {@link setLocalRenderParams} 替代之。
- */
-#if TARGET_OS_IPHONE
-- (void)setLocalViewMirror:(TRTCLocalVideoMirrorType)mirror __attribute__((deprecated("use setLocalRenderParams: instead")));
-#elif TARGET_OS_MAC
-- (void)setLocalViewMirror:(BOOL)mirror __attribute__((deprecated("use setLocalRenderParams: instead")));
-#endif
-
-/**
- * 开始显示远端用户的辅路画面
- *
- * @deprecated v8.0 版本开始不推荐使用，建议使用 {@link startRemoteView}:streamType:view: 替代之。
- */
-- (void)startRemoteSubStreamView:(NSString *)userId view:(TXView *)view __attribute__((deprecated("use startRemoteView:type:view: instead")));
-
-/**
- * 停止显示远端用户的辅路画面
- *
- * @deprecated v8.0 版本开始不推荐使用，建议使用 {@link stopRemoteView}:streamType: 替代之。
- */
-- (void)stopRemoteSubStreamView:(NSString *)userId __attribute__((deprecated("use stopRemoteView:streamType: instead")));
-
-/**
- * 设置辅路画面的填充模式
- *
- * @deprecated v8.0 版本开始不推荐使用，建议使用 {@link setRemoteRenderParams}:streamType:params: 替代之。
- */
-- (void)setRemoteSubStreamViewFillMode:(NSString *)userId mode:(TRTCVideoFillMode)mode __attribute__((deprecated("use setRemoteRenderParams:streamType:params: instead")));
-
-/**
- * 设置辅路画面的顺时针旋转角度
- *
- * @deprecated v8.0 版本开始不推荐使用，建议使用 {@link setRemoteRenderParams}:streamType:params: 替代之。
- */
-- (void)setRemoteSubStreamViewRotation:(NSString *)userId rotation:(TRTCVideoRotation)rotation __attribute__((deprecated("use setRemoteRenderParams:streamType:params: instead")));
-
-/**
- * 设定优先观看大画面还是小画面
- *
- * @deprecated v8.0 版本开始不推荐使用，建议使用 {@link startRemoteView}:streamType:view: 替代之。
- */
-- (void)setPriorRemoteVideoStreamType:(TRTCVideoStreamType)streamType __attribute__((deprecated("use startRemoteView:streamType:view: instead")));
-
-/**
- * 设置音频质量
- *
- * @deprecated v8.0 版本开始不推荐使用，建议使用 {@link startLocalAudio}:quality 替代之。
- */
-- (void)setAudioQuality:(TRTCAudioQuality)quality __attribute__((deprecated("use startLocalAudio(quality) instead")));
-
-/**
- * 设置音频质量
- *
- * @deprecated v8.0 版本开始不推荐使用，建议使用 {@link startLocalAudio}:quality 替代之。
- */
-- (void)startLocalAudio __attribute__((deprecated("use startLocalAudio(quality) instead")));
-
-/**
- * 切换摄像头
- *
- * @deprecated v8.0 版本开始不推荐使用，建议使用 {@link TXDeviceManager} 中的 {@link switchCamera} 接口替代之。
- */
-#if TARGET_OS_IPHONE
-- (void)switchCamera __attribute__((deprecated("use TXDeviceManager#switchCamera instead")));
-#endif
-
-/**
- * 查询当前摄像头是否支持缩放
- *
- * @deprecated v8.0 版本开始不推荐使用，建议使用 {@link TXDeviceManager} 中的 {@link isCameraZoomSupported} 接口替代之。
- */
-#if TARGET_OS_IPHONE
-- (BOOL)isCameraZoomSupported __attribute__((deprecated("use TXDeviceManager#isCameraZoomSupported instead")));
-#endif
-
-/**
- * 设置摄像头缩放倍数（焦距）
- *
- * @deprecated v8.0 版本开始不推荐使用，建议使用 {@link TXDeviceManager} 中的 {@link setCameraZoomRatio} 接口替代之。
- */
-#if TARGET_OS_IPHONE
-- (void)setZoom:(CGFloat)distance __attribute__((deprecated("use TXDeviceManager#setCameraZoomRatio instead")));
-#endif
-
-/**
- * 查询是否支持开关闪光灯
- *
- * @deprecated v8.0 版本开始不推荐使用，建议使用 {@link TXDeviceManager} 中的 {@link isCameraTorchSupported} 接口替代之。
- */
-#if TARGET_OS_IPHONE
-- (BOOL)isCameraTorchSupported __attribute__((deprecated("use TXDeviceManager#isCameraTorchSupported instead")));
-#endif
-
-/**
- * 开关/关闭闪光灯
- *
- * @deprecated v8.0 版本开始不推荐使用，建议使用 {@link TXDeviceManager} 中的 {@link enableCameraTorch} 接口替代之。
- */
-#if TARGET_OS_IPHONE
-- (BOOL)enbaleTorch:(BOOL)enable __attribute__((deprecated("use TXDeviceManager#enableCameraTorch instead")));
-#endif
-
-/**
- * 查询摄像头是否支持设置焦点
- *
- * @deprecated v8.0 版本开始不推荐使用。
- */
-#if TARGET_OS_IPHONE
-- (BOOL)isCameraFocusPositionInPreviewSupported __attribute__((deprecated));
-#endif
-
-/**
- * 设置摄像头焦点坐标位置
- *
- * @deprecated v8.0 版本开始不推荐使用，建议使用 {@link TXDeviceManager} 中的 {@link setCameraFocusPosition} 接口替代之。
- */
-#if TARGET_OS_IPHONE
-- (void)setFocusPosition:(CGPoint)touchPoint __attribute__((deprecated("use TXDeviceManager#setCameraFocusPosition instead")));
-#endif
-
-/**
- * 查询是否支持自动识别人脸位置
- *
- * @deprecated v8.0 版本开始不推荐使用，建议使用 {@link TXDeviceManager} 中的 {@link isAutoFocusEnabled} 接口替代之。
- */
-#if TARGET_OS_IPHONE
-- (BOOL)isCameraAutoFocusFaceModeSupported __attribute__((deprecated("use TXDeviceManager#isAutoFocusEnabled instead")));
-#endif
-
-/**
- * 开启/关闭人脸跟踪对焦
- *
- * @deprecated v8.0 版本开始不推荐使用，建议使用 {@link TXDeviceManager} 中的 {@link enableCameraAutoFocus} 接口替代之。
- */
-#if TARGET_OS_IPHONE
-- (void)enableAutoFaceFoucs:(BOOL)enable __attribute__((deprecated("use TXDeviceManager#enableCameraAutoFocus instead")));
-#endif
-
-/**
- * 开始进行摄像头测试
- *
- * @deprecated v8.0 版本开始不推荐使用，建议使用 {@link TXDeviceManager} 中的 {@link startCameraDeviceTest} 接口替代之。
- */
-#if !TARGET_OS_IPHONE && TARGET_OS_MAC
-- (void)startCameraDeviceTestInView:(NSView *)view __attribute__((deprecated("use TXDeviceManager#startCameraDeviceTest instead")));
-#endif
-
-/**
- * 开始进行摄像头测试
- *
- * @deprecated v8.0 版本开始不推荐使用，建议使用 {@link TXDeviceManager} 中的 {@link stopCameraDeviceTest} 接口替代之。
- */
-#if !TARGET_OS_IPHONE && TARGET_OS_MAC
-- (void)stopCameraDeviceTest __attribute__((deprecated("use TXDeviceManager#stopCameraDeviceTest instead")));
-#endif
-
-/**
- * 开始进行麦克风测试
- *
- * @deprecated v8.0 版本开始不推荐使用，建议使用 {@link TXDeviceManager} 中的 {@link startMicDeviceTest} 接口替代之。
- */
-#if !TARGET_OS_IPHONE && TARGET_OS_MAC
-- (void)startMicDeviceTest:(NSInteger)interval testEcho:(void (^)(NSInteger volume))testEcho __attribute__((deprecated("use TXDeviceManager#startMicDeviceTest instead")));
-#endif
-
-/**
- * 开始进行麦克风测试
- *
- * @deprecated v8.0 版本开始不推荐使用，建议使用 {@link TXDeviceManager} 中的 {@link stopMicDeviceTest} 接口替代之。
- */
-#if !TARGET_OS_IPHONE && TARGET_OS_MAC
-- (void)stopMicDeviceTest __attribute__((deprecated("use TXDeviceManager#stopMicDeviceTest instead")));
-#endif
-
-/**
- * 开始进行扬声器测试
- *
- * @deprecated v8.0 版本开始不推荐使用，建议使用 {@link TXDeviceManager} 中的 {@link startSpeakerDeviceTest} 接口替代之。
- */
-#if !TARGET_OS_IPHONE && TARGET_OS_MAC
-- (void)startSpeakerDeviceTest:(NSString *)audioFilePath onVolumeChanged:(void (^)(NSInteger volume, BOOL isLastFrame))volumeBlock __attribute__((deprecated("use TXDeviceManager#startSpeakerDeviceTest instead")));
-#endif
-
-/**
- * 停止进行扬声器测试
- *
- * @deprecated v8.0 版本开始不推荐使用，建议使用 {@link TXDeviceManager} 中的 {@link stopSpeakerDeviceTest} 接口替代之。
- */
-#if !TARGET_OS_IPHONE && TARGET_OS_MAC
-- (void)stopSpeakerDeviceTest __attribute__((deprecated("use TXDeviceManager#stopSpeakerDeviceTest instead")));
-#endif
-
-/**
- * 获取麦克风设备列表
- *
- * @deprecated v8.0 版本开始不推荐使用，建议使用 {@link TXDeviceManager} 中的 {@link getDevicesList} 接口替代之。
- */
-#if !TARGET_OS_IPHONE && TARGET_OS_MAC
-- (NSArray<TRTCMediaDeviceInfo *> *)getMicDevicesList __attribute__((deprecated("use TXDeviceManager#getDevicesList instead")));
-#endif
-
-/**
- * 获取当前的麦克风设备
- *
- * @deprecated v8.0 版本开始不推荐使用，建议使用 {@link TXDeviceManager} 中的 {@link getCurrentDevice} 接口替代之。
- */
-#if !TARGET_OS_IPHONE && TARGET_OS_MAC
-- (TRTCMediaDeviceInfo *)getCurrentMicDevice __attribute__((deprecated("use TXDeviceManager#getCurrentDevice instead")));
-#endif
-
-/**
- * 选定当前使用的麦克风
- *
- * @deprecated v8.0 版本开始不推荐使用，建议使用 {@link TXDeviceManager} 中的 {@link setCurrentDevice} 接口替代之。
- */
-#if !TARGET_OS_IPHONE && TARGET_OS_MAC
-- (int)setCurrentMicDevice:(NSString *)deviceId __attribute__((deprecated("use TXDeviceManager#setCurrentDevice instead")));
-#endif
-
-/**
- * 获取当前麦克风的设备音量
- *
- * @deprecated v8.0 版本开始不推荐使用，建议使用 {@link TXDeviceManager} 中的 {@link getCurrentDeviceVolume} 接口替代之。
- */
-#if !TARGET_OS_IPHONE && TARGET_OS_MAC
-- (float)getCurrentMicDeviceVolume __attribute__((deprecated("use TXDeviceManager#getCurrentDeviceVolume instead")));
-#endif
-
-/**
- * 设置当前麦克风的设备音量
- *
- * @deprecated v8.0 版本开始不推荐使用，建议使用 {@link TXDeviceManager} 中的 {@link setCurrentDeviceVolume} 接口替代之。
- */
-#if !TARGET_OS_IPHONE && TARGET_OS_MAC
-- (void)setCurrentMicDeviceVolume:(NSInteger)volume __attribute__((deprecated("use TXDeviceManager#setCurrentDeviceVolume instead")));
-#endif
-
-/**
- * 获取系统当前麦克风设备是否静音
- *
- * @deprecated v8.0 版本开始不推荐使用，建议使用 {@link TXDeviceManager} 中的 {@link getCurrentDeviceMute} 接口替代之。
- */
-#if !TARGET_OS_IPHONE && TARGET_OS_MAC
-- (BOOL)getCurrentMicDeviceMute __attribute__((deprecated("use TXDeviceManager#getCurrentDeviceMute instead")));
-#endif
-
-/**
- * 设置系统当前麦克风设备的静音状态
- *
- * @deprecated v8.0 版本开始不推荐使用，建议使用 {@link TXDeviceManager} 中的 {@link setCurrentDeviceMute} 接口替代之。
- */
-#if !TARGET_OS_IPHONE && TARGET_OS_MAC
-- (void)setCurrentMicDeviceMute:(BOOL)mute __attribute__((deprecated("use TXDeviceManager#setCurrentDeviceMute instead")));
-#endif
-
-/**
- * 获取扬声器设备列表
- *
- * @deprecated v8.0 版本开始不推荐使用，建议使用 {@link TXDeviceManager} 中的 {@link getDevicesList} 接口替代之。
- */
-#if !TARGET_OS_IPHONE && TARGET_OS_MAC
-- (NSArray<TRTCMediaDeviceInfo *> *)getSpeakerDevicesList __attribute__((deprecated("use TXDeviceManager#getDevicesList instead")));
-#endif
-
-/**
- * 获取当前的扬声器设备
- *
- * @deprecated v8.0 版本开始不推荐使用，建议使用 {@link TXDeviceManager} 中的 {@link getCurrentDevice} 接口替代之。
- */
-#if !TARGET_OS_IPHONE && TARGET_OS_MAC
-- (TRTCMediaDeviceInfo *)getCurrentSpeakerDevice __attribute__((deprecated("use TXDeviceManager#getCurrentDevice instead")));
-#endif
-
-/**
- * 设置要使用的扬声器
- *
- * @deprecated v8.0 版本开始不推荐使用，建议使用 {@link TXDeviceManager} 中的 {@link setCurrentDevice} 接口替代之。
- */
-#if !TARGET_OS_IPHONE && TARGET_OS_MAC
-- (int)setCurrentSpeakerDevice:(NSString *)deviceId __attribute__((deprecated("use TXDeviceManager#setCurrentDevice instead")));
-#endif
-
-/**
- * 获取当前扬声器的设备音量
- *
- * @deprecated v8.0 版本开始不推荐使用，建议使用 {@link TXDeviceManager} 中的 {@link getCurrentDeviceVolume} 接口替代之。
- */
-#if !TARGET_OS_IPHONE && TARGET_OS_MAC
-- (float)getCurrentSpeakerDeviceVolume __attribute__((deprecated("use TXDeviceManager#getCurrentDeviceVolume instead")));
-#endif
-
-/**
- * 设置当前扬声器的设备音量
- *
- * @deprecated v8.0 版本开始不推荐使用，建议使用 {@link TXDeviceManager} 中的 {@link setCurrentDeviceVolume} 接口替代之。
- */
-#if !TARGET_OS_IPHONE && TARGET_OS_MAC
-- (int)setCurrentSpeakerDeviceVolume:(NSInteger)volume __attribute__((deprecated("use TXDeviceManager#setCurrentDeviceVolume instead")));
-#endif
-
-/**
- * 获取系统当前扬声器设备是否静音
- *
- * @deprecated v8.0 版本开始不推荐使用，建议使用 {@link TXDeviceManager} 中的 {@link getCurrentDeviceMute} 接口替代之。
- */
-#if !TARGET_OS_IPHONE && TARGET_OS_MAC
-- (BOOL)getCurrentSpeakerDeviceMute __attribute__((deprecated("use TXDeviceManager#getCurrentDeviceMute instead")));
-#endif
-
-/**
- * 设置系统当前扬声器设备的静音状态
- *
- * @deprecated v8.0 版本开始不推荐使用，建议使用 {@link TXDeviceManager} 中的 {@link setCurrentDeviceMute} 接口替代之。
- */
-#if !TARGET_OS_IPHONE && TARGET_OS_MAC
-- (void)setCurrentSpeakerDeviceMute:(BOOL)mute __attribute__((deprecated("use TXDeviceManager#setCurrentDeviceMute instead")));
-#endif
-
-/**
- * 获取摄像头设备列表
- *
- * @deprecated v8.0 版本开始不推荐使用，建议使用 {@link TXDeviceManager} 中的 {@link getDevicesList} 接口替代之。
- */
-#if !TARGET_OS_IPHONE && TARGET_OS_MAC
-- (NSArray<TRTCMediaDeviceInfo *> *)getCameraDevicesList __attribute__((deprecated("use TXDeviceManager#getDevicesList instead")));
-#endif
-
-/**
- * 获取当前使用的摄像头
- *
- * @deprecated v8.0 版本开始不推荐使用，建议使用 {@link TXDeviceManager} 中的 {@link getCurrentDevice} 接口替代之。
- */
-#if !TARGET_OS_IPHONE && TARGET_OS_MAC
-- (TRTCMediaDeviceInfo *)getCurrentCameraDevice __attribute__((deprecated("use TXDeviceManager#getCurrentDevice instead")));
-#endif
-
-/**
- * 选定当前要使用的摄像头
- *
- * @deprecated v8.0 版本开始不推荐使用，建议使用 {@link TXDeviceManager} 中的 {@link setCurrentDevice} 接口替代之。
- */
-#if !TARGET_OS_IPHONE && TARGET_OS_MAC
-- (int)setCurrentCameraDevice:(NSString *)deviceId __attribute__((deprecated("use TXDeviceManager#setCurrentDevice instead")));
-#endif
-
-/**
- * 设置系统音量类型
- *
- * @deprecated v8.0 版本开始不推荐使用，建议使用 {@link startLocalAudio}(quality) 替代之，通过 quality 参数来决策音质。
- */
-- (void)setSystemVolumeType:(TRTCSystemVolumeType)type __attribute__((deprecated("use startLocalAudio:quality instead")));
-
-/**
- * 视频截图
- *
- * @deprecated v8.2 版本开始不推荐使用，建议使用 {@link snapshotVideo}:type:sourceType:completionBlock 替代之。
- */
-- (void)snapshotVideo:(NSString *)userId type:(TRTCVideoStreamType)streamType completionBlock:(void (^)(TXImage *image))completionBlock __attribute__((deprecated("use snapshotVideo:type:sourceType:completionBlock instead")));
-
-/**
- * 启用视频自定义采集模式
- *
- * @deprecated v8.5 版本开始不推荐使用，建议使用 {@link enableCustomVideoCapture}(streamType, enable) 接口替代之。
- */
-- (void)enableCustomVideoCapture:(BOOL)enable __attribute__((deprecated("use enableCustomVideoCapture:enable instead")));
-
-/**
- * 投送自己采集的视频数据
- *
- * @deprecated v8.5 版本开始不推荐使用，建议使用 {@link sendCustomVideoData}(streamType, TRTCVideoFrame) 接口替代之。
- */
-- (void)sendCustomVideoData:(TRTCVideoFrame *)frame __attribute__((deprecated("use sendCustomVideoData:frame: instead")));
-
-/**
- * 开始应用内的屏幕分享（iOS）
- *
- * @deprecated v8.6 版本开始不推荐使用，建议使用 {@link startScreenCaptureInApp}:encParam: 接口替代之。
- */
-- (void)startScreenCaptureInApp:(TRTCVideoEncParam *)encParams __attribute__((deprecated("use startScreenCaptureInApp:encParam: instead")));
-
-/**
- * 开始全系统的屏幕分享（iOS）
- *
- * @deprecated v8.6 版本开始不推荐使用，建议使用 {@link startScreenCaptureByReplaykit}:encParam:appGroup: 接口替代之。
- */
-- (void)startScreenCaptureByReplaykit:(TRTCVideoEncParam *)encParams appGroup:(NSString *)appGroup __attribute__((deprecated("use startScreenCaptureByReplaykit:encParam:appGroup: instead")));
-
-/**
- * 暂停/恢复发布本地的视频流
- *
- * @deprecated v8.9 版本开始不推荐使用，建议使用 {@link muteLocalVideo}(streamType, mute) 接口替代之。
- */
-- (void)muteLocalVideo:(BOOL)mute __attribute__((deprecated("use muteLocalVideo:streamType:mute: instead")));
-
-/**
- * 暂停 / 恢复订阅远端用户的视频流
- *
- * @deprecated v8.9 版本开始不推荐使用，建议使用 {@link muteRemoteVideoStream}(userId, streamType, mute) 接口替代之。
- */
-- (void)muteRemoteVideoStream:(NSString *)userId mute:(BOOL)mute __attribute__((deprecated("use muteRemoteVideoStream:userid,streamType:mute: instead")));
-
-/**
- *  开始进行网络测速（进入房间前使用）
- *
- * @deprecated v9.2 版本开始不推荐使用，建议使用 {@link startSpeedTest}(params) 接口替代之。
- */
-- (void)startSpeedTest:(uint32_t)sdkAppId
-                userId:(NSString *)userId
-               userSig:(NSString *)userSig
-            completion:(void (^)(TRTCSpeedTestResult *result, NSInteger completedCount, NSInteger totalCount))completion __attribute__((deprecated("use startSpeedTest: instead")));
-
-/// @}
 @end
 /// @}
 NS_ASSUME_NONNULL_END
+#import "DeprecatedTRTCCloud.h"

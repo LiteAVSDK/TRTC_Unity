@@ -33,16 +33,31 @@ FOUNDATION_EXTERN V2PropertyType kV2SecondsBetweenReconnection;
 /// 设置自定义编码参数【RTMP/RTC协议，推流】
 /// Value：JSON 字符串
 /// 例如：
-/// ```json
-///{
+/// {
 ///    "videoWidth":360,
 ///    "videoHeight":640,
 ///    "videoFps":15,
-///   "videoBitrate":1000,
-///   "minVideoBitrate":1000
-///}
-///```
+///    "videoBitrate":1000,
+///    "minVideoBitrate":1000
+/// }
 FOUNDATION_EXTERN V2PropertyType kV2SetVideoQualityEx;
+
+/// 设定播放请求头【FLV，拉流】
+/// Value：JSON 字符串
+/// 例如：
+/// {
+///    "headers": [
+///        {
+///            "key": "key1",
+///            "value": "value1"
+///        },
+///        {
+///            "key": "key2",
+///            "value": "value2"
+///        }
+///    ]
+/// }
+FOUNDATION_EXTERN V2PropertyType kV2SetHeaders;
 
 @interface V2TXLiveProperty : NSObject
 

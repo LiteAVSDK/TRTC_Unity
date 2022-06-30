@@ -9,8 +9,8 @@
 #include "TRTCTypeDef.h"
 #include "ITXAudioEffectManager.h"
 #include "ITXDeviceManager.h"
-#ifdef _WIN32
 #include "IDeprecatedTRTCCloud.h"
+#ifdef _WIN32
 #include "TXLiteAVBase.h"
 #endif
 
@@ -47,10 +47,8 @@ TRTC_API void destroyTRTCShareInstance();
 }
 namespace liteav {
 
-class ITRTCCloud
-#ifdef _WIN32
-    : public IDeprecatedTRTCCloud
-#endif  // _WIN32
+class ITRTCCloud : public IDeprecatedTRTCCloud
+
 {
    protected:
     virtual ~ITRTCCloud() {
@@ -157,7 +155,25 @@ class ITRTCCloud
     virtual void switchRole(TRTCRoleType role) = 0;
 
     /**
-     * 2.4 切换房间
+     * 2.4 切换角色(支持设置权限位)
+     *
+     * 调用本接口可以实现用户在“主播”和“观众”两种角色之间来回切换。
+     * 由于视频直播和语音聊天室需要支持多达10万名观众同时观看，所以设定了“只有主播才能发布自己的音视频”的规则。
+     * 因此，当有些观众希望发布自己的音视频流（以便能跟主播互动）时，就需要先把自己的角色切换成“主播”。
+     * 您可以在进入房间时通过 {@link TRTCParams} 中的 role 字段事先确定用户的角色，也可以在进入房间后通过 switchRole 接口动态切换角色。
+     * @param role 角色，默认为“主播”：
+     * - {@link TRTCRoleAnchor} ：主播，可以发布自己的音视频，同一个房间里最多支持50个主播同时发布音视频。
+     * - {@link TRTCRoleAudience} ：观众，不能发布自己的音视频流，只能观看房间中其他主播的音视频。如果要发布自己的音视频，需要先通过 {@link switchRole} 切换成“主播”，同一个房间内同时最多可以容纳 10 万名观众。
+     * @param privateMapKey 用于权限控制的权限票据，当您希望某个房间只能让特定的 userId 进入或者上行视频时，需要使用 privateMapKey 进行权限保护。
+     * - 仅建议有高级别安全需求的客户使用，更多详情请参见 [开启高级权限控制](https://cloud.tencent.com/document/product/647/32240)。
+     * @note
+     * 1. 该接口仅适用于视频直播（{@link TRTCAppSceneLIVE}）和语音聊天室（{@link TRTCAppSceneVoiceChatRoom}）这两个场景。
+     * 2. 如果您在 {@link enterRoom} 时指定的 scene 为 {@link TRTCAppSceneVideoCall} 或 {@link TRTCAppSceneAudioCall}，请不要调用这个接口。
+     */
+    virtual void switchRole(TRTCRoleType role, const char* privateMapKey) = 0;
+
+    /**
+     * 2.5 切换房间
      *
      * 使用该接口可以让用户可以快速从一个房间切换到另一个房间。
      * - 如果用户的身份是“观众”，该接口的调用效果等同于 exitRoom(当前房间) + enterRoom（新的房间）。
@@ -174,7 +190,7 @@ class ITRTCCloud
     virtual void switchRoom(const TRTCSwitchRoomConfig& config) = 0;
 
     /**
-     * 2.5 请求跨房通话
+     * 2.6 请求跨房通话
      *
      * 默认情况下，只有同一个房间中的用户之间可以进行音视频通话，不同的房间之间的音视频流是相互隔离的。
      * 但您可以通过调用该接口，将另一个房间中某个主播音视频流发布到自己所在的房间中，与此同时，该接口也会将自己的音视频流发布到目标主播的房间中。
@@ -214,14 +230,14 @@ class ITRTCCloud
     virtual void connectOtherRoom(const char* param) = 0;
 
     /**
-     * 2.6 退出跨房通话
+     * 2.7 退出跨房通话
      *
      * 退出结果会通过 **TRTCCloudDelegate** 中的 {@link onDisconnectOtherRoom} 回调通知给您。
      */
     virtual void disconnectOtherRoom() = 0;
 
     /**
-     * 2.7 设置订阅模式（需要在进入房前设置才能生效）
+     * 2.8 设置订阅模式（需要在进入房前设置才能生效）
      *
      * 您可以通过该接口在“自动订阅”和“手动订阅”两种模式下进行切换：
      * - 自动订阅：默认模式，用户在进入房间后会立刻接收到该房间中的音视频流，音频会自动播放，视频会自动开始解码（依然需要您通过 {@link startRemoteView} 接口绑定渲染控件）。
@@ -238,7 +254,7 @@ class ITRTCCloud
     virtual void setDefaultStreamRecvMode(bool autoRecvAudio, bool autoRecvVideo) = 0;
 
 /**
- * 2.8 创建子房间示例（用于多房间并发观看）
+ * 2.9 创建子房间示例（用于多房间并发观看）
  *
  * TRTCCloud 一开始被设计成单例模式，限制了多房间并发观看的能力。
  * 通过调用该接口，您可以创建出多个 TRTCCloud 实例，以便同时进入多个不同的房间观看音视频流。
@@ -278,7 +294,7 @@ class ITRTCCloud
 #endif
 
 /**
- * 2.9 销毁子房间示例
+ * 2.10 销毁子房间示例
  *
  * @param subCloud 子房间实例
  */
@@ -347,6 +363,49 @@ class ITRTCCloud
      *   - 请放心，当您退房时 TRTC 会自动取消混流状态。
      */
     virtual void setMixTranscodingConfig(TRTCTranscodingConfig* config) = 0;
+
+    /**
+     * 3.6  开始发布媒体流
+     *
+     * 该接口会向 TRTC 服务器发送指令，要求其将当前用户的音视频流转推/转码到直播 CDN 或者回推到 TRTC 房间中
+     * 您可以通过 {@link TRTCPublishTarget} 配置中的 {@link TRTCPublishMode} 指定具体的发布模式
+     *
+     * @param target 媒体流发布的目标地址，具体配置参考 {@link TRTCPublishTarget}。支持转推/转码到腾讯或者第三方 CDN，也支持转码回推到 TRTC 房间中。
+     * @param params 媒体流编码输出参数，具体配置参考 {@link TRTCStreamEncoderParam}。转码和回推到 TRTC 房间中时为必填项，您需要指定您预期的转码输出参数。在转推时，为了更好的转推稳定性和 CDN 兼容性，也建议您进行配置。
+     * @param config 媒体流转码配置参数。具体配置参考 {@link TRTCStreamMixingConfig}。转码和回推到 TRTC 房间中时为必填项，您需要指定您预期的转码配置参数。转推模式下则无效。
+     * @note SDK 会通过回调 {@link onStartPublishMediaStream} 带给您后台启动的任务标识（即 taskId）。
+     * @note 同一个任务（TRTCPublishMode 与 TRTCPublishCdnUrl 均相同）仅支持启动一次。若您后续需要更新或者停止该项任务，需要记录并使用返回的 taskId，通过 {@link updatePublishMediaStream} 或者 {@link stopPublishMediaStream} 来操作。
+     * @note target 支持同时配置多个 CDN url（最多同时10个）。若您的同一个转推/转码任务需要发布至多路 CDN，则仅需要在 target 中配置多个 CDN url 即可。同一个转码任务即使有多个转推地址，对应的转码计费仍只收取一份。
+     * @note 使用时需要注意不要多个任务同时往相同的 Url 地址推送，以免引起异常推流状态。一种推荐的方案是 Url 中使用 “sdkappid_roomid_userid_main” 作为区分标识，这中命名方式容易辨认且不会在您的多个应用中发生冲突。
+     */
+    virtual void startPublishMediaStream(TRTCPublishTarget* target, TRTCStreamEncoderParam* params, TRTCStreamMixingConfig* config) = 0;
+
+    /**
+     * 3.7 更新发布媒体流
+     *
+     * 该接口会向 TRTC 服务器发送指令，更新通过 {@link startPublishMediaStream} 启动的媒体流
+     *
+     * @param taskId 通过回调 {@link onStartPublishMediaStream} 带给您后台启动的任务标识（即 taskId）
+     * @param target 媒体流发布的目标地址，具体配置参考 {@link TRTCPublishTarget}。支持转推/转码到腾讯或者第三方 CDN，也支持转码回推到 TRTC 房间中。
+     * @param params 媒体流编码输出参数，具体配置参考 {@link TRTCStreamEncoderParam}。转码和回推到 TRTC 房间中时为必填项，您需要指定您预期的转码输出参数。在转推时，为了更好的转推稳定性和 CDN 兼容性，也建议您进行配置。
+     * @param config 媒体流转码配置参数。具体配置参考 {@TRTCStreamMixingConfig}。转码和回推到 TRTC 房间中时为必填项，您需要指定您预期的转码配置参数。转推模式下则无效。
+     * @note 您可以通过本接口来更新发布的 CDN url（支持增删，最多同时 10 个），但您使用时需要注意不要多个任务同时往相同的 Url 地址推送，以免引起异常推流状态
+     * @note 您可以通过 taskId 来更新调整转推/转码任务。例如在 pk 业务中，您可以先通过 {@link startPublishMediaStream} 发起转推，接着在主播发起 pk 时，通过 taskId 和本接口将转推更新为转码任务。此时，CDN
+     * 播放将连续并且不会发生断流（您需要保持媒体流编码输出参数 param 一致）。
+     * @note 同一个任务不支持纯音频、音视频、纯视频之间的切换。
+     */
+    virtual void updatePublishMediaStream(const char* taskId, TRTCPublishTarget* target, TRTCStreamEncoderParam* params, TRTCStreamMixingConfig* config) = 0;
+
+    /**
+     * 3.8 停止发布媒体流
+     *
+     * 该接口会向 TRTC 服务器发送指令，停止通过 {@link startPublishMediaStream} 启动的媒体流
+     *
+     * @param taskId 通过回调 {@link onStartPublishMediaStream} 带给您后台启动的任务标识（即 taskId）
+     * @note 若您的业务后台并没有保存该 taskId，在您的主播异常退房重进后，如果您需要重新获取 taskId，您可以再次调用 {@link startPublishMediaStream} 启动任务。此时 TRTC 后台会返回任务启动失败，同时带给您上一次启动的 taskId
+     * @note 若 taskId 填空字符串，将会停止所有通过 {@link startPublishMediaStream} 启动的媒体流，如果您只启动了一个媒体流或者想停止所有启动的媒体流，推荐使用这种方式。
+     */
+    virtual void stopPublishMediaStream(const char* taskId) = 0;
 
 /// @}
 /////////////////////////////////////////////////////////////////////////////////
@@ -684,11 +743,12 @@ class ITRTCCloud
     /**
      * 5.12 启用音量大小提示
      *
-     * 开启此功能后，SDK 会在 {@link TRTCCloudDelegate} 中的 {@link onUserVoiceVolume} 回调中反馈远端音频的音量大小。
+     * 开启此功能后，SDK 会在 {@link TRTCCloudDelegate} 中的 {@link onUserVoiceVolume} 回调中反馈本地推流用户和远端用户音频的音量大小以及远端用户的最大音量
      * @note 如需打开此功能，请在 startLocalAudio 之前调用才可以生效。
      * @param interval 设置 onUserVoiceVolume 回调的触发间隔，单位为ms，最小间隔为100ms，如果小于等于 0 则会关闭回调，建议设置为300ms；
+     * @param enable_vad true: 打开本地人声检测 ；false: 关闭本地人声检测
      */
-    virtual void enableAudioVolumeEvaluation(uint32_t interval) = 0;
+    virtual void enableAudioVolumeEvaluation(uint32_t interval, bool enable_vad) = 0;
 
     /**
      * 5.13 开始录音
@@ -733,6 +793,25 @@ class ITRTCCloud
      * @param params 音频并发参数，请参考 {@link TRTCAudioParallelParams}
      */
     virtual void setRemoteAudioParallelParams(const TRTCAudioParallelParams& params) = 0;
+
+    /**
+     * 5.19 启用 3D 音效
+     *
+     * 启用 3D 音效。
+     * @param enabled 是否启用 3D 音效，默认为关闭状态。
+     */
+    virtual void enable3DSpatialAudioEffect(bool enabled) = 0;
+
+    /**
+     * 5.20 设置 3D 音效参数
+     *
+     * 设置 3D 音效参数，注意应当传入长度为 3 的数组。
+     * @param position 音源方位，自身在世界坐标系中的坐标，顺序是前、右、上
+     * @param axisForward 自身坐标系前轴的单位向量
+     * @param axisRight 自身坐标系右轴的单位向量
+     * @param axisUp 自身坐标系上轴的单位向量
+     */
+    virtual void updateSelf3DSpatialPosition(int position[3], float axisForward[3], float axisRight[3], float axisUp[3]) = 0;
 
     /// @}
     /////////////////////////////////////////////////////////////////////////////////
@@ -1417,75 +1496,71 @@ class ITRTCCloud
     virtual void callExperimentalAPI(const char* jsonStr) = 0;
 #endif
 
-/// @}
-/////////////////////////////////////////////////////////////////////////////////
-//
-//                    弃用接口（建议使用对应的新接口）
-//
-/////////////////////////////////////////////////////////////////////////////////
-/// @name  弃用接口（建议使用对应的新接口）
-/// @{
+    /// @}
 
-/**
- * 启用视频自定义采集模式
- *
- * @deprecated v8.5 版本开始不推荐使用，建议使用 {@link enableCustomVideoCapture}(streamType, enable) 接口替代之。
- */
-#ifndef _WIN32
-    virtual void enableCustomVideoCapture(bool enable) = 0;
-#endif
-
-/**
- * 投送自己采集的视频数据
- *
- * @deprecated v8.5 版本开始不推荐使用，建议使用 {@link sendCustomVideoData}(streamType, TRTCVideoFrame) 接口替代之。
- */
-#ifndef _WIN32
-    virtual void sendCustomVideoData(TRTCVideoFrame* frame) = 0;
-#endif
-
-/**
- * 暂停/恢复发布本地的视频流
- *
- * @deprecated v8.9 版本开始不推荐使用，建议使用 {@link muteLocalVideo}(streamType, mute) 接口替代之。
- */
-#ifndef _WIN32
-    virtual void muteLocalVideo(bool mute) = 0;
-#endif
-
-/**
- * 暂停 / 恢复订阅远端用户的视频流
- *
- * @deprecated v8.9 版本开始不推荐使用，建议使用 {@link muteRemoteVideoStream}(userId, streamType, mute) 接口替代之。
- */
-#ifndef _WIN32
-    virtual void muteRemoteVideoStream(const char* userId, bool mute) = 0;
-#endif
-
-/**
- *  开始进行网络测速（进入房间前使用）
- *
- * @deprecated v9.2 版本开始不推荐使用，建议使用 {@link startSpeedTest}(params) 接口替代之。
- */
-#ifdef __APPLE__
-    virtual void startSpeedTest(uint32_t sdkAppId, const char* userId, const char* userSig) __attribute__((deprecated("use startSpeedTest:params instead"))) = 0;
-#elif !defined(_WIN32)
-    virtual void startSpeedTest(uint32_t sdkAppId, const char* userId, const char* userSig) = 0;
-#endif
-
-#ifdef _WIN32
+    using IDeprecatedTRTCCloud::enableAudioVolumeEvaluation;
     using IDeprecatedTRTCCloud::enableCustomVideoCapture;
+    using IDeprecatedTRTCCloud::getBGMDuration;
     using IDeprecatedTRTCCloud::muteLocalVideo;
     using IDeprecatedTRTCCloud::muteRemoteVideoStream;
-    using IDeprecatedTRTCCloud::selectScreenCaptureTarget;
+    using IDeprecatedTRTCCloud::pauseAudioEffect;
+    using IDeprecatedTRTCCloud::pauseBGM;
+    using IDeprecatedTRTCCloud::playAudioEffect;
+    using IDeprecatedTRTCCloud::playBGM;
+    using IDeprecatedTRTCCloud::resumeAudioEffect;
+    using IDeprecatedTRTCCloud::resumeBGM;
     using IDeprecatedTRTCCloud::sendCustomVideoData;
+    using IDeprecatedTRTCCloud::setAllAudioEffectsVolume;
+    using IDeprecatedTRTCCloud::setAudioEffectVolume;
+    using IDeprecatedTRTCCloud::setAudioQuality;
+    using IDeprecatedTRTCCloud::setBGMPosition;
+    using IDeprecatedTRTCCloud::setBGMPublishVolume;
+    using IDeprecatedTRTCCloud::setBGMVolume;
+    using IDeprecatedTRTCCloud::setLocalViewFillMode;
+    using IDeprecatedTRTCCloud::setLocalViewMirror;
+    using IDeprecatedTRTCCloud::setLocalViewRotation;
+    using IDeprecatedTRTCCloud::setMicVolumeOnMixing;
+    using IDeprecatedTRTCCloud::setPriorRemoteVideoStreamType;
+    using IDeprecatedTRTCCloud::setRemoteSubStreamViewFillMode;
+    using IDeprecatedTRTCCloud::setRemoteSubStreamViewRotation;
+    using IDeprecatedTRTCCloud::setRemoteViewFillMode;
+    using IDeprecatedTRTCCloud::setRemoteViewRotation;
     using IDeprecatedTRTCCloud::startLocalAudio;
     using IDeprecatedTRTCCloud::startRemoteView;
     using IDeprecatedTRTCCloud::startScreenCapture;
     using IDeprecatedTRTCCloud::startSpeedTest;
+    using IDeprecatedTRTCCloud::stopAllAudioEffects;
+    using IDeprecatedTRTCCloud::stopAudioEffect;
+    using IDeprecatedTRTCCloud::stopBGM;
+    using IDeprecatedTRTCCloud::stopRemoteSubStreamView;
     using IDeprecatedTRTCCloud::stopRemoteView;
+
+#if TARGET_PLATFORM_DESKTOP
+    using IDeprecatedTRTCCloud::getCameraDevicesList;
+    using IDeprecatedTRTCCloud::getCurrentCameraDevice;
+    using IDeprecatedTRTCCloud::getCurrentMicDevice;
+    using IDeprecatedTRTCCloud::getCurrentMicDeviceMute;
+    using IDeprecatedTRTCCloud::getCurrentMicDeviceVolume;
+    using IDeprecatedTRTCCloud::getCurrentSpeakerDevice;
+    using IDeprecatedTRTCCloud::getCurrentSpeakerDeviceMute;
+    using IDeprecatedTRTCCloud::getCurrentSpeakerVolume;
+    using IDeprecatedTRTCCloud::getMicDevicesList;
+    using IDeprecatedTRTCCloud::getSpeakerDevicesList;
+    using IDeprecatedTRTCCloud::selectScreenCaptureTarget;
+    using IDeprecatedTRTCCloud::setCurrentCameraDevice;
+    using IDeprecatedTRTCCloud::setCurrentMicDevice;
+    using IDeprecatedTRTCCloud::setCurrentMicDeviceMute;
+    using IDeprecatedTRTCCloud::setCurrentMicDeviceVolume;
+    using IDeprecatedTRTCCloud::setCurrentSpeakerDevice;
+    using IDeprecatedTRTCCloud::setCurrentSpeakerDeviceMute;
+    using IDeprecatedTRTCCloud::setCurrentSpeakerVolume;
+    using IDeprecatedTRTCCloud::startCameraDeviceTest;
+    using IDeprecatedTRTCCloud::startMicDeviceTest;
+    using IDeprecatedTRTCCloud::startSpeakerDeviceTest;
+    using IDeprecatedTRTCCloud::stopCameraDeviceTest;
+    using IDeprecatedTRTCCloud::stopMicDeviceTest;
+    using IDeprecatedTRTCCloud::stopSpeakerDeviceTest;
 #endif
-    /// @}
 };
 }  // namespace liteav
 /// @}

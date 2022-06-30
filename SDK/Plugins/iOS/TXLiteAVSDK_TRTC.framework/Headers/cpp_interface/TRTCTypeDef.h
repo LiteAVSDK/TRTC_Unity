@@ -31,6 +31,20 @@
 #define TRTC_API
 #endif
 
+#ifdef __GNUC__
+#define TRTC_GCC_VERSION_AT_LEAST(x, y) (__GNUC__ > (x) || __GNUC__ == (x) && __GNUC_MINOR__ >= (y))
+#else
+#define TRTC_GCC_VERSION_AT_LEAST(x, y) 0
+#endif
+
+#if TRTC_GCC_VERSION_AT_LEAST(3, 1) || defined(__clang__)
+#define trtc_attribute_deprecated __attribute__((deprecated))
+#elif defined(_MSC_VER)
+#define trtc_attribute_deprecated __declspec(deprecated)
+#else
+#define trtc_attribute_deprecated
+#endif
+
 #define TARGET_PLATFORM_DESKTOP ((__APPLE__ && TARGET_OS_MAC && !TARGET_OS_IPHONE) || _WIN32)
 #define TARGET_PLATFORM_PHONE (__ANDROID__ || (__APPLE__ && TARGET_OS_IOS))
 #define TARGET_PLATFORM_MAC (__APPLE__ && TARGET_OS_MAC && !TARGET_OS_IPHONE)
@@ -756,6 +770,33 @@ enum TRTCAudioRecordingContent {
 
 };
 
+/**
+ * 4.12 媒体流发布模式
+ *
+ * 该枚举类型用于媒体流发布接口 {@link startPublishMediaStream}
+ * TRTC 的媒体流发布服务能够将房间中的多路音视频流混合成一路发布至 CDN 或者回推到房间内，也可以将您当前的这路音视频发布到腾讯或者第三方 CDN
+ * 因此您需要指定对应媒体流的发布模式，我们提供了如下几种模式：
+ */
+enum TRTCPublishMode {
+
+    ///未定义
+    TRTCPublishModeUnknown = 0,
+
+    ///您可以通过设置该参数将您房间内的主路流（{@link TRTCVideoStreamTypeBig}）发布到腾讯或者第三方直播 CDN 服务商（仅支持标准 RTMP 协议）
+    TRTCPublishBigStreamToCdn = 1,
+
+    ///您可以通过设置该参数将您房间内的辅路流（{@link TRTCVideoStreamTypeSub}）发布到腾讯或者第三方直播 CDN 服务商（仅支持标准 RTMP 协议）
+    TRTCPublishSubStreamToCdn = 2,
+
+    ///您可以通过设置该参数，配合编码输出参数 ({@link TRTCStreamEncoderParam}) 和混流转码参数 ({@link TRTCStreamMixingConfig})，将您指定的多路音视频流进行转码并发布到腾讯或者第三方直播 CDN 服务商（仅支持标准 RTMP 协议）
+    TRTCPublishMixStreamToCdn = 3,
+
+    ///您可以通过设置该参数，配合媒体流编码输出参数 ({@link TRTCStreamEncoderParam}) 和混流转码参数 ({@link TRTCStreamMixingConfig})，将您指定的多路音视频流进行转码并发布到您指定的房间中
+    ///- 通过 {@link TRTCPublishTarget} 中的 TRTCUser 进行指定回推房间的机器人信息
+    TRTCPublishMixStreamToRoom = 4,
+
+};
+
 /////////////////////////////////////////////////////////////////////////////////
 //
 //                      TRTC 核心类型定义
@@ -959,7 +1000,10 @@ struct TRTCVolumeInfo {
     ///说话者的音量大小, 取值范围[0 - 100]。
     uint32_t volume;
 
-    TRTCVolumeInfo() : userId(nullptr), volume(0) {
+    ///是否检测到人声。0：非人声 1：人声。
+    int32_t vad;
+
+    TRTCVolumeInfo() : userId(nullptr), volume(0), vad(0) {
     }
 };
 
@@ -1528,6 +1572,241 @@ struct TRTCAudioParallelParams {
     uint32_t includeUsersCount;
 
     TRTCAudioParallelParams() : maxCount(0), includeUsers(nullptr), includeUsersCount(0) {
+    }
+};
+
+/**
+ * 5.25 媒体流发布相关配置的用户信息
+ *
+ * 您可以通过设置该参数，配合媒体流目标发布参数 ({@link TRTCPublishTarget}) 和混流转码参数 ({@link TRTCStreamMixingConfig})，将您指定的多路音视频流进行转码并发布到您填写的目标发布地址中
+ */
+struct TRTCUser {
+    ///【字段含义】用户标识，当前用户的 userId，相当于用户名，使用 UTF-8 编码
+    ///【推荐取值】如果一个用户在您的帐号系统中的 ID 为“mike”，则 userId 即可设置为“mike”
+    const char *userId;
+
+    ///【字段含义】数字房间号，需要和您的进房参数 ({@link TRTCParams}) 中的房间号类型相匹配
+    ///【推荐取值】取值范围：1 - 4294967294
+    ///【特别说明】intRoomId 与 strRoomId 是互斥的，若您进房参数中选用 strRoomId，则 intRoomId 需要填写为0。若两者都填，SDK 将优先选用 intRoomId
+    uint32_t intRoomId;
+
+    ///【字段含义】字符串房间号，需要和您的进房参数 ({@link TRTCParams}) 中的房间号类型相匹配
+    ///【特别说明】intRoomId 与 strRoomId 是互斥的，若您进房参数中选用 roomId，则 strRoomId 无需填写。若两者都填，SDK 将优先选用 intRoomId
+    ///【推荐取值】限制长度为 64 字节。以下为支持的字符集范围（共 89 个字符）:
+    /// - 大小写英文字母（a-zA-Z）；
+    /// - 数字（0-9）；
+    /// - 空格、"!"、"#"、"$"、"%"、"&"、"("、")"、"+"、"-"、":"、";"、"<"、"="、"."、">"、"?"、"@"、"["、"]"、"^"、"_"、" {"、"}"、"|"、"~"、","。
+    const char *strRoomId;
+
+    TRTCUser() : userId(nullptr), intRoomId(0), strRoomId(nullptr) {
+    }
+};
+
+/**
+ * 5.26 向腾讯或者第三方 CDN 上发布音视频流时需设置的 url 配置
+ *
+ * 该配置用于媒体流发布接口 {@link startPublishMediaStream} 中的目标推流配置 ({@link TRTCPublishTarget})
+ */
+struct TRTCPublishCdnUrl {
+    ///【字段含义】指定该路音视频流在腾讯或者第三方直播服务商的推流地址（RTMP 格式）
+    ///【推荐取值】各家服务商的推流地址规则差异较大，请根据目标服务商的要求填写合法的推流 URL，TRTC 的后台服务器会按照您填写的 URL 向第三方服务商推送标准格式音视频流
+    ///【特别说明】推流 URL 必须为 RTMP 格式，必须符合您的目标直播服务商的规范要求，否则目标服务商会拒绝来自 TRTC 后台服务的推流请求
+    const char *rtmpUrl;
+
+    ///【字段含义】指定该路音视频流是否发布至腾讯云
+    ///【推荐取值】默认值：true
+    ///【特别说明】若您的目标直播服务商为腾讯，请将此参数设置为 true，此时后台计费系统不会对此计算转推服务费
+    bool isInternalLine;
+
+    TRTCPublishCdnUrl() : rtmpUrl(nullptr), isInternalLine(true) {
+    }
+};
+
+/**
+ * 5.27 目标推流配置
+ *
+ * 该配置用于媒体流发布接口 {@link startPublishMediaStream}。
+ */
+struct TRTCPublishTarget {
+    ///【字段含义】媒体流发布模式
+    ///【推荐取值】请根据您的业务场景要求自行选择，TRTC 支持转推、转码和回推到 RTC 房间的模式
+    ///【特别说明】若您的业务场景需要多个发布模式，您可以通过多次调用媒体流发布接口 ({@link startPublishMediaStream}) 并分别设置不同的 TRTCPublishTarget
+    ///【特别说明】同一个 mode 请对应一个媒体流发布接口 ({@link startPublishMediaStream})，并在后续需要调整时，使用 {@link updatePublishCDNStream} 进行更新
+    TRTCPublishMode mode;
+
+    ///【字段含义】发布至腾讯或者第三方直播服务商的推流地址（RTMP 格式）
+    ///【特别说明】若您的 mode 选择为 TRTCPublishMixStreamToRoom，此时您不需要设置该参数
+    TRTCPublishCdnUrl *cdnUrlList;
+
+    ///【字段含义】数组 cdnUrlList 的元素个数
+    ///【特别说明】若您的 mode 选择为 TRTCPublishMixStreamToRoom，此时您不需要设置该参数
+    uint32_t cdnUrlListSize;
+
+    ///【字段含义】回推房间机器人信息
+    ///【特别说明】仅当您的 mode 选择为 TRTCPublishMixStreamToRoom 时，您需要设置该参数
+    ///【特别说明】设置后，该路转码音视频数据将回推到您指定的房间中。建议设置为特殊的 userId，以避免难以区分回推机器人和您通过 TRTC SDK 进房的主播
+    ///【特别说明】当您进房前设置的订阅模式({@link setDefaultStreamRecvMode}) 均为手动时，您需要自行管理您想要拉取的音视频流（通常当您拉取回推房间的转码流时，您应该取消订阅参与转码的对应音视频单流）
+    ///【特别说明】当您进房前设置的订阅模式({@link setDefaultStreamRecvMode}) 均为自动时，不参与转码的用户将自动收到后台下发的转码流并不再继续接收参与转码的音视频单流。除非您明确进行取消订阅（{@link muteRemoteVideoStream} 和 {@link
+    /// muteRemoteAudio}），否则转码流数据将持续下发 【特别说明】为了减少订阅复杂性，全量订阅接口（{@link muteAllRemoteAudio} 和 {@link muteAllRemoteVideoStreams}）对回推房间机器人的下发数据不生效 【特别说明】参与混流的用户不支持订阅该转码流
+    TRTCUser *mixStreamIdentity;
+
+    TRTCPublishTarget() : mode(TRTCPublishMode::TRTCPublishModeUnknown), cdnUrlList(nullptr), cdnUrlListSize(0), mixStreamIdentity(nullptr) {
+    }
+};
+
+/**
+ * 5.28 转码视频布局
+ *
+ * 该配置用于媒体流发布接口 ({@link startPublishMediaStream}) 中的转码配置 ({@link TRTCStreamMixingConfig})
+ * 用于指定转码流中每一路视频画面的位置、大小、图层以及流类型等信息
+ */
+struct TRTCVideoLayout {
+    ///【字段含义】指定该路画面的坐标区域（单位：像素）
+    RECT rect;
+
+    ///【字段含义】指定该路画面的层级（取值范围：0 - 15，不可重复）
+    int zOrder;
+
+    ///【字段含义】画面填充模式
+    ///【推荐取值】填充（画面可能会被拉伸裁剪）或适应（画面可能会有黑边），默认值：{@link TRTCVideoFillMode_Fill}
+    TRTCVideoFillMode fillMode;
+
+    ///【字段含义】指定混合画面的底色颜色
+    ///【推荐取值】默认值：0x000000 代表黑色。格式为十六进制数字，比如：“0x61B9F1” 代表 RGB 分别为 (97,158,241)。
+    uint32_t backgroundColor;
+
+    ///【字段含义】占位图 URL，即当指定用户暂时仅上行音频时，腾讯云的后台服务器会将该 URL 地址指定的图片混合到最终的画面中
+    ///【推荐取值】默认值：空值，即不设置占位图
+    ///【特别说明】此时需要您指定用户信息 fixedVideoUser 中的 userId
+    ///【特别说明】
+    ///   - URL 链接长度限制为 512 字节。图片大小限制不超过 2MB
+    ///   - 图片格式支持 png、jpg、jpeg、bmp 格式，推荐使用 png 格式的半透明图片作为占位图
+    const char *placeHolderImage;
+
+    ///【字段含义】参与转码的用户信息
+    ///【特别说明】用户信息 ({@link TRTCUser}) 支持不填写（即 userId、intRoomId 和 strRoomId 均不填写）。此时当发起混流的房间中有主播上行音视频数据时，TRTC 后台服务器将自动将对应主播音视频填充到您指定的布局中
+    TRTCUser *fixedVideoUser;
+
+    ///【字段含义】指定该路画面是主路画面（{@link TRTCVideoStreamTypeBig}）还是辅路画面（{@link TRTCVideoStreamTypeSub}）
+    TRTCVideoStreamType fixedVideoStreamType;
+
+    TRTCVideoLayout() : zOrder(0), fillMode(TRTCVideoFillMode_Fill), backgroundColor(0), placeHolderImage(nullptr), fixedVideoUser(nullptr), fixedVideoStreamType(TRTCVideoStreamTypeBig) {
+    }
+};
+
+/**
+ * 5.29 水印布局
+ *
+ * 该配置用于媒体流发布接口 ({@link startPublishMediaStream}) 中的转码配置 ({@link TRTCStreamMixingConfig})
+ */
+struct TRTCWatermark {
+    ///【字段含义】水印 URL，腾讯云的后台服务器会将该 URL 地址指定的图片混合到最终的画面中
+    ///【特别说明】
+    ///   - URL 链接长度限制为 512 字节。图片大小限制不超过 2MB
+    ///   - 图片格式支持 png、jpg、jpeg、bmp 格式，推荐使用 png 格式的半透明图片作为水印
+    const char *watermarkUrl;
+
+    ///【字段含义】指定该路水印画面的坐标区域（单位：像素）
+    RECT rect;
+
+    ///【字段含义】指定该路水印画面的层级（取值范围：0 - 15，不可重复）
+    int zOrder;
+
+    TRTCWatermark() : watermarkUrl(nullptr), zOrder(0) {
+    }
+};
+
+/**
+ * 5.30 媒体流编码输出参数
+ *
+ * 【字段含义】该配置用于媒体流发布接口 ({@link startPublishMediaStream})
+ * 【特别说明】当您的发布目标 ({@link TRTCPublishTarget}) 中的 mode 配置为 TRTCPublish_MixStream_ToCdn 或者 TRTCPublish_MixStream_ToRoom 时，该参数为必填
+ * 【特别说明】当您使用转推服务（mode 为 TRTCPublish_BigStream_ToCdn 或者 TRTCPublish_SubStream_ToCdn）时，为了更好的转推稳定性以及更好的 CDN 播放兼容性，也建议您填写该配置的具体参数
+ */
+struct TRTCStreamEncoderParam {
+    ///【字段含义】指定媒体发布流的目标分辨率（宽度）
+    ///【推荐取值】单位：像素值，推荐值：368，如果你只混合音频流，请将 width 和 height 均设置位 0，否则混流转码后的直播流中会有黑色背景
+    uint32_t videoEncodedWidth;
+
+    ///【字段含义】指定媒体发布流的目标分辨率（高度）
+    ///【推荐取值】单位：像素值，推荐值：640，如果你只混合音频流，请将 width 和 height 均设置位 0，否则混流转码后的直播流中会有黑色背景
+    uint32_t videoEncodedHeight;
+
+    ///【字段含义】指定媒体发布流的目标视频帧率（FPS）
+    ///【推荐取值】推荐值：20fps，取值范围是 (0,30]
+    uint32_t videoEncodedFPS;
+
+    ///【字段含义】指定媒体发布流的目标视频关键帧间隔（GOP）
+    ///【推荐取值】推荐值：3，单位为秒，取值范围是 [1,5]
+    uint32_t videoEncodedGOP;
+
+    ///【字段含义】指定媒体发布流的目标视频码率（kbps）
+    ///【推荐取值】如果填 0，TRTC 会根据 videoEncodedWidth 和 videoEncodedHeight 估算出一个合理的码率值，您也可以参考视频分辨率枚举定义中所推荐的码率值（见注释部分）
+    uint32_t videoEncodedKbps;
+
+    ///【字段含义】指定媒体发布流的目标音频采样率
+    ///【推荐取值】默认值：48000Hz。取值为[48000, 44100, 32000, 24000, 16000, 8000]，单位是Hz
+    uint32_t audioEncodedSampleRate;
+
+    ///【字段含义】指定媒体发布流的目标音频声道数
+    ///【推荐取值】默认值：1，代表单声道。可设定的数值只有两个数字：1-单声道，2-双声道
+    uint32_t audioEncodedChannelNum;
+
+    ///【字段含义】指定媒体发布流的目标音频码率（kbps）
+    ///【推荐取值】默认值：50kbps，取值范围是 [32，192]
+    uint32_t audioEncodedKbps;
+
+    ///【字段含义】指定媒体发布流的目标音频编码类型
+    ///【推荐取值】默认值：0，代表LC-AAC。可设定的数值只有三个数字：0 - LC-AAC，1 - HE-AAC，2 - HE-AACv2
+    ///【特别说明】HE-AAC 和 HE-AACv2 支持的输出流音频采样率范围为[48000, 44100, 32000, 24000, 16000]
+    ///【特别说明】当音频编码设置为 HE-AACv2 时，只支持输出流音频声道数为双声道。
+    uint32_t audioEncodedCodecType;
+
+    TRTCStreamEncoderParam() : videoEncodedWidth(0), videoEncodedHeight(0), videoEncodedFPS(0), videoEncodedGOP(0), videoEncodedKbps(0), audioEncodedSampleRate(0), audioEncodedChannelNum(0), audioEncodedKbps(0), audioEncodedCodecType(0) {
+    }
+};
+
+/**
+ * 5.31 媒体流转码配置参数
+ *
+ * 该配置用于媒体流发布接口 ({@link startPublishMediaStream})
+ * 用于指定转码时各路画面的排版位置信息和输入的音频信息
+ */
+struct TRTCStreamMixingConfig {
+    ///【字段含义】指定混合画面的底色颜色
+    ///【推荐取值】默认值：0x000000 代表黑色。格式为十六进制数字，比如：“0x61B9F1” 代表 RGB 分别为 (97,158,241)
+    uint32_t backgroundColor;
+
+    ///【字段含义】指定混合画面的背景图 URL，腾讯云的后台服务器会将该 URL 地址指定的图片混合到最终的画面中
+    ///【推荐取值】默认值：空值，即不设置背景图片
+    ///【特别说明】
+    ///   - URL 链接长度限制为 512 字节。图片大小限制不超过 2MB
+    ///   - 图片格式支持 png、jpg、jpeg、bmp 格式，推荐使用 png 格式的半透明图片作为背景图
+    const char *backgroundImage;
+
+    ///【字段含义】指定混合画面的中每一路视频画面的位置、大小、图层以及流类型等信息
+    ///【推荐取值】该字段是一个 TRTCVideoLayout 类型的数组，数组中的每一个元素都用来代表每一路画面的信息
+    TRTCVideoLayout *videoLayoutList;
+
+    ///【字段含义】 数组 videoLayoutList 的元素个数
+    uint32_t videoLayoutListSize;
+
+    ///【字段含义】指定转码流中的每一路输入音频的信息
+    ///【推荐取值】该字段是一个 TRTCUser 类型的数组，数组中的每一个元素都用来代表每一路输入音频的信息
+    ///【特别说明】用户信息支持不填写（即 audioMixUserList 为空）。此时若设置了 TRTCStreamEncoderParam 中音频相关编码输出参数，TRTC 后台服务器将自动将所有主播的音频混合输出（当前仅支持最高 16 路音视频输入）。
+    TRTCUser *audioMixUserList;
+
+    ///【字段含义】 数组 audioMixUserList 的元素个数
+    uint32_t audioMixUserListSize;
+
+    ///【字段含义】指定混合画面的中每一路水印画面的位置、大小、图层等信息
+    ///【推荐取值】该字段是一个 TRTCWatermark 类型的数组，数组中的每一个元素都用来代表每一路水印的信息
+    TRTCWatermark *watermarkList;
+
+    ///【字段含义】 数组 watermarkList 的元素个数
+    uint32_t watermarkListSize;
+
+    TRTCStreamMixingConfig() : backgroundColor(0), backgroundImage(nullptr), videoLayoutList(nullptr), videoLayoutListSize(0), audioMixUserList(nullptr), audioMixUserListSize(0), watermarkList(nullptr), watermarkListSize(0) {
     }
 };
 

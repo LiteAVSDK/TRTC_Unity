@@ -21,7 +21,7 @@ typedef enum TXLiteAVError
     ERR_REFUSED                                     = -3,	     ///< API 调用被拒绝
     ERR_NOT_SUPPORTED                               = -4,	     ///< 当前 API 不支持调用
     ERR_INVALID_LICENSE                             = -5,	     ///< license 不合法，调用失败
-    ERR_REQUEST_TIMEOUT                             = -6,	     ///< 请求服务器超时
+    ERR_REQUEST_SERVER_TIMEOUT                             = -6,	     ///< 请求服务器超时
     ERR_SERVER_PROCESS_FAILED                       = -7,	     ///< 服务器无法处理您的请求
     ERR_DISCONNECTED                                = -8,	     ///< 断开连接
     

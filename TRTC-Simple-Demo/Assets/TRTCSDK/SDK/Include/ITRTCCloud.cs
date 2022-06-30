@@ -718,7 +718,7 @@ namespace trtc
         /// Send custom video data to the SDK
         ///
         /// <para>We recommend the following settings for the parameters of `TRTCVideoFrame` (other parameters can be left empty).</para>
-        /// <para>-pixelFormat: only `LiteAVVideoPixelFormat_I420` is supported.</para>
+        /// <para>-pixelFormat: only `LiteAVVideoPixelFormat_I420` and `TRTCVideoPixelFormat_RGBA32` is supported.</para>
         /// <para>-bufferType: only `LiteAVVideoBufferType_Buffer` is supported.</para>
         /// <para>-data: video frame buffer</para>
         /// <para>-length: video frame size, whose value in I420 format is `width × height × 3/2`</para>
@@ -732,7 +732,7 @@ namespace trtc
         /// - The SDK has an internal frame rate control logic. It drops frames if the frame rate is higher than the target specified in `setVideoEncoderParam` and inserts frames if the frame rate is lower than the target.
         /// <para>- You can leave the setting of timestamps to the SDK by setting `timestamp` to `0`, but to avoid unstable frame rate, make sure that you call `sendCustomVideoData` at regular intervals.</para>
         /// </remarks>
-        /// <param name="frame">Video data in I420 format</param>
+        /// <param name="frame">Video data in I420 or RGBA32 format</param>
         public abstract void sendCustomVideoData(TRTCVideoFrame frame);
 
         /// <summary>

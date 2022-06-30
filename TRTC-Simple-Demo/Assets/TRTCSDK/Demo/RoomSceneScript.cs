@@ -40,8 +40,8 @@ namespace TRTCCUnityDemo
             // Toggle toggleStartPublishing = transform.Find("PanelTest/Viewport/Content/ToggleStartPublishing").gameObject.GetComponent<Toggle>();
             // toggleStartPublishing.onValueChanged.AddListener(this.OnTogglePublishing);
 
-            // Toggle toggleCustomCapture = transform.Find("PanelOperate/Viewport/Content/ToggleCustomCapture").gameObject.GetComponent<Toggle>();
-            // toggleCustomCapture.onValueChanged.AddListener(this.OnToggleCustomCapture);
+            Toggle toggleCustomCapture = transform.Find("PanelOperate/Viewport/Content/ToggleCustomCapture").gameObject.GetComponent<Toggle>();
+            toggleCustomCapture.onValueChanged.AddListener(this.OnToggleCustomCapture);
 
             Toggle beautySet = transform.Find("PanelOperate/Viewport/Content/Beauty").gameObject.GetComponent<Toggle>();
             beautySet.onValueChanged.AddListener(this.OnToggleBeauty);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using UnityEngine;
 using System.Text;
 
 namespace trtc
@@ -16,9 +17,11 @@ namespace trtc
     {
        #region DllImport
 #if UNITY_IPHONE && !UNITY_EDITOR
-        public const string MyLibName = "__Internal";
+	public const string MyLibName = "__Internal";
+#elif UNITY_WEBGL && !UNITY_EDITOR
+    public const string MyLibName = "__Internal";
 #elif UNITY_ANDROID && !UNITY_EDITOR
-        public const string MyLibName = "native-lib";
+    public const string MyLibName = "native-lib";
 #elif UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
     // public const string MyLibName = "liteav";
     public const string MyLibName = "trtc-c-wrapper";
@@ -119,7 +122,6 @@ namespace trtc
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate void onLogHandler(string log, int level, string module);
 
-        //
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate void onConnectOtherRoomHandler(string userId, TXLiteAVError errCode, string errMsg);
 
@@ -250,9 +252,11 @@ namespace trtc
         public static extern void TRTCUnityStopPublishCDNStream(IntPtr instance);
         [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void TRTCUnitySetMixTranscodingConfigNull(IntPtr instance);
+        #if !UNITY_WEBGL
         [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void TRTCUnitySetMixTranscodingConfig(IntPtr instance, TRTCTranscodingConfigMode mode, UInt32 appId, UInt32 bizId, UInt32 videoWidth, UInt32 videoHeight, UInt32 videoBitrate, UInt32 videoFramerate,
          UInt32 videoGOP, UInt32 backgroundColor, string backgroundImage, UInt32 audioSampleRate, UInt32 audioBitrate, UInt32 audioChannels, UInt32 mixUsersArraySize, string streamId, TRTCMixUser[] mixUsersArray);
+        #endif 
         [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]
 
         #if UNITY_IOS || UNITY_ANDROID
@@ -296,8 +300,10 @@ namespace trtc
         public static extern void TRTCUnitySetVideoEncoderMirror(IntPtr instance, bool mirror);
         [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void TRTCUnitySetRemoteRenderParams(IntPtr instance, string userId, int streamType, int fillMode, int mirrorType, int rotation);
+        #if !UNITY_WEBGL
         [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void TRTCUnityEnableSmallVideoStream(IntPtr instance, bool enable,ref TRTCVideoEncParam smallVideoParam);
+        #endif
         [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void TRTCUnitySetRemoteVideoStreamType(IntPtr instance, string userId, int type);
         [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]

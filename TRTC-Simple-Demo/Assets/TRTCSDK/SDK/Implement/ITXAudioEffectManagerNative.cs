@@ -8,11 +8,12 @@ namespace trtc
     {
         #region DllImport
 #if UNITY_IPHONE && !UNITY_EDITOR
-		public const string MyLibName = "__Internal";
+	public const string MyLibName = "__Internal";
+#elif UNITY_WEBGL && !UNITY_EDITOR
+    public const string MyLibName = "__Internal";
 #elif UNITY_ANDROID && !UNITY_EDITOR
-        public const string MyLibName = "native-lib";
+    public const string MyLibName = "native-lib";
 #elif UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
-    // public const string MyLibName = "liteav";
     public const string MyLibName = "trtc-c-wrapper";
 #elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
     public const string MyLibName = "macosliteav";

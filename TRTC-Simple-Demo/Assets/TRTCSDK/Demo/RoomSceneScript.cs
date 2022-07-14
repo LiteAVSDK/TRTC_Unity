@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using trtc;
+using LitJson;
 using TRTCCUnityDemo;
 # if PLATFORM_ANDROID
 using UnityEngine.Android;
@@ -30,7 +31,6 @@ namespace TRTCCUnityDemo
 
         void Start()
         {
-            
             Toggle toggleSetting = transform.Find("PanelTest/Viewport/Content/ToggleSetting").gameObject.GetComponent<Toggle>();
             toggleSetting.onValueChanged.AddListener(this.OnToggleSetting);
 
@@ -40,8 +40,8 @@ namespace TRTCCUnityDemo
             // Toggle toggleStartPublishing = transform.Find("PanelTest/Viewport/Content/ToggleStartPublishing").gameObject.GetComponent<Toggle>();
             // toggleStartPublishing.onValueChanged.AddListener(this.OnTogglePublishing);
 
-            Toggle toggleCustomCapture = transform.Find("PanelOperate/Viewport/Content/ToggleCustomCapture").gameObject.GetComponent<Toggle>();
-            toggleCustomCapture.onValueChanged.AddListener(this.OnToggleCustomCapture);
+            // Toggle toggleCustomCapture = transform.Find("PanelOperate/Viewport/Content/ToggleCustomCapture").gameObject.GetComponent<Toggle>();
+            // toggleCustomCapture.onValueChanged.AddListener(this.OnToggleCustomCapture);
 
             Toggle beautySet = transform.Find("PanelOperate/Viewport/Content/Beauty").gameObject.GetComponent<Toggle>();
             beautySet.onValueChanged.AddListener(this.OnToggleBeauty);
@@ -135,6 +135,7 @@ namespace TRTCCUnityDemo
 
         void OnDestroy()
         {
+            Debug.LogFormat("OnDestroy");
             DataManager.GetInstance().DoRoleChange -= new DataManager.ChangeRoleHandler(OnRoleChanged);
             DataManager.GetInstance().DoVideoEncParamChange -= new DataManager.ChangeVideoEncParamHandler(OnVideoEncParamChanged);
             DataManager.GetInstance().DoQosParamChange -= new DataManager.ChangeQosParamHandler(OnQosParamChanged);
@@ -264,6 +265,11 @@ namespace TRTCCUnityDemo
             LogManager.Log("OnToggleMuteLocalVideo: " + value);
             mTRTCCloud.muteLocalVideo(value);
             DataManager.GetInstance().muteLocalVideo = value;
+            // if(value) {
+            //     mTRTCCloud.getDeviceManager().GetDevicesList(TXMediaDeviceType.TXMediaDeviceTypeMic);
+            // } else {
+            //     mTRTCCloud.getDeviceManager().GetDevicesList(TXMediaDeviceType.TXMediaDeviceTypeSpeaker);
+            // }
         }
 
         void OnToggleMuteRemoteVideo(bool value)
@@ -583,6 +589,36 @@ namespace TRTCCUnityDemo
             LogManager.Log(String.Format("onRemoteUserEnterRoom {0}", userId));
         }
 
+        public void onRemoteUserLeaveRoomWeb(String jsonStr)
+        {
+            JsonData obj = JsonMapper.ToObject(jsonStr);
+            onRemoteUserLeaveRoom(obj["userId"].ToString(), (int)obj["reason"]);
+        }
+
+        public void onMicListWeb(String jsonStr)
+        {
+            JsonData obj = JsonMapper.ToObject(jsonStr);         
+            LogManager.Log(String.Format("onMicListWeb {0}, {1}", obj[0]["deviceId"], obj[0]["deviceName"]));
+        }
+
+        public void onSpeakerListWeb(String jsonStr)
+        {
+            JsonData obj = JsonMapper.ToObject(jsonStr);
+            LogManager.Log(String.Format("onSpeakerListWeb {0}, {1}", obj[0]["deviceId"], obj[0]["deviceName"]));   
+        }
+
+        public void onCurrentSpeakerWeb(String jsonStr)
+        {
+            JsonData obj = JsonMapper.ToObject(jsonStr);
+            LogManager.Log(String.Format("onCurrentSpeakerWeb {0}, {1}", obj["deviceId"], obj["deviceName"]));
+        }
+
+        public void onCurrentMicWeb(String jsonStr)
+        {
+            JsonData obj = JsonMapper.ToObject(jsonStr);
+            LogManager.Log(String.Format("onCurrentMicWeb {0}, {1}", obj["deviceId"], obj["deviceName"]));
+        }
+
         public void onRemoteUserLeaveRoom(String userId, int reason)
         {
             LogManager.Log(String.Format("onRemoteUserLeaveRoom {0}, {1}", userId, reason));
@@ -620,6 +656,11 @@ namespace TRTCCUnityDemo
                 mTRTCCloud.stopRemoteView(userId, TRTCVideoStreamType.TRTCVideoStreamTypeSub);
                 userTableView.RemoveUser(userId, TRTCVideoStreamType.TRTCVideoStreamTypeSub);
             }
+        }
+
+        public void onUserAudioAvailableWeb(String jsonStr) {
+            JsonData obj = JsonMapper.ToObject(jsonStr);
+            onUserAudioAvailable(obj["userId"].ToString(), (bool)obj["available"]);
         }
 
         public void onUserAudioAvailable(String userId, bool available)

@@ -114,6 +114,10 @@ namespace trtc
             ITXDeviceInfoArrayInfo remoteQualityArray = JsonUtility.FromJson<ITXDeviceInfoArrayInfo>(rnData.ToString());
 
             return remoteQualityArray.deviceInfoArray;
+#elif UNITY_WEBGL
+            StringBuilder rnData = new StringBuilder(1024);
+            ITXDeviceManagerNative.TRTCUnityGetDevicesList(mNativeObj, type, rnData, rnData.Capacity);
+            return new ITXDeviceInfo[0];
 #else
             return new ITXDeviceInfo[0];
 #endif
@@ -121,7 +125,7 @@ namespace trtc
 
         public override int SetCurrentDevice(TXMediaDeviceType type, String deviceId)
         {
-#if UNITY_STANDALONE_WIN
+#if UNITY_STANDALONE_WIN || UNITY_WEBGL
             int isOK = ITXDeviceManagerNative.TRTCUnitySetCurrentDevice(mNativeObj, type, deviceId);
             return isOK;
 #else
@@ -138,6 +142,10 @@ namespace trtc
             Debug.Log(rndata.ToString());
             ITXDeviceInfo tXDeviceInfo = JsonUtility.FromJson<ITXDeviceInfo>(rndata.ToString());
             return tXDeviceInfo;
+#elif UNITY_WEBGL
+            StringBuilder rnData = new StringBuilder(1024);
+            ITXDeviceManagerNative.TRTCUnityGetCurrentDevice(mNativeObj, type, rnData, rnData.Capacity);
+            return new ITXDeviceInfo();
 #else
             return new ITXDeviceInfo();
 #endif

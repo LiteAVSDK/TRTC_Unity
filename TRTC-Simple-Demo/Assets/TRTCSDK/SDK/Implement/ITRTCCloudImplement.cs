@@ -204,7 +204,9 @@ namespace trtc
         // }
         public override void enableSmallVideoStream(bool enable, ref TRTCVideoEncParam smallVideoParam)
         {
+            #if !UNITY_WEBGL
             ITRTCCloudNative.TRTCUnityEnableSmallVideoStream(mNativeObj,enable, ref smallVideoParam);
+            #endif
         }
         public override void setRemoteVideoStreamType(string userId,TRTCVideoStreamType type)
         {
@@ -690,12 +692,17 @@ namespace trtc
 
         private void Destroy()
         {
+            Debug.LogFormat("ITRTCCloudImplement Destroy");
             if (mNativeObj != IntPtr.Zero)
             {
                 ITRTCCloudNative.TRTCUnityRemoveCallback(mNativeObj);
                 ITRTCCloudNative.TRTCUnityDestroyTRTCInstance(mNativeObj);
                 mNativeObj = IntPtr.Zero;
             }
+            #if UNITY_WEBGL
+                ITRTCCloudNative.TRTCUnityRemoveCallback(mNativeObj);
+                ITRTCCloudNative.TRTCUnityDestroyTRTCInstance(mNativeObj);
+            #endif
 
             if (mGameObjName.Length > 0)
             {

@@ -12,7 +12,7 @@ This document describes how to quickly integrate TRTC SDK for Unity into your pr
 
 ## Integrating SDK
 1. Download the SDK and [Demo source code](https://github.com/LiteAVSDK/TRTC_Unity).
-2. Decompress the ZIP file and copy `SDK` to the `Assets` directory of your project.
+2. Decompress the ZIP file and copy `TRTC-Simple-Demo/Assets/TRTCSDK/SDK` to the `Assets` directory of your project.
 
 ## FAQs
 ### iOS Compilation considerations

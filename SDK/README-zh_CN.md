@@ -12,7 +12,7 @@
 
 ## 集成 SDK
 1. 下载 SDK 及配套的 [Demo 源码](https://github.com/LiteAVSDK/TRTC_Unity)。
-2. 解压后，把项目中的 `SDK` 文件夹拷贝到您项目中的 Assets 目录下。
+2. 解压后，把项目中的 `TRTC-Simple-Demo/Assets/TRTCSDK/SDK` 文件夹拷贝到您项目中的 Assets 目录下。
 
 ## 常见问题
 ### iOS 编译注意事项

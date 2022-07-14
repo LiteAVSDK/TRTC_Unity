@@ -1,6 +1,6 @@
 ## Run Unity Webgl Demo
 1. Switch Platform to WebGL, choose 'Development Build', then 'Build and run'
-![](https://dscache.tencent-cloud.cn/upload/uploader/webgl-3050d99718f5c4b3ba90c6097957a7d5bedfb6c0.png)
+![](https://dscache.tencent-cloud.cn/upload/uploader/webgl1-b13188a1df3ff3b669ba2a2ed05820a8278432ab.png)
 
 2. After building successfully, you will get a html project，modify 'index.html'
  * Add a global variable 'trtcUnityInstance'
@@ -10,7 +10,7 @@
 <script src="https://dscache.tencent-cloud.cn/upload/uploader/trtc-cloud-js-sdk-02adaa29e01a5618477f199d8f5c9d52ed7235d2.js"></script>
 <script src="https://dscache.tencent-cloud.cn/upload/uploader/trtc_unity-77593bdb36dbdcccc94b9ba99c2e4978899eef71.js"></script>
 ```
-![](https://dscache.tencent-cloud.cn/upload/uploader/web-15156ff2f21a5b3371b88168278a8318adddf5de.png)
+![](https://dscache.tencent-cloud.cn/upload/uploader/webgl2-13a35a965c5d609ad212d3e97b9784327a4c4537.png)
 
 3. Refresh page(The code can refer to the root directory 'webtest')
 

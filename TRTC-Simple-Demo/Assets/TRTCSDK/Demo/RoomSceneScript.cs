@@ -93,6 +93,8 @@ namespace TRTCCUnityDemo
 
             string version = mTRTCCloud.getSDKVersion();
             LogManager.Log("trtc sdk version is : " + version);
+            
+            mTRTCCloud.callExperimentalAPI("{\"api\": \"setGSensorMode\", \"params\": {\"StreamType\": 1, \"gSensorMode\": 2}}");
 
             TRTCParams trtcParams = new TRTCParams();
             trtcParams.sdkAppId = GenerateTestUserSig.SDKAPPID;
@@ -250,6 +252,7 @@ namespace TRTCCUnityDemo
             if (value)
             {
                 mTRTCCloud.startLocalPreview(true, null);
+
                 userTableView.UpdateVideoAvailable("", TRTCVideoStreamType.TRTCVideoStreamTypeBig, true);
             }
             else

@@ -3,8 +3,8 @@
 #ifndef __IDEPRECATEDTRTCCLOUD_H__
 #define __IDEPRECATEDTRTCCLOUD_H__
 
-#include "TRTCTypeDef.h"
-#include "TRTCCloudCallback.h"
+#include <TRTCTypeDef.h>
+#include <TRTCCloudCallback.h>
 
 namespace liteav {
 

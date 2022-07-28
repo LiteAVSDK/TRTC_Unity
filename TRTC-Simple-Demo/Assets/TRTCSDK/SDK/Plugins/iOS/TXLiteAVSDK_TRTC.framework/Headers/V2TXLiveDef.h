@@ -33,7 +33,7 @@ typedef NS_ENUM(NSUInteger, V2TXLiveMode) {
     /// 支持协议: RTMP
     V2TXLiveMode_RTMP,
 
-    ///支持协议: TRTC
+    /// 支持协议: TRTC
     V2TXLiveMode_RTC
 
 };

@@ -306,32 +306,53 @@ LITEAV_EXPORT @interface TXDeviceManager : NSObject
 - (BOOL)getCurrentDeviceMute:(TXMediaDeviceType)type;
 
 /**
- * 2.8 开始摄像头测试（仅适用于桌面端）
+ * 2.8 设置 SDK 使用的音频设备根据跟随系统默认设备（仅适用于桌面端）
+ *
+ * 仅支持设置麦克风和扬声器类型，摄像头暂不支持跟随系统默认设备
+ * @param type 设备类型，详见 TXMediaDeviceType 定义。
+ * @param enable 是否跟随系统默认的音频设备。
+ *         - true：跟随。当系统默认音频设备发生改变时，SDK 立即切换音频设备。
+ *         - false：不跟随。只有当 SDK 使用的音频设备被移除后或插入新的音频设备为系统默认设备时，SDK 才切换至系统默认的音频设备。
+ */
+- (NSInteger)enableFollowingDefaultAudioDevice:(TXMediaDeviceType)type enable:(BOOL)enable;
+
+/**
+ * 2.9 开始摄像头测试（仅适用于桌面端）
  *
  * @note 在测试过程中可以使用 {@link setCurrentDevice} 接口切换摄像头。
  */
 - (NSInteger)startCameraDeviceTest:(NSView *)view;
 
 /**
- * 2.9 结束摄像头测试（仅适用于桌面端）
+ * 2.10 结束摄像头测试（仅适用于桌面端）
  */
 - (NSInteger)stopCameraDeviceTest;
 
 /**
- * 2.10 开始麦克风测试（仅适用于桌面端）
+ * 2.11 开始麦克风测试（仅适用于桌面端）
  *
  * 该接口可以测试麦克风是否能正常工作，测试到的麦克风采集音量的大小，会以回调的形式通知给您，其中 volume 的取值范围为0 - 100。
  * @param interval 麦克风音量的回调间隔。
+ * @note 该接口调用后默认会回播麦克风录制到的声音到扬声器中
  */
 - (NSInteger)startMicDeviceTest:(NSInteger)interval testEcho:(void (^)(NSInteger volume))testEcho;
 
 /**
- * 2.11 结束麦克风测试（仅适用于桌面端）
+ * 2.12 开始麦克风测试（仅适用于桌面端）
+ *
+ * 该接口可以测试麦克风是否能正常工作，测试到的麦克风采集音量的大小，会以回调的形式通知给您，其中 volume 的取值范围为0 - 100。
+ * @param interval 麦克风音量的回调间隔。
+ * @param playback 是否开启回播麦克风声音，开启后用户测试麦克风时会听到自己的声音
+ */
+- (NSInteger)startMicDeviceTest:(NSInteger)interval playback:(BOOL)playback testEcho:(void (^)(NSInteger volume))testEcho;
+
+/**
+ * 2.13 结束麦克风测试（仅适用于桌面端）
  */
 - (NSInteger)stopMicDeviceTest;
 
 /**
- * 2.12 开始扬声器测试（仅适用于桌面端）
+ * 2.14 开始扬声器测试（仅适用于桌面端）
  *
  * 该接口通过播放指定的音频文件，用于测试播放设备是否能正常工作。如果用户在测试时能听到声音，说明播放设备能正常工作。
  * @param filePath 声音文件的路径
@@ -339,12 +360,12 @@ LITEAV_EXPORT @interface TXDeviceManager : NSObject
 - (NSInteger)startSpeakerDeviceTest:(NSString *)audioFilePath onVolumeChanged:(void (^)(NSInteger volume, BOOL isLastFrame))volumeBlock;
 
 /**
- * 2.13 结束扬声器测试（仅适用于桌面端）
+ * 2.15 结束扬声器测试（仅适用于桌面端）
  */
 - (NSInteger)stopSpeakerDeviceTest;
 
 /**
- * 2.14 设备热插拔回调（仅适用于 Mac 系统）
+ * 2.16 设备热插拔回调（仅适用于 Mac 系统）
  */
 - (void)setObserver:(nullable id<TXDeviceObserver>)observer;
 #endif

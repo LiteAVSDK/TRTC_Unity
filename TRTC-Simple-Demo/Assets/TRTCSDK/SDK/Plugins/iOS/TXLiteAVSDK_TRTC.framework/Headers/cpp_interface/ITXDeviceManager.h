@@ -371,32 +371,53 @@ class ITXDeviceManager {
     virtual bool getCurrentDeviceMute(TXMediaDeviceType type) = 0;
 
     /**
-     * 2.8 开始摄像头测试（仅适用于桌面端）
+     * 2.8 设置 SDK 使用的音频设备根据跟随系统默认设备（仅适用于桌面端）
+     *
+     * 仅支持设置麦克风和扬声器类型，摄像头暂不支持跟随系统默认设备
+     * @param type 设备类型，详见 TXMediaDeviceType 定义。
+     * @param enable 是否跟随系统默认的音频设备。
+     *         - true：跟随。当系统默认音频设备发生改变时，SDK 立即切换音频设备。
+     *         - false：不跟随。只有当 SDK 使用的音频设备被移除后或插入新的音频设备为系统默认设备时，SDK 才切换至系统默认的音频设备。
+     */
+    virtual int enableFollowingDefaultAudioDevice(TXMediaDeviceType type, bool enable) = 0;
+
+    /**
+     * 2.9 开始摄像头测试（仅适用于桌面端）
      *
      * @note 在测试过程中可以使用 {@link setCurrentDevice} 接口切换摄像头。
      */
     virtual int startCameraDeviceTest(void* view) = 0;
 
     /**
-     * 2.9 结束摄像头测试（仅适用于桌面端）
+     * 2.10 结束摄像头测试（仅适用于桌面端）
      */
     virtual int stopCameraDeviceTest() = 0;
 
     /**
-     * 2.10 开始麦克风测试（仅适用于桌面端）
+     * 2.11 开始麦克风测试（仅适用于桌面端）
      *
      * 该接口可以测试麦克风是否能正常工作，测试到的麦克风采集音量的大小，会以回调的形式通知给您，其中 volume 的取值范围为0 - 100。
      * @param interval 麦克风音量的回调间隔。
+     * @note 该接口调用后默认会回播麦克风录制到的声音到扬声器中
      */
     virtual int startMicDeviceTest(uint32_t interval) = 0;
 
     /**
-     * 2.11 结束麦克风测试（仅适用于桌面端）
+     * 2.12 开始麦克风测试（仅适用于桌面端）
+     *
+     * 该接口可以测试麦克风是否能正常工作，测试到的麦克风采集音量的大小，会以回调的形式通知给您，其中 volume 的取值范围为0 - 100。
+     * @param interval 麦克风音量的回调间隔。
+     * @param playback 是否开启回播麦克风声音，开启后用户测试麦克风时会听到自己的声音
+     */
+    virtual int startMicDeviceTest(uint32_t interval, bool playback) = 0;
+
+    /**
+     * 2.13 结束麦克风测试（仅适用于桌面端）
      */
     virtual int stopMicDeviceTest() = 0;
 
     /**
-     * 2.12 开始扬声器测试（仅适用于桌面端）
+     * 2.14 开始扬声器测试（仅适用于桌面端）
      *
      * 该接口通过播放指定的音频文件，用于测试播放设备是否能正常工作。如果用户在测试时能听到声音，说明播放设备能正常工作。
      * @param filePath 声音文件的路径
@@ -404,57 +425,55 @@ class ITXDeviceManager {
     virtual int startSpeakerDeviceTest(const char* filePath) = 0;
 
     /**
-     * 2.13 结束扬声器测试（仅适用于桌面端）
+     * 2.15 结束扬声器测试（仅适用于桌面端）
      */
     virtual int stopSpeakerDeviceTest() = 0;
-#endif
 
-/**
- * 2.14 开始摄像头测试（仅适用于 Windows 系统）
- *
- * 该接口支持自定义渲染，即您可以通过接 ITRTCVideoRenderCallback 回调接口接管摄像头的渲染画面。
- */
-#ifdef _WIN32
+    /**
+     * 2.16 开始摄像头测试（仅适用于桌面端）
+     *
+     * 该接口支持自定义渲染，即您可以通过接 ITRTCVideoRenderCallback 回调接口接管摄像头的渲染画面。
+     */
     virtual int startCameraDeviceTest(ITRTCVideoRenderCallback* callback) = 0;
 #endif
 
 /**
- * 2.15 设置 Windows 系统音量合成器中当前进程的音量（仅适用于 Windows 系统）
+ * 2.18 设置 Windows 系统音量合成器中当前进程的音量（仅适用于 Windows 系统）
  */
 #ifdef _WIN32
     virtual int setApplicationPlayVolume(int volume) = 0;
 #endif
 
 /**
- * 2.16 获取 Windows 系统音量合成器中当前进程的音量（仅适用于 Windows 系统）
+ * 2.19 获取 Windows 系统音量合成器中当前进程的音量（仅适用于 Windows 系统）
  */
 #ifdef _WIN32
     virtual int getApplicationPlayVolume() = 0;
 #endif
 
 /**
- * 2.17 设置 Windows 系统音量合成器中当前进程的静音状态（仅适用于 Windows 系统）
+ * 2.20 设置 Windows 系统音量合成器中当前进程的静音状态（仅适用于 Windows 系统）
  */
 #ifdef _WIN32
     virtual int setApplicationMuteState(bool bMute) = 0;
 #endif
 
 /**
- * 2.18 获取 Windows 系统音量合成器中当前进程的静音状态（仅适用于 Windows 系统）
+ * 2.21 获取 Windows 系统音量合成器中当前进程的静音状态（仅适用于 Windows 系统）
  */
 #ifdef _WIN32
     virtual bool getApplicationMuteState() = 0;
 #endif
 
 /**
- * 2.19 设置摄像头采集偏好
+ * 2.22 设置摄像头采集偏好
  */
 #ifdef _WIN32
     virtual void setCameraCapturerParam(const TXCameraCaptureParam& params) = 0;
 #endif
 
 /**
- * 2.20 设置 onDeviceChanged 事件回调
+ * 2.23 设置 onDeviceChanged 事件回调
  */
 #if (__APPLE__ && TARGET_OS_MAC && !TARGET_OS_IPHONE) || _WIN32
     virtual void setDeviceObserver(ITXDeviceObserver* observer) = 0;

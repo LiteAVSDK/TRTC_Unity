@@ -1565,7 +1565,7 @@ LITEAV_EXPORT @interface TRTCAudioParallelParams : NSObject
  *
  * 您可以通过设置该参数，配合媒体流目标发布参数 ({@link TRTCPublishTarget}) 和混流转码参数 ({@link TRTCStreamMixingConfig})，将您指定的多路音视频流进行转码并发布到您填写的目标发布地址中
  */
-LITEAV_EXPORT @interface TRTCUser : NSObject
+LITEAV_EXPORT @interface TRTCUser : NSObject<NSCopying>
 
 ///【字段含义】用户标识，当前用户的 userId，相当于用户名，使用 UTF-8 编码
 ///【推荐取值】如果一个用户在您的帐号系统中的 ID 为“mike”，则 userId 即可设置为“mike”
@@ -1591,7 +1591,7 @@ LITEAV_EXPORT @interface TRTCUser : NSObject
  *
  * 该配置用于媒体流发布接口 {@link startPublishMediaStream} 中的目标推流配置 ({@link TRTCPublishTarget})
  */
-LITEAV_EXPORT @interface TRTCPublishCdnUrl : NSObject
+LITEAV_EXPORT @interface TRTCPublishCdnUrl : NSObject<NSCopying>
 
 ///【字段含义】指定该路音视频流在腾讯或者第三方直播服务商的推流地址（RTMP 格式）
 ///【推荐取值】各家服务商的推流地址规则差异较大，请根据目标服务商的要求填写合法的推流 URL，TRTC 的后台服务器会按照您填写的 URL 向第三方服务商推送标准格式音视频流
@@ -1638,7 +1638,7 @@ LITEAV_EXPORT @interface TRTCPublishTarget : NSObject
  * 该配置用于媒体流发布接口 ({@link startPublishMediaStream}) 中的转码配置 ({@link TRTCStreamMixingConfig})
  * 用于指定转码流中每一路视频画面的位置、大小、图层以及流类型等信息
  */
-LITEAV_EXPORT @interface TRTCVideoLayout : NSObject
+LITEAV_EXPORT @interface TRTCVideoLayout : NSObject<NSCopying>
 
 ///【字段含义】指定该路画面的坐标区域（单位：像素）
 @property(nonatomic, assign) CGRect rect;
@@ -1676,7 +1676,7 @@ LITEAV_EXPORT @interface TRTCVideoLayout : NSObject
  *
  * 该配置用于媒体流发布接口 ({@link startPublishMediaStream}) 中的转码配置 ({@link TRTCStreamMixingConfig})
  */
-LITEAV_EXPORT @interface TRTCWatermark : NSObject
+LITEAV_EXPORT @interface TRTCWatermark : NSObject<NSCopying>
 
 ///【字段含义】水印 URL，腾讯云的后台服务器会将该 URL 地址指定的图片混合到最终的画面中
 ///【特别说明】

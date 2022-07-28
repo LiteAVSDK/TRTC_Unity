@@ -332,10 +332,11 @@ LITEAV_EXPORT @interface TRTCCloud : NSObject
  * @param target 媒体流发布的目标地址，具体配置参考 {@link TRTCPublishTarget}。支持转推/转码到腾讯或者第三方 CDN，也支持转码回推到 TRTC 房间中。
  * @param params 媒体流编码输出参数，具体配置参考 {@link TRTCStreamEncoderParam}。转码和回推到 TRTC 房间中时为必填项，您需要指定您预期的转码输出参数。在转推时，为了更好的转推稳定性和 CDN 兼容性，也建议您进行配置。
  * @param config 媒体流转码配置参数。具体配置参考 {@link TRTCStreamMixingConfig}。转码和回推到 TRTC 房间中时为必填项，您需要指定您预期的转码配置参数。转推模式下则无效。
- * @note SDK 会通过回调 {@link onStartPublishMediaStream} 带给您后台启动的任务标识（即 taskId）。
- * @note 同一个任务（TRTCPublishMode 与 TRTCPublishCdnUrl 均相同）仅支持启动一次。若您后续需要更新或者停止该项任务，需要记录并使用返回的 taskId，通过 {@link updatePublishMediaStream} 或者 {@link stopPublishMediaStream} 来操作。
- * @note target 支持同时配置多个 CDN url（最多同时10个）。若您的同一个转推/转码任务需要发布至多路 CDN，则仅需要在 target 中配置多个 CDN url 即可。同一个转码任务即使有多个转推地址，对应的转码计费仍只收取一份。
- * @note 使用时需要注意不要多个任务同时往相同的 Url 地址推送，以免引起异常推流状态。一种推荐的方案是 Url 中使用 “sdkappid_roomid_userid_main” 作为区分标识，这中命名方式容易辨认且不会在您的多个应用中发生冲突。
+ * @note
+ * 1. SDK 会通过回调 {@link onStartPublishMediaStream} 带给您后台启动的任务标识（即 taskId）。
+ * 2. 同一个任务（TRTCPublishMode 与 TRTCPublishCdnUrl 均相同）仅支持启动一次。若您后续需要更新或者停止该项任务，需要记录并使用返回的 taskId，通过 {@link updatePublishMediaStream} 或者 {@link stopPublishMediaStream} 来操作。
+ * 3. target 支持同时配置多个 CDN url（最多同时 10 个）。若您的同一个转推/转码任务需要发布至多路 CDN，则仅需要在 target 中配置多个 CDN url 即可。同一个转码任务即使有多个转推地址，对应的转码计费仍只收取一份。
+ * 4. 使用时需要注意不要多个任务同时往相同的 Url 地址推送，以免引起异常推流状态。一种推荐的方案是 Url 中使用 “sdkappid_roomid_userid_main” 作为区分标识，这中命名方式容易辨认且不会在您的多个应用中发生冲突。
  */
 - (void)startPublishMediaStream:(TRTCPublishTarget *)target encoderParam:(nullable TRTCStreamEncoderParam *)param mixingConfig:(nullable TRTCStreamMixingConfig *)config;
 
@@ -347,11 +348,12 @@ LITEAV_EXPORT @interface TRTCCloud : NSObject
  * @param taskId 通过回调 {@link onStartPublishMediaStream} 带给您后台启动的任务标识（即 taskId）
  * @param target 媒体流发布的目标地址，具体配置参考 {@link TRTCPublishTarget}。支持转推/转码到腾讯或者第三方 CDN，也支持转码回推到 TRTC 房间中。
  * @param params 媒体流编码输出参数，具体配置参考 {@link TRTCStreamEncoderParam}。转码和回推到 TRTC 房间中时为必填项，您需要指定您预期的转码输出参数。在转推时，为了更好的转推稳定性和 CDN 兼容性，也建议您进行配置。
- * @param config 媒体流转码配置参数。具体配置参考 {@TRTCStreamMixingConfig}。转码和回推到 TRTC 房间中时为必填项，您需要指定您预期的转码配置参数。转推模式下则无效。
- * @note 您可以通过本接口来更新发布的 CDN url（支持增删，最多同时 10 个），但您使用时需要注意不要多个任务同时往相同的 Url 地址推送，以免引起异常推流状态
- * @note 您可以通过 taskId 来更新调整转推/转码任务。例如在 pk 业务中，您可以先通过 {@link startPublishMediaStream} 发起转推，接着在主播发起 pk 时，通过 taskId 和本接口将转推更新为转码任务。此时，CDN
+ * @param config 媒体流转码配置参数。具体配置参考 {@link TRTCStreamMixingConfig}。转码和回推到 TRTC 房间中时为必填项，您需要指定您预期的转码配置参数。转推模式下则无效。
+ * @note
+ * 1. 您可以通过本接口来更新发布的 CDN url（支持增删，最多同时 10 个），但您使用时需要注意不要多个任务同时往相同的 Url 地址推送，以免引起异常推流状态
+ * 2. 您可以通过 taskId 来更新调整转推/转码任务。例如在 pk 业务中，您可以先通过 {@link startPublishMediaStream} 发起转推，接着在主播发起 pk 时，通过 taskId 和本接口将转推更新为转码任务。此时，CDN
  * 播放将连续并且不会发生断流（您需要保持媒体流编码输出参数 param 一致）。
- * @note 同一个任务不支持纯音频、音视频、纯视频之间的切换。
+ * 3. 同一个任务不支持纯音频、音视频、纯视频之间的切换。
  */
 - (void)updatePublishMediaStream:(NSString *)taskId publishTarget:(TRTCPublishTarget *)target encoderParam:(nullable TRTCStreamEncoderParam *)param mixingConfig:(nullable TRTCStreamMixingConfig *)config;
 
@@ -361,8 +363,9 @@ LITEAV_EXPORT @interface TRTCCloud : NSObject
  * 该接口会向 TRTC 服务器发送指令，停止通过 {@link startPublishMediaStream} 启动的媒体流
  *
  * @param taskId 通过回调 {@link onStartPublishMediaStream} 带给您后台启动的任务标识（即 taskId）
- * @note 若您的业务后台并没有保存该 taskId，在您的主播异常退房重进后，如果您需要重新获取 taskId，您可以再次调用 {@link startPublishMediaStream} 启动任务。此时 TRTC 后台会返回任务启动失败，同时带给您上一次启动的 taskId
- * @note 若 taskId 填空字符串，将会停止所有通过 {@link startPublishMediaStream} 启动的媒体流，如果您只启动了一个媒体流或者想停止所有启动的媒体流，推荐使用这种方式。
+ * @note
+ * 1. 若您的业务后台并没有保存该 taskId，在您的主播异常退房重进后，如果您需要重新获取 taskId，您可以再次调用 {@link startPublishMediaStream} 启动任务。此时 TRTC 后台会返回任务启动失败，同时带给您上一次启动的 taskId
+ * 2. 若 taskId 填空字符串，将会停止所有通过 {@link startPublishMediaStream} 启动的媒体流，如果您只启动了一个媒体流或者想停止所有启动的媒体流，推荐使用这种方式。
  */
 - (void)stopPublishMediaStream:(NSString *)taskId;
 
@@ -1359,9 +1362,8 @@ LITEAV_EXPORT @interface TRTCCloud : NSObject
 /**
  * 11.1 使用 UDP 通道发送自定义消息给房间内所有用户
  *
- * 该接口可以让您借助 TRTC 的 UDP 通道，向当前房间里的其他用户广播自定义数据，已达到传输信令的目的。
- * TRTC 中的 UDP 通道原本设计用来传输音视频数据的，该接口的原理是将您要发送的信令伪装成音视频数据包，与原本要发送的音视频数据一并发送出去。
- * 房间中的其他用户可以通过 {@link TRTCCloudDelegate} 中的 onRecvCustomCmdMsg 回调接收消息。
+ * 该接口可以让您借助 TRTC 的 UDP 通道，向当前房间里的其他用户广播自定义数据，以达到传输信令的目的。
+ * 房间中的其他用户可以通过 {@link $TRTCCloudDelegate$} 中的 onRecvCustomCmdMsg 回调接收消息。
  * @param cmdID 消息 ID，取值范围为1 - 10。
  * @param data 待发送的消息，单个消息的最大长度被限制为 1KB。
  * @param reliable 是否可靠发送，可靠发送可以获得更高的发送成功率，但可靠发送比不可靠发送会带来更大的接收延迟。
@@ -1373,6 +1375,7 @@ LITEAV_EXPORT @interface TRTCCloud : NSObject
  * 3. 每个客户端每秒最多能发送总计 8KB 数据。
  * 4. 请将 reliable 和 ordered 同时设置为 YES 或同时设置为 NO，暂不支持交叉设置。
  * 5. 强烈建议您将不同类型的消息设定为不同的 cmdID，这样可以在要求有序的情况下减小消息时延。
+ * 6. 目前仅支持主播身份。
  */
 - (BOOL)sendCustomCmdMsg:(NSInteger)cmdID data:(NSData *)data reliable:(BOOL)reliable ordered:(BOOL)ordered;
 

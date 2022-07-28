@@ -799,45 +799,39 @@ class ITRTCCloudCallback {
     virtual void onSnapshotComplete(const char* userId, TRTCVideoStreamType type, char* data, uint32_t length, uint32_t width, uint32_t height, TRTCVideoPixelFormat format) {
     }
 
-/// @}
-/////////////////////////////////////////////////////////////////////////////////
-//
-//                    废弃的事件回调（建议使用对应的新回调）
-//
-/////////////////////////////////////////////////////////////////////////////////
-/// @name 废弃的事件回调（建议使用对应的新回调）
-/// @{
+    /// @}
+    /////////////////////////////////////////////////////////////////////////////////
+    //
+    //                    废弃的事件回调（建议使用对应的新回调）
+    //
+    /////////////////////////////////////////////////////////////////////////////////
+    /// @name 废弃的事件回调（建议使用对应的新回调）
+    /// @{
 
-/**
- * 有主播加入当前房间（已废弃）
- *
- * @deprecated 新版本开始不推荐使用，建议使用 {@link onRemoteUserEnterRoom} 替代之。
- */
-#ifdef _WIN32
-    virtual __declspec(deprecated("use onRemoteUserEnterRoom instead")) void onUserEnter(const char* userId) {
+    /**
+     * 有主播加入当前房间（已废弃）
+     *
+     * @deprecated 新版本开始不推荐使用，建议使用 {@link onRemoteUserEnterRoom} 替代之。
+     */
+    trtc_attribute_deprecated virtual void onUserEnter(const char* userId) {
     }
-#endif
 
-/**
- * 有主播离开当前房间（已废弃）
- *
- * @deprecated 新版本开始不推荐使用，建议使用 {@link onRemoteUserLeaveRoom} 替代之。
- */
-#ifdef _WIN32
-    virtual __declspec(deprecated("use onRemoteUserLeaveRoom instead")) void onUserExit(const char* userId, int reason) {
+    /**
+     * 有主播离开当前房间（已废弃）
+     *
+     * @deprecated 新版本开始不推荐使用，建议使用 {@link onRemoteUserLeaveRoom} 替代之。
+     */
+    trtc_attribute_deprecated virtual void onUserExit(const char* userId, int reason) {
     }
-#endif
 
-/**
- * 音效播放已结束（已废弃）
- *
- * @deprecated 新版本开始不推荐使用，建议使用 {@link ITXAudioEffectManager} 接口替代之。
- * 新的接口中不再区分背景音乐和音效，而是统一用 {@link startPlayMusic} 取代之。
- */
-#ifdef _WIN32
-    virtual __declspec(deprecated("use ITXAudioEffectManager.ITXMusicPlayObserver instead")) void onAudioEffectFinished(int effectId, int code) {
+    /**
+     * 音效播放已结束（已废弃）
+     *
+     * @deprecated 新版本开始不推荐使用，建议使用 {@link ITXAudioEffectManager} 接口替代之。
+     * 新的接口中不再区分背景音乐和音效，而是统一用 {@link startPlayMusic} 取代之。
+     */
+    trtc_attribute_deprecated virtual void onAudioEffectFinished(int effectId, int code) {
     }
-#endif
 
 /**
  * 开始播放背景音乐（已废弃）
@@ -846,7 +840,7 @@ class ITRTCCloudCallback {
  * 新的接口中不再区分背景音乐和音效，而是统一用 {@link startPlayMusic} 取代之。
  */
 #ifdef _WIN32
-    virtual __declspec(deprecated("use ITXAudioEffectManager.ITXMusicPlayObserver instead")) void onPlayBGMBegin(TXLiteAVError errCode) {
+    trtc_attribute_deprecated virtual void onPlayBGMBegin(TXLiteAVError errCode) {
     }
 #endif
 
@@ -857,7 +851,7 @@ class ITRTCCloudCallback {
  * 新的接口中不再区分背景音乐和音效，而是统一用 {@link startPlayMusic} 取代之。
  */
 #ifdef _WIN32
-    virtual __declspec(deprecated("use ITXAudioEffectManager.ITXMusicPlayObserver instead")) void onPlayBGMProgress(uint32_t progressMS, uint32_t durationMS) {
+    trtc_attribute_deprecated virtual void onPlayBGMProgress(uint32_t progressMS, uint32_t durationMS) {
     }
 #endif
 
@@ -868,26 +862,17 @@ class ITRTCCloudCallback {
  * 新的接口中不再区分背景音乐和音效，而是统一用 {@link startPlayMusic} 取代之。
  */
 #ifdef _WIN32
-    virtual __declspec(deprecated("use ITXAudioEffectManager.ITXMusicPlayObserver instead")) void onPlayBGMComplete(TXLiteAVError errCode) {
+    trtc_attribute_deprecated virtual void onPlayBGMComplete(TXLiteAVError errCode) {
     }
 #endif
 
-/**
- * 服务器测速的结果回调（已废弃）
- *
- * @deprecated 新版本开始不推荐使用，建议使用 {@link onSpeedTestResult:} 接口替代之。
- */
-#ifdef _WIN32
-    virtual __declspec(deprecated("use onSpeedTestResult instead")) void onSpeedTest(const TRTCSpeedTestResult& currentResult, uint32_t finishedCount, uint32_t totalCount) {
+    /**
+     * 服务器测速的结果回调（已废弃）
+     *
+     * @deprecated 新版本开始不推荐使用，建议使用 {@link onSpeedTestResult:} 接口替代之。
+     */
+    trtc_attribute_deprecated virtual void onSpeedTest(const TRTCSpeedTestResult& currentResult, uint32_t finishedCount, uint32_t totalCount) {
     }
-#elif defined(__APPLE__)
-    virtual void onSpeedTest(const TRTCSpeedTestResult& currentResult, uint32_t finishedCount, uint32_t totalCount) {
-    }
-    __attribute__((deprecated("use onSpeedTestResult instead")));
-#else
-    virtual void onSpeedTest(const TRTCSpeedTestResult& currentResult, uint32_t finishedCount, uint32_t totalCount) {
-    }
-#endif
 
     /// @}
 };  // End of interface ITRTCCloudCallback

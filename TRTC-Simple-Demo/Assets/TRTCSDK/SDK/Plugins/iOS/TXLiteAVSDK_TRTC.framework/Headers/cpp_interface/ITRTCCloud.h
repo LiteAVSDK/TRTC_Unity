@@ -253,54 +253,50 @@ class ITRTCCloud : public IDeprecatedTRTCCloud
      */
     virtual void setDefaultStreamRecvMode(bool autoRecvAudio, bool autoRecvVideo) = 0;
 
-/**
- * 2.9 创建子房间示例（用于多房间并发观看）
- *
- * TRTCCloud 一开始被设计成单例模式，限制了多房间并发观看的能力。
- * 通过调用该接口，您可以创建出多个 TRTCCloud 实例，以便同时进入多个不同的房间观看音视频流。
- * 但需要注意的是，由于摄像头和麦克风还是只有一份，因此您只能同时在一个 TRTCCloud 实例中以“主播”的身份存在，也就是您只能同时在一个 TRTCCloud 实例中发布自己的音视频流。
- * 该功能主要用于在线教育场景中一种被称为“超级小班课”的业务场景中，用于解决“每个 TRTC 的房间中最多只能有 50 人同时发布自己音视频流”的限制。
- * 示例代码如下：
- * <pre>
- *     ITRTCCloud *mainCloud = getTRTCShareInstance();
- *     mainCloud->enterRoom(params1, TRTCAppSceneLIVE);
- *     //...
- *     //Switch the role from "anchor" to "audience" in your own room
- *     mainCloud->switchRole(TRTCRoleAudience);
- *     mainCloud->muteLocalVideo(true);
- *     mainCloud->muteLocalAudio(true);
- *     //...
- *     //Use subcloud to enter another room and switch the role from "audience" to "anchor"
- *     ITRTCCloud *subCloud = mainCloud->createSubCloud();
- *     subCloud->enterRoom(params2, TRTCAppSceneLIVE);
- *     subCloud->switchRole(TRTCRoleAnchor);
- *     subCloud->muteLocalVideo(false);
- *     subCloud->muteLocalAudio(false);
- *     //...
- *     //Exit from new room and release it.
- *     subCloud->exitRoom();
- *     mainCloud->destroySubCloud(subCloud);
- * </pre>
- *
- * @note
- * - 同一个用户，可以使用同一个 userId 进入多个不同 roomId 的房间。
- * - 两台不同的终端设备不可以同时使用同一个 userId 进入同一个 roomId 的房间。
- * - 同一个用户，同时只能在一个 TRTCCloud 实例中推流，在不同房间同时推流会引发云端的状态混乱，导致各种 bug。
- * - 通过 createSubCloud 接口创建出来的 TRTCCloud 实例有一个能力限制：不能调用子实例中与本地音视频相关的接口（除 switchRole、muteLocalVideo 和 muteLocalAudio 之外）， 设置美颜等接口请使用原 TRTCCloud 实例对象。
- * @return 子 TRTCCloud 实例
- */
-#if _WIN32 || __APPLE__
+    /**
+     * 2.9 创建子房间示例（用于多房间并发观看）
+     *
+     * TRTCCloud 一开始被设计成单例模式，限制了多房间并发观看的能力。
+     * 通过调用该接口，您可以创建出多个 TRTCCloud 实例，以便同时进入多个不同的房间观看音视频流。
+     * 但需要注意的是，由于摄像头和麦克风还是只有一份，因此您只能同时在一个 TRTCCloud 实例中以“主播”的身份存在，也就是您只能同时在一个 TRTCCloud 实例中发布自己的音视频流。
+     * 该功能主要用于在线教育场景中一种被称为“超级小班课”的业务场景中，用于解决“每个 TRTC 的房间中最多只能有 50 人同时发布自己音视频流”的限制。
+     * 示例代码如下：
+     * <pre>
+     *     ITRTCCloud *mainCloud = getTRTCShareInstance();
+     *     mainCloud->enterRoom(params1, TRTCAppSceneLIVE);
+     *     //...
+     *     //Switch the role from "anchor" to "audience" in your own room
+     *     mainCloud->switchRole(TRTCRoleAudience);
+     *     mainCloud->muteLocalVideo(true);
+     *     mainCloud->muteLocalAudio(true);
+     *     //...
+     *     //Use subcloud to enter another room and switch the role from "audience" to "anchor"
+     *     ITRTCCloud *subCloud = mainCloud->createSubCloud();
+     *     subCloud->enterRoom(params2, TRTCAppSceneLIVE);
+     *     subCloud->switchRole(TRTCRoleAnchor);
+     *     subCloud->muteLocalVideo(false);
+     *     subCloud->muteLocalAudio(false);
+     *     //...
+     *     //Exit from new room and release it.
+     *     subCloud->exitRoom();
+     *     mainCloud->destroySubCloud(subCloud);
+     * </pre>
+     *
+     * @note
+     * - 同一个用户，可以使用同一个 userId 进入多个不同 roomId 的房间。
+     * - 两台不同的终端设备不可以同时使用同一个 userId 进入同一个 roomId 的房间。
+     * - 同一个用户，同时只能在一个 TRTCCloud 实例中推流，在不同房间同时推流会引发云端的状态混乱，导致各种 bug。
+     * - 通过 createSubCloud 接口创建出来的 TRTCCloud 实例有一个能力限制：不能调用子实例中与本地音视频相关的接口（除 switchRole、muteLocalVideo 和 muteLocalAudio 之外）， 设置美颜等接口请使用原 TRTCCloud 实例对象。
+     * @return 子 TRTCCloud 实例
+     */
     virtual ITRTCCloud* createSubCloud() = 0;
-#endif
 
-/**
- * 2.10 销毁子房间示例
- *
- * @param subCloud 子房间实例
- */
-#if _WIN32 || __APPLE__
+    /**
+     * 2.10 销毁子房间示例
+     *
+     * @param subCloud 子房间实例
+     */
     virtual void destroySubCloud(ITRTCCloud* subCloud) = 0;
-#endif
 
     /////////////////////////////////////////////////////////////////////////////////
     //
@@ -373,10 +369,11 @@ class ITRTCCloud : public IDeprecatedTRTCCloud
      * @param target 媒体流发布的目标地址，具体配置参考 {@link TRTCPublishTarget}。支持转推/转码到腾讯或者第三方 CDN，也支持转码回推到 TRTC 房间中。
      * @param params 媒体流编码输出参数，具体配置参考 {@link TRTCStreamEncoderParam}。转码和回推到 TRTC 房间中时为必填项，您需要指定您预期的转码输出参数。在转推时，为了更好的转推稳定性和 CDN 兼容性，也建议您进行配置。
      * @param config 媒体流转码配置参数。具体配置参考 {@link TRTCStreamMixingConfig}。转码和回推到 TRTC 房间中时为必填项，您需要指定您预期的转码配置参数。转推模式下则无效。
-     * @note SDK 会通过回调 {@link onStartPublishMediaStream} 带给您后台启动的任务标识（即 taskId）。
-     * @note 同一个任务（TRTCPublishMode 与 TRTCPublishCdnUrl 均相同）仅支持启动一次。若您后续需要更新或者停止该项任务，需要记录并使用返回的 taskId，通过 {@link updatePublishMediaStream} 或者 {@link stopPublishMediaStream} 来操作。
-     * @note target 支持同时配置多个 CDN url（最多同时10个）。若您的同一个转推/转码任务需要发布至多路 CDN，则仅需要在 target 中配置多个 CDN url 即可。同一个转码任务即使有多个转推地址，对应的转码计费仍只收取一份。
-     * @note 使用时需要注意不要多个任务同时往相同的 Url 地址推送，以免引起异常推流状态。一种推荐的方案是 Url 中使用 “sdkappid_roomid_userid_main” 作为区分标识，这中命名方式容易辨认且不会在您的多个应用中发生冲突。
+     * @note
+     * 1. SDK 会通过回调 {@link onStartPublishMediaStream} 带给您后台启动的任务标识（即 taskId）。
+     * 2. 同一个任务（TRTCPublishMode 与 TRTCPublishCdnUrl 均相同）仅支持启动一次。若您后续需要更新或者停止该项任务，需要记录并使用返回的 taskId，通过 {@link updatePublishMediaStream} 或者 {@link stopPublishMediaStream} 来操作。
+     * 3. target 支持同时配置多个 CDN url（最多同时 10 个）。若您的同一个转推/转码任务需要发布至多路 CDN，则仅需要在 target 中配置多个 CDN url 即可。同一个转码任务即使有多个转推地址，对应的转码计费仍只收取一份。
+     * 4. 使用时需要注意不要多个任务同时往相同的 Url 地址推送，以免引起异常推流状态。一种推荐的方案是 Url 中使用 “sdkappid_roomid_userid_main” 作为区分标识，这中命名方式容易辨认且不会在您的多个应用中发生冲突。
      */
     virtual void startPublishMediaStream(TRTCPublishTarget* target, TRTCStreamEncoderParam* params, TRTCStreamMixingConfig* config) = 0;
 
@@ -388,11 +385,12 @@ class ITRTCCloud : public IDeprecatedTRTCCloud
      * @param taskId 通过回调 {@link onStartPublishMediaStream} 带给您后台启动的任务标识（即 taskId）
      * @param target 媒体流发布的目标地址，具体配置参考 {@link TRTCPublishTarget}。支持转推/转码到腾讯或者第三方 CDN，也支持转码回推到 TRTC 房间中。
      * @param params 媒体流编码输出参数，具体配置参考 {@link TRTCStreamEncoderParam}。转码和回推到 TRTC 房间中时为必填项，您需要指定您预期的转码输出参数。在转推时，为了更好的转推稳定性和 CDN 兼容性，也建议您进行配置。
-     * @param config 媒体流转码配置参数。具体配置参考 {@TRTCStreamMixingConfig}。转码和回推到 TRTC 房间中时为必填项，您需要指定您预期的转码配置参数。转推模式下则无效。
-     * @note 您可以通过本接口来更新发布的 CDN url（支持增删，最多同时 10 个），但您使用时需要注意不要多个任务同时往相同的 Url 地址推送，以免引起异常推流状态
-     * @note 您可以通过 taskId 来更新调整转推/转码任务。例如在 pk 业务中，您可以先通过 {@link startPublishMediaStream} 发起转推，接着在主播发起 pk 时，通过 taskId 和本接口将转推更新为转码任务。此时，CDN
+     * @param config 媒体流转码配置参数。具体配置参考 {@link TRTCStreamMixingConfig}。转码和回推到 TRTC 房间中时为必填项，您需要指定您预期的转码配置参数。转推模式下则无效。
+     * @note
+     * 1. 您可以通过本接口来更新发布的 CDN url（支持增删，最多同时 10 个），但您使用时需要注意不要多个任务同时往相同的 Url 地址推送，以免引起异常推流状态
+     * 2. 您可以通过 taskId 来更新调整转推/转码任务。例如在 pk 业务中，您可以先通过 {@link startPublishMediaStream} 发起转推，接着在主播发起 pk 时，通过 taskId 和本接口将转推更新为转码任务。此时，CDN
      * 播放将连续并且不会发生断流（您需要保持媒体流编码输出参数 param 一致）。
-     * @note 同一个任务不支持纯音频、音视频、纯视频之间的切换。
+     * 3. 同一个任务不支持纯音频、音视频、纯视频之间的切换。
      */
     virtual void updatePublishMediaStream(const char* taskId, TRTCPublishTarget* target, TRTCStreamEncoderParam* params, TRTCStreamMixingConfig* config) = 0;
 
@@ -402,8 +400,9 @@ class ITRTCCloud : public IDeprecatedTRTCCloud
      * 该接口会向 TRTC 服务器发送指令，停止通过 {@link startPublishMediaStream} 启动的媒体流
      *
      * @param taskId 通过回调 {@link onStartPublishMediaStream} 带给您后台启动的任务标识（即 taskId）
-     * @note 若您的业务后台并没有保存该 taskId，在您的主播异常退房重进后，如果您需要重新获取 taskId，您可以再次调用 {@link startPublishMediaStream} 启动任务。此时 TRTC 后台会返回任务启动失败，同时带给您上一次启动的 taskId
-     * @note 若 taskId 填空字符串，将会停止所有通过 {@link startPublishMediaStream} 启动的媒体流，如果您只启动了一个媒体流或者想停止所有启动的媒体流，推荐使用这种方式。
+     * @note
+     * 1. 若您的业务后台并没有保存该 taskId，在您的主播异常退房重进后，如果您需要重新获取 taskId，您可以再次调用 {@link startPublishMediaStream} 启动任务。此时 TRTC 后台会返回任务启动失败，同时带给您上一次启动的 taskId
+     * 2. 若 taskId 填空字符串，将会停止所有通过 {@link startPublishMediaStream} 启动的媒体流，如果您只启动了一个媒体流或者想停止所有启动的媒体流，推荐使用这种方式。
      */
     virtual void stopPublishMediaStream(const char* taskId) = 0;
 
@@ -865,9 +864,10 @@ class ITRTCCloud : public IDeprecatedTRTCCloud
      * @param xOffset    水印显示的左上角 x 轴偏移
      * @param yOffset    水印显示的左上角 y 轴偏移
      * @param fWidthRatio 水印显示的宽度占画面宽度比例（水印按该参数等比例缩放显示）
+     * @param isVisibleOnLocalPreview true: 本地预览显示水印 ；false: 本地预览不显示水印。仅在win/mac下生效
      * @note 本接口只支持给主路视频添加图片水印
      */
-    virtual void setWaterMark(TRTCVideoStreamType streamType, const char* srcData, TRTCWaterMarkSrcType srcType, uint32_t nWidth, uint32_t nHeight, float xOffset, float yOffset, float fWidthRatio) = 0;
+    virtual void setWaterMark(TRTCVideoStreamType streamType, const char* srcData, TRTCWaterMarkSrcType srcType, uint32_t nWidth, uint32_t nHeight, float xOffset, float yOffset, float fWidthRatio, bool isVisibleOnLocalPreview = false) = 0;
 
     /// @}
     /////////////////////////////////////////////////////////////////////////////////
@@ -1226,7 +1226,7 @@ class ITRTCCloud : public IDeprecatedTRTCCloud
      * 设置该回调之后，SDK 内部会跳过原来的渲染流程，并把采集到的数据回调出来，您需要自己完成画面渲染。
      * - 您可以通过调用 setLocalVideoRenderCallback(TRTCVideoPixelFormat_Unknown, TRTCVideoBufferType_Unknown, nullptr) 停止回调。
      * - iOS、Mac、Windows 平台目前仅支持回调 {@link TRTCVideoPixelFormat_I420} 或 {@link TRTCVideoPixelFormat_BGRA32} 像素格式的视频帧。
-     * - Android 平台目前仅支持传入 {@link TRTCVideoPixelFormat_I420} 像素格式的视频帧。
+     * - Android 平台目前仅支持传入 {@link TRTCVideoPixelFormat_I420}, {@link TRTCVideoPixelFormat_RGBA32} 或 {@link TRTCVideoPixelFormat_Texture_2D} 像素格式的视频帧。
      *
      * @param pixelFormat 指定回调的像素格式
      * @param bufferType  指定视频数据结构类型，目前只支持 {@link TRTCVideoBufferType_Buffer}
@@ -1241,7 +1241,7 @@ class ITRTCCloud : public IDeprecatedTRTCCloud
      * 设置该回调之后，SDK 内部会跳过原来的渲染流程，并把采集到的数据回调出来，您需要自己完成画面渲染。
      * - 您可以通过调用 setLocalVideoRenderCallback(TRTCVideoPixelFormat_Unknown, TRTCVideoBufferType_Unknown, nullptr) 停止回调。
      * - iOS、Mac、Windows 平台目前仅支持回调 {@link TRTCVideoPixelFormat_I420} 或 {@link TRTCVideoPixelFormat_BGRA32} 像素格式的视频帧。
-     * - Android 平台目前仅支持传入 {@link TRTCVideoPixelFormat_I420} 像素格式的视频帧。
+     * - Android 平台目前仅支持传入 {@link TRTCVideoPixelFormat_I420}, {@link TRTCVideoPixelFormat_RGBA32} 或 {@link TRTCVideoPixelFormat_Texture_2D} 像素格式的视频帧。
      *
      * @note 实际使用时，需要先调用 startRemoteView(userid, nullptr) 来获取远端用户的视频流（view 设置为 nullptr 即可），否则不会有数据回调出来。
      * @param userId 远端用户id
@@ -1359,9 +1359,8 @@ class ITRTCCloud : public IDeprecatedTRTCCloud
     /**
      * 11.1 使用 UDP 通道发送自定义消息给房间内所有用户
      *
-     * 该接口可以让您借助 TRTC 的 UDP 通道，向当前房间里的其他用户广播自定义数据，已达到传输信令的目的。
-     * TRTC 中的 UDP 通道原本设计用来传输音视频数据的，该接口的原理是将您要发送的信令伪装成音视频数据包，与原本要发送的音视频数据一并发送出去。
-     * 房间中的其他用户可以通过 {@link TRTCCloudDelegate} 中的 onRecvCustomCmdMsg 回调接收消息。
+     * 该接口可以让您借助 TRTC 的 UDP 通道，向当前房间里的其他用户广播自定义数据，以达到传输信令的目的。
+     * 房间中的其他用户可以通过 {@link $TRTCCloudDelegate$} 中的 onRecvCustomCmdMsg 回调接收消息。
      * @param cmdID 消息 ID，取值范围为1 - 10。
      * @param data 待发送的消息，单个消息的最大长度被限制为 1KB。
      * @param reliable 是否可靠发送，可靠发送可以获得更高的发送成功率，但可靠发送比不可靠发送会带来更大的接收延迟。
@@ -1373,6 +1372,7 @@ class ITRTCCloud : public IDeprecatedTRTCCloud
      * 3. 每个客户端每秒最多能发送总计 8KB 数据。
      * 4. 请将 reliable 和 ordered 同时设置为 true 或同时设置为 false，暂不支持交叉设置。
      * 5. 强烈建议您将不同类型的消息设定为不同的 cmdID，这样可以在要求有序的情况下减小消息时延。
+     * 6. 目前仅支持主播身份。
      */
     virtual bool sendCustomCmdMsg(uint32_t cmdId, const uint8_t* data, uint32_t dataSize, bool reliable, bool ordered) = 0;
 

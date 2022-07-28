@@ -6,7 +6,6 @@
 #include <stdio.h>
 
 #include "TXLiteAVBuffer.h"
-#include "TXLiteAVSymbolExport.h"
 
 #ifdef __cplusplus
 
@@ -21,10 +20,10 @@ class LITEAV_EXPORT ITRTCAudioPacketListener {
   virtual ~ITRTCAudioPacketListener() {}
 
   // 网络层接收到音频数据包
-  virtual bool onRecvAudioPacket(TRTCAudioPacket& data) { return false; }
+  virtual bool onRecvAudioPacket(TRTCAudioPacket& data) = 0;
 
   // 网络层即将发送的音频数据包
-  virtual bool onSendAudioPacket(TRTCAudioPacket& data) { return false; }
+  virtual bool onSendAudioPacket(TRTCAudioPacket& data) = 0;
 };
 
 }  // namespace liteav

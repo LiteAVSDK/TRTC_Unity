@@ -49,7 +49,7 @@ public static class IosPostProcess
     {
         if (buildTarget == BuildTarget.iOS)
         {
-            UnityEngine.Debug.Log("--ios-start buildPath:"+buildPath);
+            UnityEngine.Debug.Log("--ios--start buildPath:"+buildPath);
             #if UNITY_IPHONE
             var projPath = buildPath + "/Unity-Iphone.xcodeproj/project.pbxproj";
             UnityEngine.Debug.Log("projPath:"+projPath);

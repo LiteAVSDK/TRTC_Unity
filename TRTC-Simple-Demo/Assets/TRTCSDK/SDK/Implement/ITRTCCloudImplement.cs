@@ -534,30 +534,23 @@ namespace trtc
         {
             ITRTCCloudNative.TRTCUnityStopSpeedTest(mNativeObj);
         }
-        // public override void startCameraDeviceTest(IntPtr rendHwnd)
-        // {
 
-        // }
-        // public override void stopCameraDeviceTest()
-        // {
-
-        // }
-        // public override void startMicDeviceTest(uint interval)
-        // {
-
-        // }
-        // public override void stopMicDeviceTest()
-        // {
-
-        // }
-        // public override void startSpeakerDeviceTest(string testAudioFilePath)
-        // {
-
-        // }
-        // public override void stopSpeakerDeviceTest()
-        // {
-
-        // }
+        public override void enable3DSpatialAudioEffect(bool enable)
+        {
+            ITRTCCloudNative.TRTCUnityEnable3DSpatialAudioEffect(mNativeObj, enable);
+        }
+        public override void updateSelf3DSpatialPosition(int[] position, float[] axisForward, float[] axisRight, float[] axisUp)
+        {
+            ITRTCCloudNative.TRTCUnityUpdateSelf3DSpatialPosition(mNativeObj, position, axisForward, axisRight, axisUp);
+        }
+        public override void set3DSpatialReceivingRange(string userId, int range)
+        {
+            ITRTCCloudNative.TRTCUnitySet3DSpatialReceivingRange(mNativeObj, userId, range);
+        }
+        public override void updateRemote3DSpatialPosition(string userId, int[] position)
+        {
+            ITRTCCloudNative.TRTCUnityUpdateRemote3DSpatialPosition(mNativeObj, userId, position);
+        }
 
         /////////////////////////////////////////////////////////////////////////////////
         //
@@ -692,7 +685,6 @@ namespace trtc
 
         private void Destroy()
         {
-            Debug.LogFormat("ITRTCCloudImplement Destroy");
             if (mNativeObj != IntPtr.Zero)
             {
                 ITRTCCloudNative.TRTCUnityRemoveCallback(mNativeObj);
@@ -713,6 +705,7 @@ namespace trtc
 
         ~ITRTCCloudImplement()
         {
+            Debug.LogFormat("~ITRTCCloudImplement");
             Destroy();
         }
 

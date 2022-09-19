@@ -763,6 +763,36 @@ namespace trtc
         public abstract void sendCustomAudioData(TRTCAudioFrame frame);
 
         /// <summary>
+        /// Enable 3D audio effects
+        /// <param name="enable">Whether to enable 3D audio effects. Default value: `false`</param>
+        /// </summary>
+        public abstract void enable3DSpatialAudioEffect(bool enable);
+
+        /// <summary>
+        /// Set 3D audio effect parameters
+        /// <para>Note that an array of length 3 should be passed in.</para>
+        /// <param name="position">Sound source location. Your own coordinates in the world coordinate system. The order is front, right, top</param>
+        /// <param name="axisForward">The unit vector of the front axis of the own coordinate system.</param>
+        /// <param name="axisRight">The unit vector of the right axis of the own coordinate system.</param>
+        /// <param name="axisUp">The unit vector of the axis in the own coordinate system.</param>
+        /// </summary>
+        public abstract void updateSelf3DSpatialPosition(int[] position, float[] axisForward, float[] axisRight, float[] axisUp);
+
+        /// <summary>
+        /// Set the acceptable range of the sound emitted by the specified user
+        /// <param name="userId">Specify the ID of the remote user</param>
+        /// <param name="range">Maximum acceptable range of sound</param>
+        /// </summary>
+        public abstract void set3DSpatialReceivingRange(string userId, int range);
+
+        /// <summary>
+        /// Set remote user coordinate information in 3D sound effect
+        /// <param name="userId">Specify the ID of the remote user</param>
+        /// <param name="position">Sound source location. Your own coordinates in the world coordinate system. The order is front, right, top</param>
+        /// </summary>
+        public abstract void updateRemote3DSpatialPosition(string userId, int[] position);
+
+        /// <summary>
         /// Configure the custom rendering of local video
         /// </summary>
         /// <remarks>

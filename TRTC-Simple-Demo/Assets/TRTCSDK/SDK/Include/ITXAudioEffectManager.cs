@@ -50,14 +50,14 @@ namespace trtc
         /// <remarks>
         /// This API works only if the user wears earphones and the device has low capturing latency.
         /// </remarks>
-        //public abstract void enableVoiceEarMonitor(bool enable);
+        // public abstract void enableVoiceEarMonitor(bool enable);
 
         /// <summary>
         /// 1.2 Set in-ear monitoring volume
         /// </summary>
         /// <param name="volume"Volume. Value range: 0-150. Default value: `100`></param>
         /// <remarks>You need to contact technical support to use a value higher than `100`.</remarks>
-        //public abstract void setVoiceEarMonitorVolume(int volume);
+        // public abstract void setVoiceEarMonitorVolume(int volume);
 
         /// <summary>
         /// 1.3 Set a reverb effect (karaoke, room, hall, deep, resonant, etc.)

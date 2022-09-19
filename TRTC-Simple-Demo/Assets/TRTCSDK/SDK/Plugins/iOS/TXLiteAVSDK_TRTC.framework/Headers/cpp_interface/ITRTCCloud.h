@@ -796,21 +796,41 @@ class ITRTCCloud : public IDeprecatedTRTCCloud
     /**
      * 5.19 启用 3D 音效
      *
-     * 启用 3D 音效。
+     * 启用 3D 音效。注意需使用流畅音质 {@link TRTCAudioQualitySpeech} 或默认音质 {@link TRTCAudioQualityDefault}。
      * @param enabled 是否启用 3D 音效，默认为关闭状态。
      */
     virtual void enable3DSpatialAudioEffect(bool enabled) = 0;
 
     /**
-     * 5.20 设置 3D 音效参数
+     * 5.20 设置 3D 音效中自身坐标及朝向信息
      *
-     * 设置 3D 音效参数，注意应当传入长度为 3 的数组。
-     * @param position 音源方位，自身在世界坐标系中的坐标，顺序是前、右、上
-     * @param axisForward 自身坐标系前轴的单位向量
-     * @param axisRight 自身坐标系右轴的单位向量
-     * @param axisUp 自身坐标系上轴的单位向量
+     * 更新自身在世界坐标系中的位置和朝向， SDK 会根据该方法参数计算自身和远端用户之间的相对位置，进而渲染出空间音效。注意各参数应分别传入长度为 3 的数组。
+     * @param position 自身在世界坐标系中的坐标，三个值依次表示前、右、上坐标值。
+     * @param axisForward 自身坐标系前轴在世界坐标系中的单位向量，三个值依次表示前、右、上坐标值。
+     * @param axisRight 自身坐标系右轴在世界坐标系中的单位向量，三个值依次表示前、右、上坐标值。
+     * @param axisUp 自身坐标系上轴在世界坐标系中的单位向量，三个值依次表示前、右、上坐标值。
+     * @note 请适当限制调用频率，推荐两次坐标设置至少间隔 100ms。
      */
     virtual void updateSelf3DSpatialPosition(int position[3], float axisForward[3], float axisRight[3], float axisUp[3]) = 0;
+
+    /**
+     * 5.21 设置 3D 音效中远端用户坐标信息
+     *
+     * 更新远端用户在世界坐标系中的位置，SDK 会根据自身和远端用户之间的相对位置，进而渲染出空间音效。注意参数为长度等于 3 的数组。
+     * @param userId 指定远端用户的 ID。
+     * @param position 该远端用户在世界坐标系中的坐标，三个值依次表示前、右、上坐标值。
+     * @note 请适当限制调用频率，推荐同一远端用户两次坐标设置至少间隔 100ms。
+     */
+    virtual void updateRemote3DSpatialPosition(const char* userId, int position[3]) = 0;
+
+    /**
+     * 5.22 设置指定用户所发出声音的可被接收范围
+     *
+     * 设置该范围大小之后，该指定用户的声音将在该范围内可被听见，超出该范围将被衰减为 0。
+     * @param userId 指定远端用户的 ID。
+     * @param range 声音最大可被接收范围。
+     */
+    virtual void set3DSpatialReceivingRange(const char* userId, int range) = 0;
 
     /// @}
     /////////////////////////////////////////////////////////////////////////////////

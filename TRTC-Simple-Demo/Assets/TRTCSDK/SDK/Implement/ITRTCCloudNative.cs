@@ -310,7 +310,15 @@ namespace trtc
         public static extern void TRTCUnitySetBeautyStyle(IntPtr instance, int style, int beauty, int white, int ruddiness);
         [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void TRTCUnitySetWaterMark(IntPtr instance, int streamType, string srcData, int srcType, int nWidth, int nHeight, float xOffset, float yOffset, float fWidthRatio);
-
+        
+        [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void TRTCUnityEnable3DSpatialAudioEffect(IntPtr instance, bool enable);
+        [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void TRTCUnityUpdateSelf3DSpatialPosition(IntPtr instance, int[] position, float[] axisForward, float[] axisRight, float[] axisUp);
+        [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void TRTCUnitySet3DSpatialReceivingRange(IntPtr instance, string userId, int range);
+        [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void TRTCUnityUpdateRemote3DSpatialPosition(IntPtr instance, string userId, int[] position);
 
         [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void TRTCUnityStartLocalAudio(IntPtr instance, int quality);

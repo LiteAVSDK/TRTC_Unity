@@ -663,6 +663,23 @@ typedef NS_ENUM(NSInteger, TRTCSystemVolumeType) {
 
 };
 
+/**
+ * 3.9 音频回调数据读写模式
+ *
+ * TRTC 提供了两种音频回调数据的操作模式。
+ * - 读写模式（ReadWrite）：可以获取并修改回调的音频数据，默认模式。
+ * - 只读模式（ReadOnly）：仅从回调中获取音频数据。
+ */
+typedef NS_ENUM(NSInteger, TRTCAudioFrameOperationMode) {
+
+    ///读写模式：可以获取并修改回调的音频数据。
+    TRTCAudioFrameOperationModeReadWrite = 0,
+
+    ///只读模式：仅从回调中获取音频数据。
+    TRTCAudioFrameOperationModeReadOnly = 1,
+
+};
+
 /////////////////////////////////////////////////////////////////////////////////
 //
 //                      更多枚举值定义
@@ -1257,6 +1274,10 @@ LITEAV_EXPORT @interface TRTCMixUser : NSObject
 ///【特别说明】水印图和占位图暂时不支持设置 renderMode，默认强制拉伸处理
 @property(nonatomic, assign) int renderMode;
 
+///【字段含义】该路音频参与混音时的音量等级（取值范围：0 - 100）。
+///【默认取值】默认值：100。
+@property(nonatomic, assign) int soundLevel;
+
 ///【字段含义】占位图或水印图
 ///   - 占位图是指当对应 userId 混流内容为纯音频时，混合后的画面中显示的是占位图片。
 ///   - 水印图是指一张贴在混合后画面中的半透明图片，这张图片会一直覆盖于混合后的画面上。
@@ -1507,6 +1528,10 @@ LITEAV_EXPORT @interface TRTCAudioFrameDelegateFormat : NSObject
 ///【字段含义】采样点数
 ///【推荐取值】取值必须是 sampleRate/100 的整数倍。
 @property(nonatomic, assign) int samplesPerCall;
+
+///【字段含义】回调数据读写模式
+///【推荐取值】TRTCAudioFrameOperationModeReadOnly：仅从回调中获取音频数据。可设定的模式有 TRTCAudioFrameOperationModeReadOnly，TRTCAudioFrameOperationModeReadWrite。
+@property(nonatomic, assign) TRTCAudioFrameOperationMode mode;
 
 @end
 

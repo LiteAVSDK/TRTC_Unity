@@ -565,6 +565,23 @@ enum TRTCAudioFrameFormat {
 
 };
 
+/**
+ * 3.9 音频回调数据读写模式
+ *
+ * TRTC 提供了两种音频回调数据的操作模式。
+ * - 读写模式（ReadWrite）：可以获取并修改回调的音频数据，默认模式。
+ * - 只读模式（ReadOnly）：仅从回调中获取音频数据。
+ */
+enum TRTCAudioFrameOperationMode {
+
+    ///读写模式：可以获取并修改回调的音频数据。
+    TRTCAudioFrameOperationModeReadWrite = 0,
+
+    ///只读模式：仅从回调中获取音频数据。
+    TRTCAudioFrameOperationModeReadOnly = 1,
+
+};
+
 /////////////////////////////////////////////////////////////////////////////////
 //
 //                      更多枚举值定义
@@ -1178,6 +1195,10 @@ struct TRTCMixUser {
     ///【特别说明】水印图和占位图暂时不支持设置 renderMode，默认强制拉伸处理
     uint32_t renderMode;
 
+    ///【字段含义】该路音频参与混音时的音量等级（取值范围：0 - 100）。
+    ///【默认取值】默认值：100。
+    uint32_t soundLevel;
+
     ///【字段含义】占位图或水印图
     ///   - 占位图是指当对应 userId 混流内容为纯音频时，混合后的画面中显示的是占位图片。
     ///   - 水印图是指一张贴在混合后画面中的半透明图片，这张图片会一直覆盖于混合后的画面上。
@@ -1193,7 +1214,7 @@ struct TRTCMixUser {
     ///   - image 仅在 inputType 为 TRTCMixInputTypePureAudio 或者 TRTCMixInputTypeWatermark 时才生效。
     const char *image;
 
-    TRTCMixUser() : userId(nullptr), roomId(nullptr), rect(), zOrder(0), streamType(TRTCVideoStreamTypeBig), pureAudio(false), inputType(TRTCMixInputTypeUndefined), renderMode(0), image(nullptr) {
+    TRTCMixUser() : userId(nullptr), roomId(nullptr), rect(), zOrder(0), streamType(TRTCVideoStreamTypeBig), pureAudio(false), inputType(TRTCMixInputTypeUndefined), renderMode(0), soundLevel(100), image(nullptr) {
         rect.left = 0;
         rect.top = 0;
         rect.right = 0;
@@ -1455,7 +1476,11 @@ struct TRTCAudioFrameCallbackFormat {
     ///【推荐取值】取值必须是 sampleRate/100 的整数倍。
     int samplesPerCall;
 
-    TRTCAudioFrameCallbackFormat() : sampleRate(0), channel(0), samplesPerCall(0) {
+    ///【字段含义】回调数据读写模式
+    ///【推荐取值】TRTCAudioFrameOperationModeReadOnly：仅从回调中获取音频数据。可设定的模式有 TRTCAudioFrameOperationModeReadOnly，TRTCAudioFrameOperationModeReadWrite。
+    TRTCAudioFrameOperationMode mode;
+
+    TRTCAudioFrameCallbackFormat() : sampleRate(0), channel(0), samplesPerCall(0), mode(TRTCAudioFrameOperationModeReadWrite) {
     }
 };
 

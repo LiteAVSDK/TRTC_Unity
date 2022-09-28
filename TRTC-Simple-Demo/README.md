@@ -20,9 +20,9 @@ The demo includes the following features:
 ## Directions
 [](id:step1)
 ### Step 1. Create an application
-1. Log in to the TRTC console and select **Development Assistance** > **[Demo Quick Run](https://console.cloud.tencent.com/trtc/quickstart)**.
+1. Log in to the TRTC console and select **Development Assistance** > **[Create application](https://console.tencentcloud.com/trtc/app/create)**.
 2. Enter an application name such as `TestTRTC` and click **Create**.
-![](https://main.qcloudimg.com/raw/7178fb5203b8c1ad9eb4a3b7a3c008d7.png)
+![ #900px](https://qcloudimg.tencent-cloud.cn/raw/51c73a617e69a76ed26e6f74b0071ec9.png)
 
 [](id:step2)
 ### Step 2. Download the SDK and source code
@@ -33,7 +33,8 @@ The demo includes the following features:
 4. Set parameters in `GenerateTestUserSig.cs` as follows:
   <ul><li>SDKAPPID: `0` by default. Set it to the actual `SDKAppID`.</li>
   <li>SECRETKEY: left empty by default. Set it to the actual key.</li></ul> 
-	<img src="https://main.qcloudimg.com/raw/4dad4541a4a0d400441e9cd75c07ba1e.png"/>
+
+![ #900px](https://qcloudimg.tencent-cloud.cn/raw/429ae90ac533b37c0036bebdc38d0488/TRTC-create-application-sdkAppId.png)
 
 [](id:step3)
 ### Step 3. Compile and run

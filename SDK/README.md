@@ -23,7 +23,7 @@ This document describes how to quickly integrate TRTC SDK for Unity into your pr
 ![](https://imgcache.qq.com/operation/dianshi/other/link.743c57b230fa1be24a2226b6cd1c99378eca81ca.png)
 4. If you use TRTC SDK v9.6 or a later version, you need to manually add the dynamic libraries.
 Click General, expand Frameworks, Libraries, and Embedded Content, and click the + icon at the bottom to add the dynamic libraries required by TXLiteAVSDK_TRTC.framework: TXFFmpeg.xcframework and TXSoundTouch.xcframework. Click Embed & Sign.(Unity-iPhone/UnityFramework both need to add). [Download addresses of two dynamic libraries](https://liteav.sdk.qcloud.com/download/latest/TXLiteAVSDK_TRTC_iOS_latest.zip)
-![](https://qcloudimg.tencent-cloud.cn/raw/a159c5fb799cf50611387bdae7275863.png)
+![](https://imgcache.qq.com/operation/dianshi/other/unity.ca7b6e717bf7b34e4f08a7e688ff59bf49d92217.png)
 5. Click 'Other Linker Flags item' to expand，add `-ObjC`
 ![](https://imgcache.qq.com/operation/dianshi/other/8.6-objc.e0df060a638c1056fc07d1cb51c303a9de5b542f.png)
 6. Error prompt `You must rebuild it with bitcode enabled (Xcode setting ENABLE_BITCODE)`

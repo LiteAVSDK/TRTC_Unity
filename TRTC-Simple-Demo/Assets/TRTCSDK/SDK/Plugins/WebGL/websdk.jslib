@@ -515,14 +515,18 @@ mergeInto(LibraryManager.library, {
   TRTCUnityGetCurrentDevice: function (instance, type, returnData, returnSize) {
     TRTCUnityGetCurrentDevice(type);
   },
-  TRTCUnityEnable3DSpatialAudioEffect(instance, enable) {},
-  TRTCUnityUpdateSelf3DSpatialPosition(
+  TRTCUnityEnable3DSpatialAudioEffect: function (instance, enable) {},
+  TRTCUnityUpdateSelf3DSpatialPosition: function (
     instance,
     position,
     axisForward,
     axisRight,
     axisUp
   ) {},
-  TRTCUnitySet3DSpatialReceivingRange(instance, userId, range) {},
-  TRTCUnityUpdateRemote3DSpatialPosition(instance, userId, position) {},
+  TRTCUnitySet3DSpatialReceivingRange: function (instance, userId, range) {},
+  TRTCUnityUpdateRemote3DSpatialPosition: function (
+    instance,
+    userId,
+    position
+  ) {},
 });

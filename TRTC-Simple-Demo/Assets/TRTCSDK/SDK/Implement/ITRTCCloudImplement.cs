@@ -333,7 +333,7 @@ namespace trtc
         /////////////////////////////////////////////////////////////////////////////////
         public override void startScreenCapture(TRTCVideoStreamType type, ref TRTCVideoEncParam param)
         {
-            #if UNITY_STANDALONE_WIN || UNITY_ANDROID || UNITY_IOS
+            #if UNITY_STANDALONE_WIN || UNITY_ANDROID || UNITY_IOS || UNITY_STANDALONE_OSX
             ITRTCCloudNative.TRTCUnityStartScreenCapture(mNativeObj, (int)type, (int)param.videoResolution, (int)param.resMode,
                 param.videoFps, param.videoBitrate, param.minVideoBitrate, param.enableAdjustRes);
             #endif
@@ -341,28 +341,28 @@ namespace trtc
 
         public override void stopScreenCapture()
         {
-            #if UNITY_STANDALONE_WIN || UNITY_ANDROID || UNITY_IOS
+            #if UNITY_STANDALONE_WIN || UNITY_ANDROID || UNITY_IOS || UNITY_STANDALONE_OSX
             ITRTCCloudNative.TRTCUnityStopScreenCapture(mNativeObj);
             #endif
         }
 
         public override void pauseScreenCapture()
         {
-            #if UNITY_STANDALONE_WIN || UNITY_ANDROID || UNITY_IOS
+            #if UNITY_STANDALONE_WIN || UNITY_ANDROID || UNITY_IOS || UNITY_STANDALONE_OSX
             ITRTCCloudNative.TRTCUnityPauseScreenCapture(mNativeObj);
             #endif
         }
 
         public override void resumeScreenCapture()
         {
-            #if UNITY_STANDALONE_WIN || UNITY_ANDROID || UNITY_IOS
+            #if UNITY_STANDALONE_WIN || UNITY_ANDROID || UNITY_IOS || UNITY_STANDALONE_OSX
             ITRTCCloudNative.TRTCUnityResumeScreenCapture(mNativeObj);
             #endif
         }
 
         public override TRTCScreenCaptureSourceInfo[] getScreenCaptureSources(int thumbnailWidth, int thumbnailHeight)
         {
-#if UNITY_STANDALONE_WIN
+#if UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX
             int count = ITRTCCloudNative.TRTCUnityGetScreenCaptureSourceCount(mNativeObj, thumbnailWidth, thumbnailHeight);
             // Debug.LogFormat("TRTCUnityGetScreenCaptureSourceCount count={0}", count);
             TRTCScreenCaptureSourceInfo[] sourceInfoLists = new TRTCScreenCaptureSourceInfo[count];

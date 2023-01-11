@@ -54,7 +54,7 @@
 		</data>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/TXLiteAVCode.h</key>
 		<data>
-		Q3TywA6BMc6+t7JVmWz6t+9hsFY=
+		69/ki+mtYUZeEpGm6++xtP6cfa0=
 		</data>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/TXLiteAVEncodedDataProcessingListener.h</key>
 		<data>
@@ -78,7 +78,7 @@
 		</data>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/TXLivePlayListener.h</key>
 		<data>
-		KliUkJeFBWC2oMuO2jFdwtcuay0=
+		Zg6L9vwtWLBS6OdKYzQhye/CNhQ=
 		</data>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/TXLivePlayer.h</key>
 		<data>
@@ -98,7 +98,7 @@
 		</data>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/TXLiveSDKTypeDef.h</key>
 		<data>
-		rjtBq/wu3BPgTuGmY1iDpDR4aWA=
+		jD6XsGBq/OgizHqgNtPvV2Yv9Eo=
 		</data>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/TXPlayerAuthParams.h</key>
 		<data>
@@ -174,7 +174,7 @@
 		</data>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/cpp_interface/TXLiteAVCode.h</key>
 		<data>
-		Q3TywA6BMc6+t7JVmWz6t+9hsFY=
+		69/ki+mtYUZeEpGm6++xtP6cfa0=
 		</data>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/cpp_interface/V2TXLiveCode.hpp</key>
 		<data>
@@ -377,7 +377,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			+ODmFVlQQjrnV9PaMucwEVTiJJwFhJRjhMb+huHXomw=
+			Nj6TEvRGzLwY5qKq+4Su0j+rqOnzMNUAJ5BdeWoIuOo=
 			</data>
 		</dict>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/TXLiteAVEncodedDataProcessingListener.h</key>
@@ -419,7 +419,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			XZebBy+1DE8KwjWI/vEwt3+OLrCcVojbHlD+DXjW8j8=
+			5yssD3znwUcivivo4yBejjuUjMkkVjcj4OcC04LBenw=
 			</data>
 		</dict>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/TXLivePlayer.h</key>
@@ -454,7 +454,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			vwnIaPW1FN7RXeB0CqtD+2sAJ5MdTXEw+csvl35saMU=
+			u4InUFCz6lUwPMTPzHpUvdvvMgGY1kAqRFnMnXGOBB4=
 			</data>
 		</dict>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/TXPlayerAuthParams.h</key>
@@ -587,7 +587,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			+ODmFVlQQjrnV9PaMucwEVTiJJwFhJRjhMb+huHXomw=
+			Nj6TEvRGzLwY5qKq+4Su0j+rqOnzMNUAJ5BdeWoIuOo=
 			</data>
 		</dict>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/cpp_interface/V2TXLiveCode.hpp</key>

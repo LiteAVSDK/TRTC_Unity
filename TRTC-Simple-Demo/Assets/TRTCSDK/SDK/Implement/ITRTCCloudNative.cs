@@ -416,7 +416,7 @@ namespace trtc
         public static extern void TRTCUnityResumeScreenCapture(IntPtr instance);
         [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]
         public static extern int TRTCUnityGetScreenCaptureSourceCount(IntPtr instance, int thumbnail_width, int thumbnail_height);
-#if UNITY_STANDALONE_WIN
+#if UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX
         [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr TRTCUnityGetScreenCaptureSourceInfo(IntPtr instance, int index,
             IntPtr type, StringBuilder source_name, int source_name_size, IntPtr is_main_screen, byte[] image_buffer, IntPtr image_length, int thumbnail_width, int thumbnail_height);

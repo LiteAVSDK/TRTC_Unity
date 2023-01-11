@@ -160,6 +160,11 @@
 - (V2TXLiveCode)switchStream:(NSString *)newUrl;
 
 /**
+ * 获取码流信息
+ */
+- (NSArray<V2TXLiveStreamInfo *> *)getStreamList;
+
+/**
  * 启用播放音量大小提示。
  *
  * 开启后可以在 {@link onPlayoutVolumeUpdate} 回调中获取到 SDK 对音量大小值的评估。

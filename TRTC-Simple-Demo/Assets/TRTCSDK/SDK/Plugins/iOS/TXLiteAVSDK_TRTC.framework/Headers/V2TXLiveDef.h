@@ -383,6 +383,30 @@ LITEAV_EXPORT @interface V2TXLivePlayerStatistics : NSObject
 /// 【字段含义】音频码率（Kbps）
 @property(nonatomic, assign) NSUInteger audioBitrate;
 
+/// 【字段含义】网络音频丢包率（％），注：仅支持前缀为 [trtc://] 或 [webrtc://] 的播放地址
+@property(nonatomic, assign) NSUInteger audioPacketLoss;
+
+/// 【字段含义】网络视频丢包率（％），注：仅支持前缀为 [trtc://] 或 [webrtc://] 的播放地址
+@property(nonatomic, assign) NSUInteger videoPacketLoss;
+
+/// 【字段含义】播放延迟（ms）
+@property(nonatomic, assign) NSUInteger jitterBufferDelay;
+
+/// 【字段含义】音频播放的累计卡顿时长（ms）
+@property(nonatomic, assign) NSUInteger audioTotalBlockTime;
+
+/// 【字段含义】音频播放卡顿率，单位（％）
+@property(nonatomic, assign) NSUInteger audioBlockRate;
+
+/// 【字段含义】视频播放的累计卡顿时长（ms）
+@property(nonatomic, assign) NSUInteger videoTotalBlockTime;
+
+/// 【字段含义】视频播放卡顿率，单位（％）
+@property(nonatomic, assign) NSUInteger videoBlockRate;
+
+/// 【字段含义】从 SDK 到云端的往返延时（ms），注：仅支持前缀为 [trtc://] 或 [webrtc://] 的播放地址
+@property(nonatomic, assign) NSUInteger rtt;
+
 @end
 /// @}
 
@@ -595,6 +619,23 @@ LITEAV_EXPORT @interface V2TXLiveLogConfig : NSObject
 /// 【字段含义】设置本地 Log 的存储目录，默认 Log 存储位置：
 ///  iOS & Mac: sandbox Documents/log
 @property(nonatomic, copy, nullable) NSString *logPath;
+
+@end
+/// @}
+
+/**
+ * 支持自适应切换的码流信息
+ */
+LITEAV_EXPORT @interface V2TXLiveStreamInfo : NSObject
+
+///**字段含义** 视频宽, 默认值：0, 表示未知
+@property(nonatomic, assign) int width;
+
+///**字段含义** 视频高, 默认值：0, 表示未知
+@property(nonatomic, assign) int height;
+
+///**字段含义** 流地址，通过 SwitchStream 接口调用实现多码率质量切换
+@property(nonatomic, copy, nullable) NSString *url;
 
 @end
 /// @}

@@ -272,7 +272,19 @@ class ITRTCCloudCallback {
     }
 
     /**
-     * 3.11 用户视频大小发生改变回调
+     * 3.11 远端音频状态变化的事件回调
+     *
+     * 您可以通过此事件回调获取远端每一路音频的播放状态（包括 Playing、Loading 和 Stopped 三种状态），从而进行相应的 UI 展示。
+     * @param userId 用户标识。
+     * @param status 音频状态：包括 Playing、Loading 和 Stopped 三种状态。
+     * @param reason 音频状态改变的原因。
+     * @param extrainfo 额外信息。
+     */
+    virtual void onRemoteAudioStatusUpdated(const char* userId, TRTCAVStatusType status, TRTCAVStatusChangeReason reason, void* extrainfo) {
+    }
+
+    /**
+     * 3.12 用户视频大小发生改变回调
      *
      * 当您收到 onUserVideoSizeChanged(userId, streamtype, newWidth, newHeight) 通知时，表示该路画面大小发生了调整，调整的原因可能是该用户调用了 setVideoEncoderParam 或者 setSubStreamEncoderParam 重新设置了画面尺寸。
      * @param userId 用户标识

@@ -187,10 +187,10 @@ namespace trtc
             ITRTCCloudNative.TRTCUnitySetNetworkQosParam(mNativeObj, (int)param.preference, (int)param.controlMode);
         }
 
-        // public override void setVideoEncoderRotation(TRTCVideoRotation rotation)
-        // {
-        //     ITRTCCloudNative.TRTCUnitySetVideoEncoderRotation(mNativeObj,(int)rotation);
-        // }
+        public override void setVideoEncoderRotation(TRTCVideoRotation rotation)
+        {
+            ITRTCCloudNative.TRTCUnitySetVideoEncoderRotation(mNativeObj,(int)rotation);
+        }
         public override void setVideoEncoderMirror(bool mirror)
         {
             //Windows doesn't support it at the moment
@@ -705,7 +705,6 @@ namespace trtc
 
         ~ITRTCCloudImplement()
         {
-            Debug.LogFormat("~ITRTCCloudImplement");
             Destroy();
         }
 

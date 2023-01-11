@@ -1348,6 +1348,12 @@ namespace trtc
         ///     - If you have set `pureAudio` to `YES`, set this parameter to `TRTCMixInputTypeUndefined`.
         /// </summary>
         public TRTCMixInputType inputType;
+
+        public UInt32 renderMode;
+
+        public UInt32 soundLevel;
+
+        public string image;
     }
 
     /// <summary>

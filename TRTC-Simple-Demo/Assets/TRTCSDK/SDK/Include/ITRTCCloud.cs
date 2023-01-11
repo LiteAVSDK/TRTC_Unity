@@ -378,6 +378,14 @@ namespace trtc
         public abstract void setNetworkQosParam(ref TRTCNetworkQosParam param);
 
         /// <summary>
+        /// Set video orientation of the video encoder output
+        /// <remarks>
+        /// This setting does not affect the preview orientation of the local video, but will affect the orientation of the video viewed by other users in the room (and cloud recordings).
+        /// </remarks>
+        /// <param name="rotation">Currently supports two rotation angles of 0 and 180. 0 (default): no rotation</param>
+        public abstract void setVideoEncoderRotation(TRTCVideoRotation rotation);
+
+        /// <summary>
         /// Set the mirror mode of encoded video (not supported on Windows)
         /// </summary>
         /// <remarks>

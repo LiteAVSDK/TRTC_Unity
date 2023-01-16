@@ -27,6 +27,6 @@ Assets/TRTCSDK/SDK/Include/obj/xdoc/cache
 *.VC.db
 *.log
 x64/
-x86/
+# x86/
 *.DS_Store
 *.apk

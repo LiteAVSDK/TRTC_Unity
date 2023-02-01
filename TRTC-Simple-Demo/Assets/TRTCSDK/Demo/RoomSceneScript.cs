@@ -93,7 +93,7 @@ namespace TRTCCUnityDemo
 
             string version = mTRTCCloud.getSDKVersion();
             LogManager.Log("trtc sdk version is : " + version);
-            
+
             mTRTCCloud.callExperimentalAPI("{\"api\": \"setGSensorMode\", \"params\": {\"StreamType\": 1, \"gSensorMode\": 2}}");
 
             TRTCParams trtcParams = new TRTCParams();
@@ -240,19 +240,12 @@ namespace TRTCCUnityDemo
             DataManager.GetInstance().muteLocalAudio = value;
         }
 
-        void OnToggleMuteRemoteAudio(bool value)
-        {
-            LogManager.Log("OnToggleMuteRemoteAudio: " + value);
-            mTRTCCloud.muteAllRemoteAudio(value);
-        }
-
         void OnToggleCamera(bool value)
         {
             LogManager.Log("OnToggleCamera: " + value);
             if (value)
             {
                 mTRTCCloud.startLocalPreview(true, null);
-
                 userTableView.UpdateVideoAvailable("", TRTCVideoStreamType.TRTCVideoStreamTypeBig, true);
             }
             else
@@ -263,16 +256,17 @@ namespace TRTCCUnityDemo
             DataManager.GetInstance().captureVideo = value;
         }
 
+        void OnToggleMuteRemoteAudio(bool value)
+        {
+            LogManager.Log("OnToggleMuteRemoteAudio: " + value);
+            mTRTCCloud.muteAllRemoteAudio(value);
+        }
+
         void OnToggleMuteLocalVideo(bool value)
         {
             LogManager.Log("OnToggleMuteLocalVideo: " + value);
             mTRTCCloud.muteLocalVideo(value);
             DataManager.GetInstance().muteLocalVideo = value;
-            // if(value) {
-            //     mTRTCCloud.getDeviceManager().GetDevicesList(TXMediaDeviceType.TXMediaDeviceTypeMic);
-            // } else {
-            //     mTRTCCloud.getDeviceManager().GetDevicesList(TXMediaDeviceType.TXMediaDeviceTypeSpeaker);
-            // }
         }
 
         void OnToggleMuteRemoteVideo(bool value)
@@ -334,7 +328,11 @@ namespace TRTCCUnityDemo
             mixUsersArray[0].rect.top = 0;
             mixUsersArray[0].rect.right = 360;
             mixUsersArray[0].rect.bottom = 640;
+            mixUsersArray[0].renderMode = 0;
+            mixUsersArray[0].soundLevel = 100;
+            mixUsersArray[0].image = "";
 
+            /*
             mixUsersArray[1].userId = "110";
             mixUsersArray[1].zOrder = 5;
             mixUsersArray[1].streamType = 0;
@@ -343,9 +341,10 @@ namespace TRTCCUnityDemo
             mixUsersArray[1].rect.right = 100; //For reference only
             mixUsersArray[1].rect.bottom = 100; //For reference only
             mixUsersArray[1].roomId = DataManager.GetInstance().GetRoomID(); // Local users do not need to fill in roomid, remote users need to
+            */
 
             transcodingConfig.mixUsersArray = mixUsersArray;
-            transcodingConfig.mixUsersArraySize = 2;
+            transcodingConfig.mixUsersArraySize = 1;
             if(value)
                 mTRTCCloud.setMixTranscodingConfig(transcodingConfig);
             else
@@ -434,13 +433,16 @@ namespace TRTCCUnityDemo
                     videoBitrate = 1600,
                     minVideoBitrate = 1000
                 };
-                #if UNITY_STANDALONE_WIN
+                #if UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
                     int thumbnailWidth = 100;
                     int thumbnailHeight = 60;
                     TRTCScreenCaptureSourceInfo[] sources = mTRTCCloud.getScreenCaptureSources(thumbnailWidth, thumbnailHeight);
                     if (sources.Length > 0)
                     {
-                        // LogManager.Log(String.Format("getScreenCaptureSources {0}, {1}, {2}, {3}, {4}", sources.Length, sources[0].thumbBGRA.length, sources[0].thumbBGRA.width, sources[0].thumbBGRA.height, sources[0].sourceName));
+                        for (int i = 0; i < sources.Length; ++i) {
+                            // LogManager.Log(String.Format("item {0}, {1}, {2}", sources.Length, sources[i].sourceId, sources[i].sourceName));
+                            Debug.LogFormat("item id={0}, name={1}", sources[i].sourceId, sources[i].sourceName);
+                        }
                         mTRTCCloud.selectScreenCaptureTarget(sources[0], new Rect(0, 0, 0, 0), new TRTCScreenCaptureProperty());
                         mTRTCCloud.startScreenCapture(TRTCVideoStreamType.TRTCVideoStreamTypeSub, ref videoEncParam);
                         userTableView.AddUser("", TRTCVideoStreamType.TRTCVideoStreamTypeSub);
@@ -455,10 +457,8 @@ namespace TRTCCUnityDemo
             }
             else
             {
-                #if UNITY_STANDALONE_WIN || UNITY_ANDROID || UNITY_IOS
                 mTRTCCloud.stopScreenCapture();
-                #endif
-                #if UNITY_STANDALONE_WIN
+                #if UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
                 userTableView.UpdateVideoAvailable("", TRTCVideoStreamType.TRTCVideoStreamTypeSub, false);
                 userTableView.RemoveUser("", TRTCVideoStreamType.TRTCVideoStreamTypeSub);
                 #endif

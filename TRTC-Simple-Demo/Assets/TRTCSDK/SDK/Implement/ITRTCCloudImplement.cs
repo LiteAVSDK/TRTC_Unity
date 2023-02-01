@@ -41,6 +41,13 @@ namespace trtc
             #if PLATFORM_ANDROID
                 localUserId = param.userId;
             #endif
+            #if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
+            if(param.sdkAppId.ToString().StartsWith("2")) {
+                ITRTCCloudNative.TRTCUnityCallExperimentalAPI(mNativeObj, "{\"api\":\"setNetEnv\", \"params\": {\"env\":5}}");
+            } else {
+                ITRTCCloudNative.TRTCUnityCallExperimentalAPI(mNativeObj, "{\"api\":\"setNetEnv\", \"params\": {\"env\":0}}");
+            }
+            #endif
             ITRTCCloudNative.TRTCUnityEnterRoom(mNativeObj, param.sdkAppId, param.userId, param.userSig, param.roomId, param.strRoomId, (int)param.role,
                 param.streamId, param.userDefineRecordId, param.privateMapKey, param.businessInfo, (int)scene);
         }
@@ -194,7 +201,7 @@ namespace trtc
         public override void setVideoEncoderMirror(bool mirror)
         {
             //Windows doesn't support it at the moment
-            #if UNITY_ANDROID || UNITY_IOS || UNITY_STANDALONE_OSX
+            #if UNITY_ANDROID || UNITY_IOS || UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
             ITRTCCloudNative.TRTCUnitySetVideoEncoderMirror(mNativeObj,mirror);
             #endif
         }
@@ -316,7 +323,7 @@ namespace trtc
         public override void setBeautyStyle(TRTCBeautyStyle style, uint beauty, uint white, uint ruddiness)
         {
             //Windows doesn't support it at the moment
-            #if UNITY_ANDROID || UNITY_IOS || UNITY_STANDALONE_OSX
+            #if UNITY_ANDROID || UNITY_IOS || UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
             ITRTCCloudNative.TRTCUnitySetBeautyStyle(mNativeObj, (int)style,(int) beauty, (int)white, (int)ruddiness);
             #endif
         }
@@ -333,36 +340,28 @@ namespace trtc
         /////////////////////////////////////////////////////////////////////////////////
         public override void startScreenCapture(TRTCVideoStreamType type, ref TRTCVideoEncParam param)
         {
-            #if UNITY_STANDALONE_WIN || UNITY_ANDROID || UNITY_IOS || UNITY_STANDALONE_OSX
             ITRTCCloudNative.TRTCUnityStartScreenCapture(mNativeObj, (int)type, (int)param.videoResolution, (int)param.resMode,
                 param.videoFps, param.videoBitrate, param.minVideoBitrate, param.enableAdjustRes);
-            #endif
         }
 
         public override void stopScreenCapture()
         {
-            #if UNITY_STANDALONE_WIN || UNITY_ANDROID || UNITY_IOS || UNITY_STANDALONE_OSX
             ITRTCCloudNative.TRTCUnityStopScreenCapture(mNativeObj);
-            #endif
         }
 
         public override void pauseScreenCapture()
         {
-            #if UNITY_STANDALONE_WIN || UNITY_ANDROID || UNITY_IOS || UNITY_STANDALONE_OSX
             ITRTCCloudNative.TRTCUnityPauseScreenCapture(mNativeObj);
-            #endif
         }
 
         public override void resumeScreenCapture()
         {
-            #if UNITY_STANDALONE_WIN || UNITY_ANDROID || UNITY_IOS || UNITY_STANDALONE_OSX
             ITRTCCloudNative.TRTCUnityResumeScreenCapture(mNativeObj);
-            #endif
         }
 
         public override TRTCScreenCaptureSourceInfo[] getScreenCaptureSources(int thumbnailWidth, int thumbnailHeight)
         {
-#if UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX
+        #if UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
             int count = ITRTCCloudNative.TRTCUnityGetScreenCaptureSourceCount(mNativeObj, thumbnailWidth, thumbnailHeight);
             // Debug.LogFormat("TRTCUnityGetScreenCaptureSourceCount count={0}", count);
             TRTCScreenCaptureSourceInfo[] sourceInfoLists = new TRTCScreenCaptureSourceInfo[count];
@@ -599,9 +598,7 @@ namespace trtc
         public override ITXDeviceManager getDeviceManager()
         {
             IntPtr mDeviceManagerNativeObj = IntPtr.Zero;
-#if UNITY_ANDROID || UNITY_IOS || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN
             mDeviceManagerNativeObj = ITRTCCloudNative.TRTCUnityGetDeviceManager(mNativeObj);
-            #endif
             ITXDeviceManager tXDeviceManager = new ITXDeviceManagerImplement(mDeviceManagerNativeObj);
             return tXDeviceManager;
         }
@@ -609,9 +606,7 @@ namespace trtc
         public override ITXAudioEffectManager getAudioEffectManager()
         {
             IntPtr mAudioEffectManagerNativeObj = IntPtr.Zero;
-#if UNITY_ANDROID || UNITY_IOS || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN
             mAudioEffectManagerNativeObj = ITRTCCloudNative.TRTCUnityGetAudioEffectManager(mNativeObj);
-            #endif
             ITXAudioEffectManager tXAudioEffectManager = new ITXAudioEffectManagerImplement(mAudioEffectManagerNativeObj);
             return tXAudioEffectManager;
         }

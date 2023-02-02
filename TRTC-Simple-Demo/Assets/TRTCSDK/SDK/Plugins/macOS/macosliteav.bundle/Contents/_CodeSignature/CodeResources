@@ -10,15 +10,15 @@
 		</data>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/TRTCCloud.h</key>
 		<data>
-		hLlMHLiqPQOUrKUYJezBt4zZp0Y=
+		98X0hl9r5wyU2Y1mYYOBDx9e9Lo=
 		</data>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/TRTCCloudDef.h</key>
 		<data>
-		wCD0ANiwEwFW3aZ1tohyVKvV05s=
+		oNatvx2+lJzUeqDOFy73wQlCTws=
 		</data>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/TRTCCloudDelegate.h</key>
 		<data>
-		DOXAjU4VSEYJU93OCCfLKa4FFT8=
+		VrzhS15iSbVejHwrciGeBVt1mrM=
 		</data>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/TRTCStatistics.h</key>
 		<data>
@@ -30,7 +30,7 @@
 		</data>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/TXAudioEffectManager.h</key>
 		<data>
-		FDHQzVLf6Gq4m13510ouNsqu6pc=
+		iGZOrQF2tpJIQ7N/dQI/85bMdWs=
 		</data>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/TXAudioRawDataDelegate.h</key>
 		<data>
@@ -46,7 +46,7 @@
 		</data>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/TXDeviceManager.h</key>
 		<data>
-		RMLyfP5mQg+mglXAK1p3+V28kdw=
+		dlSmUobeD1mk9HKg+pDsZXIhGSA=
 		</data>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/TXLiteAVBuffer.h</key>
 		<data>
@@ -54,7 +54,7 @@
 		</data>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/TXLiteAVCode.h</key>
 		<data>
-		69/ki+mtYUZeEpGm6++xtP6cfa0=
+		Q3TywA6BMc6+t7JVmWz6t+9hsFY=
 		</data>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/TXLiteAVEncodedDataProcessingListener.h</key>
 		<data>
@@ -78,7 +78,7 @@
 		</data>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/TXLivePlayListener.h</key>
 		<data>
-		Zg6L9vwtWLBS6OdKYzQhye/CNhQ=
+		KliUkJeFBWC2oMuO2jFdwtcuay0=
 		</data>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/TXLivePlayer.h</key>
 		<data>
@@ -98,7 +98,7 @@
 		</data>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/TXLiveSDKTypeDef.h</key>
 		<data>
-		jD6XsGBq/OgizHqgNtPvV2Yv9Eo=
+		rjtBq/wu3BPgTuGmY1iDpDR4aWA=
 		</data>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/TXPlayerAuthParams.h</key>
 		<data>
@@ -142,7 +142,7 @@
 		</data>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/V2TXLivePusher.h</key>
 		<data>
-		vsAGsmj07SizOzUB5GxPpHbKXD4=
+		dPZodZVIMBtuQSO8UV4qhC5QifY=
 		</data>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/V2TXLivePusherObserver.h</key>
 		<data>
@@ -150,31 +150,31 @@
 		</data>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/cpp_interface/ITRTCCloud.h</key>
 		<data>
-		4b5fFyuHmHWalstSP0u2r0y280U=
+		RuEV4qus5r8ATZVeo8hqv8WdB10=
 		</data>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/cpp_interface/ITRTCStatistics.h</key>
 		<data>
-		B0Dk7ovnxeU+dgJxdZ1aAwwg2TI=
+		KVcMpKFx9Y842uPkndVJDv8sy9E=
 		</data>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/cpp_interface/ITXAudioEffectManager.h</key>
 		<data>
-		/00gA5cedCq5y7qsSveLmHCmpFk=
+		K1UaBn5fLPHdc+HsvTbOnwBRTDE=
 		</data>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/cpp_interface/ITXDeviceManager.h</key>
 		<data>
-		Q5d8+hOAR+Ai6p2B+r+p8zR1KcY=
+		TgndOf0CqbaEnVdja6nGz9cEPbo=
 		</data>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/cpp_interface/TRTCCloudCallback.h</key>
 		<data>
-		LUj84K5JYv4CXCsX7UG4nxnC0aE=
+		yybUwc++SlIvTwmAgOEfGSm7eIE=
 		</data>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/cpp_interface/TRTCTypeDef.h</key>
 		<data>
-		EZUPmte953bgYHnmJGUMkik8LFU=
+		NJafAYNanzrChsFvaJJTS3x+9Eo=
 		</data>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/cpp_interface/TXLiteAVCode.h</key>
 		<data>
-		69/ki+mtYUZeEpGm6++xtP6cfa0=
+		Q3TywA6BMc6+t7JVmWz6t+9hsFY=
 		</data>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/cpp_interface/V2TXLiveCode.hpp</key>
 		<data>
@@ -186,7 +186,7 @@
 		</data>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/cpp_interface/V2TXLivePlayer.hpp</key>
 		<data>
-		77ItY7srtxdvoH+/9GxYwJgdW3s=
+		F9TjsMxiweMfXB18lXCZ/eTpEm0=
 		</data>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/cpp_interface/V2TXLivePlayerObserver.hpp</key>
 		<data>
@@ -198,7 +198,7 @@
 		</data>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/cpp_interface/V2TXLivePusher.hpp</key>
 		<data>
-		c90v1G8Z1ld1L90/7PMscbYiiaw=
+		KNew5tWbttqkRjur/r10xkvgwA0=
 		</data>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/cpp_interface/V2TXLivePusherObserver.hpp</key>
 		<data>
@@ -226,15 +226,15 @@
 		</data>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Resources/Info.plist</key>
 		<data>
-		z2nxRNCFGj4qCEwC2mXZS6JG6gw=
+		DVrR5/pzt8UEF338J0nT6q3Zklk=
 		</data>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/TXLiteAVSDK_TRTC_Mac</key>
 		<data>
-		o3TPze33xsIOVZoonhUgPR8pFSE=
+		slXR2hZSVyeSNx4suDGTq/sQd7E=
 		</data>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/_CodeSignature/CodeDirectory</key>
 		<data>
-		PdXHb/gZhWcBFHKnmdTOMU1qQJ0=
+		a5zaOjgSkZMbEq0zrP5Mz6ZBq7I=
 		</data>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/_CodeSignature/CodeRequirements</key>
 		<data>
@@ -242,11 +242,11 @@
 		</data>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/_CodeSignature/CodeRequirements-1</key>
 		<data>
-		5ecv4qacd5IA51H7srvc2Xm2WP0=
+		YC86Ymzed8LUh4qK51gAgY2+zVo=
 		</data>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/_CodeSignature/CodeResources</key>
 		<data>
-		o3QNtQKrs5vBv7B5rWSQkzYMiwc=
+		jl/xlqBPvl4lT9gFeiaAvzCnOW0=
 		</data>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/_CodeSignature/CodeSignature</key>
 		<data>
@@ -255,15 +255,6 @@
 	</dict>
 	<key>files2</key>
 	<dict>
-		<key>Frameworks/TXLiteAVSDK_TRTC_Mac.framework</key>
-		<dict>
-			<key>cdhash</key>
-			<data>
-			id7WJE5NA9injaHFGSD1L4a+9ns=
-			</data>
-			<key>requirement</key>
-			<string>cdhash H"436a3db817c87fd66b1754342c299bf47b387af9" or cdhash H"89ded6244e4d03d8a78da1c51920f52f86bef67b"</string>
-		</dict>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Headers</key>
 		<dict>
 			<key>symlink</key>
@@ -300,21 +291,21 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			9Vh2wItrir9ZusuRijO8AK4u7RsP1m+1xpLc5lFFvzs=
+			xkdbadRXs8ld3Z0xLFo+2CXYKI3H2bv6yG7LheSFgtc=
 			</data>
 		</dict>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/TRTCCloudDef.h</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			SR1EqsZGyip1Csofm0ndaVZ06blvXw3cezaYdussi+s=
+			PsRUPYWaDSVEREw/xy+hMggo5rWXF6eZG17CT6oBXIg=
 			</data>
 		</dict>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/TRTCCloudDelegate.h</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			vdrkrjB4x09e3p6mz2lDFqna0fNhN2rNdrHQUR4/yyk=
+			fZ/isnssg0NpH3uWGoKeKI2tLOy+f8Dk6VBJL32siMU=
 			</data>
 		</dict>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/TRTCStatistics.h</key>
@@ -335,7 +326,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			swpuNHVnU70DXHo/hFeULLg1UhFJkYTl5gadYZ546A4=
+			nZ5n0zD68bl3aQk0+wwsZRtIIcqYJtB7l/Y1ob6ITBU=
 			</data>
 		</dict>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/TXAudioRawDataDelegate.h</key>
@@ -363,7 +354,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			lqD9fIxnmwqNapClRGibWW4te+PXwarU5hTzWcwxJkI=
+			M2P0c9aLcWhZADbnsdD05mG/D1ViFXhjLJgw8bThAnw=
 			</data>
 		</dict>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/TXLiteAVBuffer.h</key>
@@ -377,7 +368,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			Nj6TEvRGzLwY5qKq+4Su0j+rqOnzMNUAJ5BdeWoIuOo=
+			+ODmFVlQQjrnV9PaMucwEVTiJJwFhJRjhMb+huHXomw=
 			</data>
 		</dict>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/TXLiteAVEncodedDataProcessingListener.h</key>
@@ -419,7 +410,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			5yssD3znwUcivivo4yBejjuUjMkkVjcj4OcC04LBenw=
+			XZebBy+1DE8KwjWI/vEwt3+OLrCcVojbHlD+DXjW8j8=
 			</data>
 		</dict>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/TXLivePlayer.h</key>
@@ -454,7 +445,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			u4InUFCz6lUwPMTPzHpUvdvvMgGY1kAqRFnMnXGOBB4=
+			vwnIaPW1FN7RXeB0CqtD+2sAJ5MdTXEw+csvl35saMU=
 			</data>
 		</dict>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/TXPlayerAuthParams.h</key>
@@ -531,7 +522,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			576/Sl13jlP2T1JO6fIToZrC/FPnZEYYawL+R/7EZn4=
+			yF9PjDHUtLDayoH/JfwKTuni24Rfqqkb2f5J5kX+ztY=
 			</data>
 		</dict>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/V2TXLivePusherObserver.h</key>
@@ -545,49 +536,49 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			nYuDR/6FfiGMCFc66xFRzN+zLIPljN5zjMutVGAPRKw=
+			+1bVFAbCVZoMNTnmib+3+e/7ICFzzeX48nwkgfCAESA=
 			</data>
 		</dict>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/cpp_interface/ITRTCStatistics.h</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			TOjdXgUHThEq3Sdv+YW8NsxhOP2WnYlyEx8IjBtf2iA=
+			SKh4LQs9aVjm/7Vkl6yKOVSqzLzIkjz0YBJHksM77e0=
 			</data>
 		</dict>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/cpp_interface/ITXAudioEffectManager.h</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			UFa9uUs16FneIhgLLLaAQzNGITg/HH644YQlZqeQLZc=
+			SlHvWjRHjXri7YvMb1mnPntLBbMbepSN3+SmN2lKzk4=
 			</data>
 		</dict>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/cpp_interface/ITXDeviceManager.h</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			shS94cD31w+aCSnmPrOedah5HuU438A1t2PDzqcCUq8=
+			IZx9Fi97F8KwKPM9IzSeFqm3+QkmzdbKoPV1APfcjMg=
 			</data>
 		</dict>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/cpp_interface/TRTCCloudCallback.h</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			EirL6z6ob9GaCN/zC4nAU/EGB9c43kEnzNGVyUXvcDw=
+			zwOaveaXKM/lFDZsjS2T6Lp0nPacDd6iNJi9XE92mwo=
 			</data>
 		</dict>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/cpp_interface/TRTCTypeDef.h</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			AyOIGnUXiASENgHcj0a6OXfbHivxM/iO4/BL0PlX0rg=
+			mT26HHvH6pOemBnTCFGPvJUTRlrGfjCksvgMtEXTrHc=
 			</data>
 		</dict>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/cpp_interface/TXLiteAVCode.h</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			Nj6TEvRGzLwY5qKq+4Su0j+rqOnzMNUAJ5BdeWoIuOo=
+			+ODmFVlQQjrnV9PaMucwEVTiJJwFhJRjhMb+huHXomw=
 			</data>
 		</dict>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/cpp_interface/V2TXLiveCode.hpp</key>
@@ -608,7 +599,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			mIpd8QBRLObEdu/QiOIvb0RRTwmHS6SPOVU6a8BSSS4=
+			6iZy9UE4RP+MCaaxMvQLyQsFuqnSvusVBDUcqQbxsDk=
 			</data>
 		</dict>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/cpp_interface/V2TXLivePlayerObserver.hpp</key>
@@ -629,7 +620,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			q7MakXn4+vP6hb0S0vvuZjlMRcrZWW9JNjVki9gmkcA=
+			sAyNuzOvREOg31IU35AilFHrkzU/1ILXPpnqnyTgTjg=
 			</data>
 		</dict>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/Headers/cpp_interface/V2TXLivePusherObserver.hpp</key>
@@ -678,21 +669,21 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			POqr5A4ODYkTaqs8tG78uSgiWZtXHW09Uu5wD+XGzk4=
+			+HdTh6K2vTxcDnyvcZ+9VVhdlM+o1CyyzBHfQc3Ibvw=
 			</data>
 		</dict>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/TXLiteAVSDK_TRTC_Mac</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			hvvgek8m6286Q8PEUojy2XoKTDeGaT+33urDO+FtfW4=
+			ppPqY9X2WPCBgABjNR4EvwCCKcDGKqJwdAm7uNhiSXE=
 			</data>
 		</dict>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/_CodeSignature/CodeDirectory</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			tqpYA2hwLl8/NVMduO6eGAAfqsxKezJubxAzLq9c0+U=
+			34C/PAMZ0Wxxwavtt1O+uWLuaxDQJICL7LJc+ttVk+s=
 			</data>
 		</dict>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/_CodeSignature/CodeRequirements</key>
@@ -706,14 +697,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			cYpKo1usZYgq9w1Ay6x+ND9dnE1Y3Ck+ho48hfyHwP8=
+			uaADZ3esERhG8sY2kyP0oH+dF52f4USbh60RdT0KUDo=
 			</data>
 		</dict>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/_CodeSignature/CodeResources</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			uGq00bVyjU1dnQoJ4goXgpWqr7nlSvMRx5C89QqImE8=
+			pduYFTT+G80JLFYMo+/ws8uO69ceYCO3ARojjmt9U3k=
 			</data>
 		</dict>
 		<key>Resources/TXLiteAVSDK_TRTC_Mac.framework/Versions/A/_CodeSignature/CodeSignature</key>

@@ -779,7 +779,8 @@ typedef NS_ENUM(NSUInteger, TRTCRecordType) {
  */
 typedef NS_ENUM(NSUInteger, TRTCMixInputType) {
 
-    ///不指定，SDK 会根据另一个参数 pureAudio 的数值决定混流输入类型
+    ///默认值
+    ///考虑到针对老版本的兼容性，如果您指定了 inputType 为 Undefined，SDK 会根据另一个参数 pureAudio 的数值决定混流输入类型
     TRTCMixInputTypeUndefined = 0,
 
     ///混入音频和视频
@@ -790,6 +791,10 @@ typedef NS_ENUM(NSUInteger, TRTCMixInputType) {
 
     ///只混入音频
     TRTCMixInputTypePureAudio = 3,
+
+    ///混入水印
+    ///此时您无需指定 userId 字段，但需要指定 image 字段，推荐使用 png 格式的图片。
+    TRTCMixInputTypeWatermark = 4,
 
 };
 
@@ -1171,12 +1176,33 @@ typedef NS_ENUM(NSUInteger, TRTCAudioRecordingContent) {
 ///【特别说明】已废弃，推荐使用8.5版本开始新引入的字段：inputType。
 @property(nonatomic, assign) BOOL pureAudio;
 
-///【字段含义】指定该路流的混合内容（只混合音频、只混合视频、混合音频和视频），该字段是对 pureAudio 字段的升级。
-///【推荐取值】默认值：TRTCMixInputTypeUndefined，代表参考 pureAudio 的取值。
-///   - 如果您是第一次使用 TRTC，之前并没有对 pureAudio 字段进行过设置，您可以根据实际需要设置该字段，不建议您再设置 pureAudio。
-///   - 如果您之前在老版本中已经使用了 pureAudio 字段，并期望保持其设置，则可以将 inputType 设置为 TRTCMixInputTypeUndefined。
+///【字段含义】指定该路流的混合内容（只混音频、只混视频、混合音视频、混入水印）
+///【默认取值】默认值：TRTCMixInputTypeUndefined
+///【特别说明】
+///   - 当指定 inputType 为 TRTCMixInputTypeUndefined 并设置 pureAudio 为 YES 时，等效于设置 inputType 为 TRTCMixInputTypePureAudio。
+///   - 当指定 inputType 为 TRTCMixInputTypeUndefined 并设置 pureAudio 为 NO 时，等效于设置 inputType 为 TRTCMixInputTypeAudioVideo。
+///   - 当指定 inputType 为 TRTCMixInputTypeWatermark 时，您可以不指定 userId 字段，但需要指定 image 字段。
 @property(nonatomic, assign) TRTCMixInputType inputType;
 
+///【字段含义】该画面在输出时的显示模式
+///【推荐取值】默认值：视频流默认为0。0为裁剪，1为缩放，2为缩放并显示黑底。
+///【特别说明】水印图和占位图暂时不支持设置 renderMode，默认强制拉伸处理
+@property(nonatomic, assign) int renderMode;
+
+///【字段含义】占位图或水印图
+///   - 占位图是指当对应 userId 混流内容为纯音频时，混合后的画面中显示的是占位图片。
+///   - 水印图是指一张贴在混合后画面中的半透明图片，这张图片会一直覆盖于混合后的画面上。
+///   - 当指定 inputType 为 TRTCMixInputTypePureAudio 时，image 为占位图，此时需要您指定 userId。
+///   - 当指定 inputType 为 TRTCMixInputTypeWatermark 时，image 为水印图，此时不需要您指定 userId。
+///【推荐取值】默认值：空值，即不设置占位图或者水印图。
+///【特别说明】
+///   - 您可以将 image 设置为控制台中的某一个素材 ID，这需要您事先在 “[控制台](https://console.cloud.tencent.com/trtc) => 应用管理 => 功能配置 => 素材管理” 中单击 [新增图片] 按钮进行上传。
+///   - 上传成功后可以获得对应的“图片ID”，然后将“图片ID”转换成字符串类型并设置给 image 字段即可（比如假设“图片ID” 为 63，可以设置 image = @"63"）
+///   - 您也可以将 image 设置为图片的 URL 地址，腾讯云的后台服务器会将该 URL 地址指定的图片混合到最终的画面中。
+///   - URL 链接长度限制为 512 字节。图片大小限制不超过 2MB。
+///   - 图片格式支持 png、jpg、jpeg、bmp 格式，推荐使用 png 格式的半透明图片作为水印。
+///   - image 仅在 inputType 为 TRTCMixInputTypePureAudio 或者 TRTCMixInputTypeWatermark 时才生效。
+@property(nonatomic, copy, nullable) NSString *image;
 @end
 
 /**
@@ -1224,9 +1250,12 @@ typedef NS_ENUM(NSUInteger, TRTCAudioRecordingContent) {
 
 ///【字段含义】指定混合画面的背景图片
 ///【推荐取值】默认值：空值，即不设置背景图片。
-///【特别说明】背景图需要您事先在 “[控制台](https://console.cloud.tencent.com/trtc) => 应用管理 => 功能配置 => 素材管理” 中单击【新增图片】按钮进行上传。
-///           上传成功后可以获得对应的“图片ID”，然后将“图片ID”转换成字符串类型并设置到 backgroundImage 里即可。
-///           例如：假设“图片ID” 为 63，可以设置 backgroundImage = @"63";
+///【特别说明】
+///   - 您可以将 image 设置为控制台中的某一个素材 ID，这需要您事先在 “[控制台](https://console.cloud.tencent.com/trtc) => 应用管理 => 功能配置 => 素材管理” 中单击 [新增图片] 按钮进行上传。
+///   - 上传成功后可以获得对应的“图片ID”，然后将“图片ID”转换成字符串类型并设置给 image 字段即可（比如假设“图片ID” 为 63，可以设置 image = @"63"）
+///   - 您也可以将 image 设置为图片的 URL 地址，腾讯云的后台服务器会将该 URL 地址指定的图片混合到最终的画面中。
+///   - URL 链接长度限制为 512 字节。图片大小限制不超过 2MB。
+///   - 图片格式支持 png、jpg、jpeg、bmp 格式。
 @property(nonatomic, copy, nullable) NSString *backgroundImage;
 
 ///【字段含义】指定云端转码的目标音频采样率

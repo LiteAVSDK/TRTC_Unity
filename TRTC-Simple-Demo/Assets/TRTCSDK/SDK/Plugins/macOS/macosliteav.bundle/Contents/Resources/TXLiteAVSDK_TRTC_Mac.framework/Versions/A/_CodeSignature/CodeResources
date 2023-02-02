@@ -6,7 +6,7 @@
 	<dict>
 		<key>Resources/Info.plist</key>
 		<data>
-		z2nxRNCFGj4qCEwC2mXZS6JG6gw=
+		DVrR5/pzt8UEF338J0nT6q3Zklk=
 		</data>
 	</dict>
 	<key>files2</key>
@@ -26,33 +26,33 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			hLlMHLiqPQOUrKUYJezBt4zZp0Y=
+			98X0hl9r5wyU2Y1mYYOBDx9e9Lo=
 			</data>
 			<key>hash2</key>
 			<data>
-			9Vh2wItrir9ZusuRijO8AK4u7RsP1m+1xpLc5lFFvzs=
+			xkdbadRXs8ld3Z0xLFo+2CXYKI3H2bv6yG7LheSFgtc=
 			</data>
 		</dict>
 		<key>Headers/TRTCCloudDef.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			wCD0ANiwEwFW3aZ1tohyVKvV05s=
+			oNatvx2+lJzUeqDOFy73wQlCTws=
 			</data>
 			<key>hash2</key>
 			<data>
-			SR1EqsZGyip1Csofm0ndaVZ06blvXw3cezaYdussi+s=
+			PsRUPYWaDSVEREw/xy+hMggo5rWXF6eZG17CT6oBXIg=
 			</data>
 		</dict>
 		<key>Headers/TRTCCloudDelegate.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			DOXAjU4VSEYJU93OCCfLKa4FFT8=
+			VrzhS15iSbVejHwrciGeBVt1mrM=
 			</data>
 			<key>hash2</key>
 			<data>
-			vdrkrjB4x09e3p6mz2lDFqna0fNhN2rNdrHQUR4/yyk=
+			fZ/isnssg0NpH3uWGoKeKI2tLOy+f8Dk6VBJL32siMU=
 			</data>
 		</dict>
 		<key>Headers/TRTCStatistics.h</key>
@@ -81,11 +81,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			FDHQzVLf6Gq4m13510ouNsqu6pc=
+			iGZOrQF2tpJIQ7N/dQI/85bMdWs=
 			</data>
 			<key>hash2</key>
 			<data>
-			swpuNHVnU70DXHo/hFeULLg1UhFJkYTl5gadYZ546A4=
+			nZ5n0zD68bl3aQk0+wwsZRtIIcqYJtB7l/Y1ob6ITBU=
 			</data>
 		</dict>
 		<key>Headers/TXAudioRawDataDelegate.h</key>
@@ -125,11 +125,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			RMLyfP5mQg+mglXAK1p3+V28kdw=
+			dlSmUobeD1mk9HKg+pDsZXIhGSA=
 			</data>
 			<key>hash2</key>
 			<data>
-			lqD9fIxnmwqNapClRGibWW4te+PXwarU5hTzWcwxJkI=
+			M2P0c9aLcWhZADbnsdD05mG/D1ViFXhjLJgw8bThAnw=
 			</data>
 		</dict>
 		<key>Headers/TXLiteAVBuffer.h</key>
@@ -389,11 +389,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			vsAGsmj07SizOzUB5GxPpHbKXD4=
+			dPZodZVIMBtuQSO8UV4qhC5QifY=
 			</data>
 			<key>hash2</key>
 			<data>
-			576/Sl13jlP2T1JO6fIToZrC/FPnZEYYawL+R/7EZn4=
+			yF9PjDHUtLDayoH/JfwKTuni24Rfqqkb2f5J5kX+ztY=
 			</data>
 		</dict>
 		<key>Headers/V2TXLivePusherObserver.h</key>
@@ -411,66 +411,66 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			4b5fFyuHmHWalstSP0u2r0y280U=
+			RuEV4qus5r8ATZVeo8hqv8WdB10=
 			</data>
 			<key>hash2</key>
 			<data>
-			nYuDR/6FfiGMCFc66xFRzN+zLIPljN5zjMutVGAPRKw=
+			+1bVFAbCVZoMNTnmib+3+e/7ICFzzeX48nwkgfCAESA=
 			</data>
 		</dict>
 		<key>Headers/cpp_interface/ITRTCStatistics.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			B0Dk7ovnxeU+dgJxdZ1aAwwg2TI=
+			KVcMpKFx9Y842uPkndVJDv8sy9E=
 			</data>
 			<key>hash2</key>
 			<data>
-			TOjdXgUHThEq3Sdv+YW8NsxhOP2WnYlyEx8IjBtf2iA=
+			SKh4LQs9aVjm/7Vkl6yKOVSqzLzIkjz0YBJHksM77e0=
 			</data>
 		</dict>
 		<key>Headers/cpp_interface/ITXAudioEffectManager.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			/00gA5cedCq5y7qsSveLmHCmpFk=
+			K1UaBn5fLPHdc+HsvTbOnwBRTDE=
 			</data>
 			<key>hash2</key>
 			<data>
-			UFa9uUs16FneIhgLLLaAQzNGITg/HH644YQlZqeQLZc=
+			SlHvWjRHjXri7YvMb1mnPntLBbMbepSN3+SmN2lKzk4=
 			</data>
 		</dict>
 		<key>Headers/cpp_interface/ITXDeviceManager.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			Q5d8+hOAR+Ai6p2B+r+p8zR1KcY=
+			TgndOf0CqbaEnVdja6nGz9cEPbo=
 			</data>
 			<key>hash2</key>
 			<data>
-			shS94cD31w+aCSnmPrOedah5HuU438A1t2PDzqcCUq8=
+			IZx9Fi97F8KwKPM9IzSeFqm3+QkmzdbKoPV1APfcjMg=
 			</data>
 		</dict>
 		<key>Headers/cpp_interface/TRTCCloudCallback.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			LUj84K5JYv4CXCsX7UG4nxnC0aE=
+			yybUwc++SlIvTwmAgOEfGSm7eIE=
 			</data>
 			<key>hash2</key>
 			<data>
-			EirL6z6ob9GaCN/zC4nAU/EGB9c43kEnzNGVyUXvcDw=
+			zwOaveaXKM/lFDZsjS2T6Lp0nPacDd6iNJi9XE92mwo=
 			</data>
 		</dict>
 		<key>Headers/cpp_interface/TRTCTypeDef.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			EZUPmte953bgYHnmJGUMkik8LFU=
+			NJafAYNanzrChsFvaJJTS3x+9Eo=
 			</data>
 			<key>hash2</key>
 			<data>
-			AyOIGnUXiASENgHcj0a6OXfbHivxM/iO4/BL0PlX0rg=
+			mT26HHvH6pOemBnTCFGPvJUTRlrGfjCksvgMtEXTrHc=
 			</data>
 		</dict>
 		<key>Headers/cpp_interface/TXLiteAVCode.h</key>
@@ -510,11 +510,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			77ItY7srtxdvoH+/9GxYwJgdW3s=
+			F9TjsMxiweMfXB18lXCZ/eTpEm0=
 			</data>
 			<key>hash2</key>
 			<data>
-			mIpd8QBRLObEdu/QiOIvb0RRTwmHS6SPOVU6a8BSSS4=
+			6iZy9UE4RP+MCaaxMvQLyQsFuqnSvusVBDUcqQbxsDk=
 			</data>
 		</dict>
 		<key>Headers/cpp_interface/V2TXLivePlayerObserver.hpp</key>
@@ -543,11 +543,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			c90v1G8Z1ld1L90/7PMscbYiiaw=
+			KNew5tWbttqkRjur/r10xkvgwA0=
 			</data>
 			<key>hash2</key>
 			<data>
-			q7MakXn4+vP6hb0S0vvuZjlMRcrZWW9JNjVki9gmkcA=
+			sAyNuzOvREOg31IU35AilFHrkzU/1ILXPpnqnyTgTjg=
 			</data>
 		</dict>
 		<key>Headers/cpp_interface/V2TXLivePusherObserver.hpp</key>
@@ -585,11 +585,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			z2nxRNCFGj4qCEwC2mXZS6JG6gw=
+			DVrR5/pzt8UEF338J0nT6q3Zklk=
 			</data>
 			<key>hash2</key>
 			<data>
-			POqr5A4ODYkTaqs8tG78uSgiWZtXHW09Uu5wD+XGzk4=
+			+HdTh6K2vTxcDnyvcZ+9VVhdlM+o1CyyzBHfQc3Ibvw=
 			</data>
 		</dict>
 	</dict>

@@ -438,7 +438,7 @@
  * @param value 调用 key 所对应的高级 API 时，需要的参数。
  * @return 返回值 {@link V2TXLiveCode}
  *         - V2TXLIVE_OK: 成功
- *         - V2TXLIVE_ERROR_INVALID_PARAMETER: 操作失败，key 不允许为空
+ *         - V2TXLIVE_ERROR_INVALID_PARAMETER: 操作失败，key 不允许为 nil
  */
 - (V2TXLiveCode)setProperty:(NSString *)key value:(NSObject *)value;
 

@@ -239,6 +239,20 @@ class V2TXLivePlayer {
      */
     virtual void showDebugView(bool isShow) = 0;
 
+/**
+ * 调用 V2TXLivePlayer 的高级 API 接口。
+ *
+ * @note  该接口用于调用一些高级功能。
+ * @param key   高级 API 对应的 key。
+ * @param value 调用 key 所对应的高级 API 时，需要的参数。
+ * @return 返回值 {@link V2TXLiveCode}
+ *         - V2TXLIVE_OK: 成功
+ *         - V2TXLIVE_ERROR_INVALID_PARAMETER: 操作失败，key 不允许为 nullptr
+ */
+#ifdef _WIN32
+    virtual int32_t setProperty(const char* key, const void* value) = 0;
+#endif
+
    protected:
     virtual ~V2TXLivePlayer(){};
 };

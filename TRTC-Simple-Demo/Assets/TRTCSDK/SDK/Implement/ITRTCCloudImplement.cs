@@ -107,7 +107,7 @@ namespace trtc
 
         public override void setMixTranscodingConfig(TRTCTranscodingConfig? lconfig)
         {
-            #if UNITY_ANDROID || UNITY_IOS || UNITY_STANDALONE_OSX
+            #if UNITY_ANDROID || UNITY_IOS || UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
             if(lconfig == null) {
                 ITRTCCloudNative.TRTCUnitySetMixTranscodingConfigNull(mNativeObj);
             } else {
@@ -655,7 +655,7 @@ namespace trtc
                 onConnectionLostHandler, onTryToReconnectHandler, onConnectionRecoveryHandler, onCameraDidReadyHandler,
                 onMicDidReadyHandler, onUserVoiceVolumeHandler, onDeviceChangeHandler, onRecvSEIMsgHandler,
                 onStartPublishingHandler, onStopPublishingHandler);
-#if UNITY_STANDALONE_WIN || UNITY_ANDROID || UNITY_IOS
+#if UNITY_STANDALONE_WIN || UNITY_ANDROID || UNITY_IOS || UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
             ITRTCCloudNative.TRTCUnityAddScreenCaptureCallback(mNativeObj,
                 onScreenCaptureStartedHandler, onScreenCapturePausedHandler,
                 onScreenCaptureResumedHandler, onScreenCaptureStopedHandler);

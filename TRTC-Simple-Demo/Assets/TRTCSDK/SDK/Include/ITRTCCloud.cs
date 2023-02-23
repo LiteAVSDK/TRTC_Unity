@@ -228,6 +228,14 @@ namespace trtc
         public abstract void stopPublishCDNStream();
 
         /// <summary>
+        /// Enable or disable private encryption of media streams
+        /// In scenarios with high security requirements, TRTC recommends that you call the enablePayloadPrivateEncryption method to enable private encryption of media streams before joining a room.
+        /// After the user exits the room, the SDK will automatically close the private encryption. To re-enable private encryption, you need to call this method before the user joins the room again.
+        /// @param enabled Whether to enable media stream private encryption.
+        /// </summary>
+        public abstract int enablePayloadPrivateEncryption(bool enabled,string encryptionKey,string encryptionSalt);
+
+        /// <summary>
         /// Set On-Cloud MixTranscoding parameters (not supported on Windows)
         /// </summary>
         /// <example>

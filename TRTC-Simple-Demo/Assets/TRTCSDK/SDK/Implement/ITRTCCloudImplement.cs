@@ -66,6 +66,10 @@ namespace trtc
         {
             ITRTCCloudNative.TRTCUnityConnectOtherRoom(mNativeObj,param);
         }
+        public override int enablePayloadPrivateEncryption(bool enabled,string encryptionKey,string encryptionSalt)
+        {
+            return ITRTCCloudNative.TRTCUnityEnablePayloadPrivateEncryption(mNativeObj,enabled,encryptionKey,encryptionSalt);
+        }
         public override void disconnectOtherRoom()
         {
             ITRTCCloudNative.TRTCUnityDisconnectOtherRoom(mNativeObj);

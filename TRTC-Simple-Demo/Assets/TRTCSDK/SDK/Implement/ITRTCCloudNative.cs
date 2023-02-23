@@ -240,6 +240,8 @@ namespace trtc
         [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]
         public static extern  void TRTCUnitySetDefaultStreamRecvMode(IntPtr instance,bool autoRecvAudio, bool autoRecvVideo);
         [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern  int TRTCUnityEnablePayloadPrivateEncryption(IntPtr instance,bool enabled,string encryptionKey,string encryptionSalt);
+        [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]
         public static extern  void TRTCUnitySwitchRoom(IntPtr instance,int roomId,string strRoomId,string userSig,string privateMapKey); 
 
         [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]

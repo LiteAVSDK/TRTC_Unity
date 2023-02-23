@@ -95,6 +95,8 @@ namespace TRTCCUnityDemo
             LogManager.Log("trtc sdk version is : " + version);
 
             mTRTCCloud.callExperimentalAPI("{\"api\": \"setGSensorMode\", \"params\": {\"StreamType\": 1, \"gSensorMode\": 2}}");
+            // int ifSuccess = mTRTCCloud.enablePayloadPrivateEncryption(true, "1111222233334444", "11112222333344445555666677778888");
+            // LogManager.Log("trtc sdk enablePayloadPrivateEncryption ifSuccess : " + ifSuccess);
 
             TRTCParams trtcParams = new TRTCParams();
             trtcParams.sdkAppId = GenerateTestUserSig.SDKAPPID;

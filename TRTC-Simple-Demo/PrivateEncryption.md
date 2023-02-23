@@ -7,7 +7,7 @@ Before enterring the room, call the enablePayloadPrivateEncryption method to ena
 - 2.After the user exits the room, the SDK will automatically close the private encryption. To turn private encryption back on, you need to call this method before the user enters the room again.
 
 ### Generate and set keys
-On your server, refer to the following command to randomly generate a String-type key through OpenSSL.
+On your server, refer to the following command to randomly generate a 16-byte String key through OpenSSL.
 
 ```
 // Randomly generate a string type, 16-byte key, and pass the key to the encryptionKey parameter of enablePayloadPrivateEncryption.
@@ -16,13 +16,14 @@ a2e898d07a304246044f899a16123263
 ```
 
 ### Generate and set the salt
-On your server, refer to the following command to randomly generate a Base64-encoded, 32-byte salt via OpenSSL.
+On your server, refer to the following command to randomly generate a 32-byte String salt through OpenSSL.
 
 ```
-// Randomly generate a Base64-encoded, 32-byte salt, and pass the salt to the encryptionSalt parameter of TRTCPayloadPrivateEncryptionConfig.
-openssl rand -base64 32
-3ZZ0nV/rDVUzTa6tXyz+F7rrUYIcxRqX5fiUto/FbZA=
+// Randomly generate a string type, 32-byte salt, and pass the salt to the encryptionSalt parameter of TRTCPayloadPrivateEncryptionConfig.
+openssl rand -hex 32
+e9382c074f22071519e39022141d479241d0008f312138850fbf6d8786db15ca
 ```
+
 
 ### Sample code
 ```

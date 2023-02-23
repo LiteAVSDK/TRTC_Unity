@@ -26,7 +26,7 @@ namespace trtc
     // public const string MyLibName = "liteav";
     public const string MyLibName = "trtc-c-wrapper";
 #elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
-    public const string MyLibName = "macosliteav";
+    public const string MyLibName = "trtc-mac-unity-plugin";
 #endif
        #endregion
 

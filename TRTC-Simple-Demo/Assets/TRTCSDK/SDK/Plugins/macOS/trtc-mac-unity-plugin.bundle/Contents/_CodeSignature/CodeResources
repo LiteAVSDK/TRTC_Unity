@@ -19,10 +19,10 @@
 		<dict>
 			<key>cdhash</key>
 			<data>
-			1/Fm6+ZeUdlTQ1Kkmt/31y6tEw4=
+			eux+B5XI3l4tCSyb9klYBGp+dsg=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"84508ba49525a607db67c2d3b181f0e700af2ba2" or cdhash H"d7f166ebe65e51d9534352a49adff7d72ead130e"</string>
+			<string>cdhash H"d1e01034edffd0bfd2241d9ac32594ae4eedfdc4" or cdhash H"7aec7e0795c8de5e2d092c9bf64958046a7e76c8"</string>
 		</dict>
 		<key>Frameworks/TXSoundTouch.framework</key>
 		<dict>

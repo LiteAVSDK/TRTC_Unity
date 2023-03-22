@@ -239,8 +239,10 @@ namespace trtc
         public static extern  void TRTCUnityDisconnectOtherRoom(IntPtr instance);
         [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]
         public static extern  void TRTCUnitySetDefaultStreamRecvMode(IntPtr instance,bool autoRecvAudio, bool autoRecvVideo);
+        #if UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
         [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]
         public static extern  int TRTCUnityEnablePayloadPrivateEncryption(IntPtr instance,bool enabled,string encryptionKey,string encryptionSalt);
+        #endif
         [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]
         public static extern  void TRTCUnitySwitchRoom(IntPtr instance,int roomId,string strRoomId,string userSig,string privateMapKey); 
 

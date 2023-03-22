@@ -537,7 +537,14 @@ namespace trtc
         {
             ITRTCCloudNative.TRTCUnityStopSpeedTest(mNativeObj);
         }
-
+        public override void startSystemAudioLoopback(string deviceName)
+        {
+            ITRTCCloudNative.TRTCUnityStartSystemAudioLoopback(mNativeObj, deviceName);
+        }
+        public override void stopSystemAudioLoopback()
+        {
+            ITRTCCloudNative.TRTCUnityStopSystemAudioLoopback(mNativeObj);
+        }
         public override void enable3DSpatialAudioEffect(bool enable)
         {
             ITRTCCloudNative.TRTCUnityEnable3DSpatialAudioEffect(mNativeObj, enable);

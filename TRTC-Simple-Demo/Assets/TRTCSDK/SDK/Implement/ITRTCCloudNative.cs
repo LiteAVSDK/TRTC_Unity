@@ -446,6 +446,10 @@ namespace trtc
         public static extern  void TRTCUnityStartSpeedTest(IntPtr instance,int sdkAppId, string userId, string userSig);
         [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void TRTCUnityStopSpeedTest(IntPtr instance);
+        [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void TRTCUnityStartSystemAudioLoopback(IntPtr instance, string deviceName);
+        [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void TRTCUnityStopSystemAudioLoopback(IntPtr instance);
 
         // Discard interface function
         // [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]

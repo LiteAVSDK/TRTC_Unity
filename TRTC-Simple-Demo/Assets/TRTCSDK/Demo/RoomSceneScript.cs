@@ -427,6 +427,7 @@ namespace TRTCCUnityDemo
         {
             if (value)
             {
+                // mTRTCCloud.startSystemAudioLoopback(null);
                 TRTCVideoEncParam videoEncParam = new TRTCVideoEncParam()
                 {
                     videoResolution = TRTCVideoResolution.TRTCVideoResolution_1280_720,
@@ -459,6 +460,7 @@ namespace TRTCCUnityDemo
             }
             else
             {
+                // mTRTCCloud.stopSystemAudioLoopback();
                 mTRTCCloud.stopScreenCapture();
                 #if UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
                 userTableView.UpdateVideoAvailable("", TRTCVideoStreamType.TRTCVideoStreamTypeSub, false);

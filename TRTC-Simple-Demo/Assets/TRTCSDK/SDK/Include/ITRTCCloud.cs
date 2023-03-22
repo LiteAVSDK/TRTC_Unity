@@ -919,6 +919,17 @@ namespace trtc
         /// </summary>
         public abstract void stopSpeedTest();
 
+        /// <summary>
+        /// Enable system sound collection (only applicable to desktop systems)
+        /// </summary>
+        /// <param name="deviceName">You can specify this parameter as null, which means that the SDK can collect the sound of the whole system</param>
+        public abstract void startSystemAudioLoopback(string deviceName);
+
+        /// <summary>
+        /// Stop system sound collection (desktop system only)
+        /// </summary>
+        public abstract void stopSystemAudioLoopback();
+
         /// @}
 
         /////////////////////////////////////////////////////////////////////////////////

@@ -68,7 +68,10 @@ namespace trtc
         }
         public override int enablePayloadPrivateEncryption(bool enabled,string encryptionKey,string encryptionSalt)
         {
+        #if UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
             return ITRTCCloudNative.TRTCUnityEnablePayloadPrivateEncryption(mNativeObj,enabled,encryptionKey,encryptionSalt);
+        #endif
+        return 0;
         }
         public override void disconnectOtherRoom()
         {
@@ -539,11 +542,15 @@ namespace trtc
         }
         public override void startSystemAudioLoopback(string deviceName)
         {
+            #if UNITY_STANDALONE_WIN
             ITRTCCloudNative.TRTCUnityStartSystemAudioLoopback(mNativeObj, deviceName);
+            #endif
         }
         public override void stopSystemAudioLoopback()
         {
+            #if UNITY_STANDALONE_WIN
             ITRTCCloudNative.TRTCUnityStopSystemAudioLoopback(mNativeObj);
+            #endif
         }
         public override void enable3DSpatialAudioEffect(bool enable)
         {

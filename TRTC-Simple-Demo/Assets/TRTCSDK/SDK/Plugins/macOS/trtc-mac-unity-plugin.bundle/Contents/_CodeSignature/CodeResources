@@ -10,28 +10,19 @@
 		<dict>
 			<key>cdhash</key>
 			<data>
-			eymM1CgglrjuKzc5GkC3cCIbYf8=
+			rl1qlsWA2itpl4Jt6su7McLDp1A=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"8ae5af2481e0a732bfec79e1e065d9bad253919e" or cdhash H"7b298cd4282096b8ee2b37391a40b770221b61ff"</string>
-		</dict>
-		<key>Frameworks/TXLiteAVSDK_TRTC_Mac.framework</key>
-		<dict>
-			<key>cdhash</key>
-			<data>
-			eux+B5XI3l4tCSyb9klYBGp+dsg=
-			</data>
-			<key>requirement</key>
-			<string>cdhash H"d1e01034edffd0bfd2241d9ac32594ae4eedfdc4" or cdhash H"7aec7e0795c8de5e2d092c9bf64958046a7e76c8"</string>
+			<string>cdhash H"ba38932c3dd4456c446859fabca817789c1b595b" or cdhash H"ae5d6a96c580da2b6997826deacbbb31c2c3a750" or cdhash H"3c7863a2bc21012f12fd1585af00814462ad8afd" or cdhash H"4e890deb61863f1d5fb18878b39d1f3236ac4951"</string>
 		</dict>
 		<key>Frameworks/TXSoundTouch.framework</key>
 		<dict>
 			<key>cdhash</key>
 			<data>
-			cpElPj7w4Il0mCi56n/sE70DSU8=
+			kqLDlPi/04xeoHCJ3Six1CrqplE=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"b8ecd4a8252e92e71470727ea2b3179c06c79bb4" or cdhash H"7291253e3ef0e089749828b9ea7fec13bd03494f"</string>
+			<string>cdhash H"1617b8557de995cc209e0b35a4301ba127e5fac0" or cdhash H"92a2c394f8bfd38c5ea07089dd28b1d42aeaa651" or cdhash H"d1b41c7e8f1f0b213d25bc0b5727ebf7fe8331df" or cdhash H"01cd153ac9d09596e0b02975ddd10b4e1b36a689"</string>
 		</dict>
 	</dict>
 	<key>rules</key>

@@ -110,7 +110,8 @@ public static class IosPostProcess
         }else if(buildTarget == BuildTarget.StandaloneOSX || 
             buildTarget == BuildTarget.StandaloneOSXIntel || buildTarget == BuildTarget.StandaloneOSXIntel64){
             UnityEngine.Debug.Log("--macos--start:"+buildPath);
-            string plistPath = buildPath+".app" + "/Contents/Info.plist"; // straight to a binary
+            string plistPath = buildPath + "/Contents/Info.plist"; // straight to a binary
+            // string plistPath = buildPath+".app" + "/Contents/Info.plist"; // strai
             UpdatePermission(plistPath);
             UnityEngine.Debug.Log("--macos-- build complete, please open 【"+buildPath+".app】to run");
         }

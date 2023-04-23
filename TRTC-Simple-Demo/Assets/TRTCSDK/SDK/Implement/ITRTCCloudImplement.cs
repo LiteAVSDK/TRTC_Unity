@@ -1138,33 +1138,26 @@ namespace trtc
         }
 
         // static int mVideoLogCount = 0;
-
         [MonoPInvokeCallback(typeof(ITRTCCloudNative.onRenderVideoFrameHandler))]
         public static void onRenderVideoFrameHandler(string userId, int streamType, int videoFormat, int bufferType,
             IntPtr data, int textureId, UInt32 length, UInt32 width, UInt32 height, UInt64 timestamp, int rotation)
         {
+            // if (mVideoLogCount++ % 100 == 0) {
+            //      LogManager.Log(String.Format("onRenderVideoFormat rotation={0}, w={1}, h={2}, bufferType={3}, length={4}, data={5}", rotation, width, height, bufferType, length, data));
+            // }
             TRTCVideoFrame videoFrame = new TRTCVideoFrame();
             videoFrame.videoFormat = (TRTCVideoPixelFormat)videoFormat;
             videoFrame.bufferType = (TRTCVideoBufferType)bufferType;
             videoFrame.data = new byte[length];
-            Marshal.Copy(data, videoFrame.data, 0, (int)length);
+            if (data != IntPtr.Zero) {
+                Marshal.Copy(data, videoFrame.data, 0, (int)length);
+            }
             videoFrame.length = length;
             videoFrame.width = width;
             videoFrame.height = height;
             videoFrame.timestamp = timestamp;
             videoFrame.rotation = (TRTCVideoRotation)rotation;
             
-            /*
-            if (mVideoLogCount++ % 100 == 0)
-            {
-                Debug.LogFormat("onRenderVideoFormat rotation={0}, w={1}, h={2}", videoFrame.rotation, videoFrame.width, videoFrame.height);
-                Debug.LogFormat("onRenderData {0} {1} {2} {3} {4} {5} {6} {7} {8} {9} {10} {11} {12} {13} {14} {15} {16} {17} {18} {19}",
-                    videoFrame.data[0], videoFrame.data[1], videoFrame.data[2], videoFrame.data[3], videoFrame.data[4],
-                    videoFrame.data[5], videoFrame.data[6], videoFrame.data[7], videoFrame.data[8], videoFrame.data[9],
-                    videoFrame.data[10], videoFrame.data[11], videoFrame.data[12], videoFrame.data[13], videoFrame.data[14],
-                    videoFrame.data[15], videoFrame.data[16], videoFrame.data[17], videoFrame.data[18], videoFrame.data[19]);
-            }
-            */
 #if PLATFORM_ANDROID
                 if(localUserId == userId) {
                     userId = "";

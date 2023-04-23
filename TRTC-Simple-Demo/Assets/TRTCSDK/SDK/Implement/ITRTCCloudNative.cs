@@ -105,7 +105,6 @@ namespace trtc
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate void onRenderVideoFrameHandler(string user_id, int stream_type,
             int video_format, int buffer_type, IntPtr data, int texture_id, UInt32 length, UInt32 width, UInt32 height, UInt64 timestamp, int rotation);
-
         // 音频回调相关
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate void onCapturedRawAudioFrameHandler(int audioFormat,IntPtr data,UInt32 length,UInt32 sampleRate,UInt32 channel,UInt64 timestamp);

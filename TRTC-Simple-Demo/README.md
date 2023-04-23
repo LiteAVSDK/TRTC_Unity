@@ -88,10 +88,8 @@ The demo includes the following features:
 
 1. Open Unity Editor, go to **File** > **Build Settings**, and select **PC, Mac & Linux Standalone** for **Platform**, and **macOS** for **Target Platform**.
    ![](https://main.qcloudimg.com/raw/6f3f9c21aa9eeadd7a4e3be377b2a6b3.png)
-2. Click **Build And Run** to run the demo.
-3. To use the simulator feature of Unity Editor, you must install `Device Simulator Package`.
-4. Click **Windows** > **General** > **Device Simulator**.
-   ![](https://main.qcloudimg.com/raw/79f707b89553528956a888f48b4d4d6d.png)
+2. Open **Player Setting** , change **Scripting Backend** to **IL2CPP**
+3. Click **Build And Run** to run the demo.
 
 [](id:demo)
 

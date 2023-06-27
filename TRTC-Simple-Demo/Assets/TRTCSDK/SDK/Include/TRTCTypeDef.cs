@@ -732,6 +732,46 @@ namespace trtc
         TXAudioRouteEarpiece = 1,   /// <summary>Receiver</summary>
     };
 
+    /// <summary>
+    /// Camera acquisition preferences (for win devices only)
+    /// 
+    /// This enum is used to set camera acquisition parameters.
+    /// </summary>
+    public enum TXCameraCaptureMode
+    {
+        /// Auto adjustment of camera capture parameters.
+        /// SDK selects the appropriate camera output parameters according to the actual acquisition device performance and network situation, and maintains a balance between device performance and video preview quality.
+        TXCameraResolutionStrategyAuto = 0,
+
+        /// Give priority to equipment performance.
+        /// SDK selects the closest camera output parameters according to the user's encoder resolution and frame rate, so as to ensure the performance of the device.
+        TXCameraResolutionStrategyPerformance = 1,
+
+        /// Give priority to the quality of video preview.
+        /// SDK selects higher camera output parameters to improve the quality of preview video. In this case, it will consume more CPU and memory to do video preprocessing.
+        TXCameraResolutionStrategyHighQuality = 2,
+
+        /// Allows the user to set the width and height of the video captured by the local camera.
+        TXCameraCaptureManual = 3,
+    }
+
+    /// <summary>
+    /// Camera acquisition parameters(for win devices only) 
+    /// 
+    /// This setting determines the quality of the local preview image.
+    /// </summary>
+    public struct TXCameraCaptureParam
+    {
+        /// Field description: camera acquisition preferences
+        public TXCameraCaptureMode mode;
+
+        /// Field description: width of acquired image
+        public int width;
+
+        /// Field description:  height of acquired image
+        public int height;
+    };
+
 
     /////////////////////////////////////////////////////////////////////////////////
     //

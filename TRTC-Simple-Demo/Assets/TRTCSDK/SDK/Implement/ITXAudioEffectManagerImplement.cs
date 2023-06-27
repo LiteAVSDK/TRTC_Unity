@@ -8,40 +8,43 @@ namespace trtc
     public class ITXAudioEffectManagerImplement : ITXAudioEffectManager
     {
         #region callbaks
-        private static List<ITXMusicPlayObserver> mCallbacks = new List<ITXMusicPlayObserver>();
+        private static Dictionary<int, ITXMusicPlayObserver> mCallbacks = new Dictionary<int, ITXMusicPlayObserver>();
 
 
         [MonoPInvokeCallback(typeof(ITXAudioEffectManagerNative.onStartHandler))]
         public static void onStartHandler(int id, int errCode)
         {
-            if (mCallbacks == null)
-                return;
-            foreach (ITXMusicPlayObserver callback in mCallbacks)
+            if (mCallbacks == null || !mCallbacks.ContainsKey(id))
             {
-                callback.onStart(id, errCode);
+                return;
             }
+
+            ITXMusicPlayObserver callback = mCallbacks[id];
+            callback.onStart(id, errCode);
         }
 
         [MonoPInvokeCallback(typeof(ITXAudioEffectManagerNative.onPlayProgressHandler))]
         public static void onPlayProgressHandler(int id, long curPtsMS, long durationMS)
         {
-            if (mCallbacks == null)
-                return;
-            foreach (ITXMusicPlayObserver callback in mCallbacks)
+            if (mCallbacks == null || !mCallbacks.ContainsKey(id))
             {
-                callback.onPlayProgress(id, curPtsMS, durationMS);
+                return;
             }
+
+            ITXMusicPlayObserver callback = mCallbacks[id];
+            callback.onPlayProgress(id, curPtsMS, durationMS);
         }
 
         [MonoPInvokeCallback(typeof(ITXAudioEffectManagerNative.onCompleteHandler))]
         public static void onCompleteHandler(int id, int errCode)
         {
-            if (mCallbacks == null)
-                return;
-            foreach (ITXMusicPlayObserver callback in mCallbacks)
+            if (mCallbacks == null || !mCallbacks.ContainsKey(id))
             {
-                callback.onComplete(id, errCode);
+                return;
             }
+
+            ITXMusicPlayObserver callback = mCallbacks[id];
+            callback.onComplete(id, errCode);
         }
 
         #endregion
@@ -67,9 +70,17 @@ namespace trtc
         }
         public override void setMusicObserver(int musicId, ITXMusicPlayObserver observer)
         {
-            mCallbacks.Add(observer);
+            if (mCallbacks.ContainsKey(musicId))
+            {
+                mCallbacks[musicId] = observer;
+            }
+            else
+            {
+                mCallbacks.Add(musicId, observer);
+            }
             ITXAudioEffectManagerNative.TRTCUnitySetMusicObserver(mNativeObj, musicId, onStartHandler, onPlayProgressHandler, onCompleteHandler);
         }
+
         // public override void enableVoiceEarMonitor(bool enable)
         // {
         //     ITXAudioEffectManagerNative.TRTCUnityEnableVoiceEarMonitor(mNativeObj,enable);
@@ -147,7 +158,9 @@ namespace trtc
 
         public override void startPlayMusic(AudioMusicParam musicParam)
         {
-            ITXAudioEffectManagerNative.TRTCUnityStartPlayMusic(mNativeObj,musicParam);
+            ITXAudioEffectManagerNative.TRTCUnityStartPlayMusic(mNativeObj,
+          musicParam.id, musicParam.path, musicParam.loopCount, musicParam.publish,
+          musicParam.isShortFile, musicParam.startTimeMS, musicParam.endTimeMS);
         }
         
         public override void stopPlayMusic(int id)

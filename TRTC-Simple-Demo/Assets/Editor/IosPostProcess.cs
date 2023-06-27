@@ -73,6 +73,7 @@ public static class IosPostProcess
             proj.AddFrameworkToProject(frameTarget, Utf8string("OpenGLES.framework"), true);
             proj.AddFrameworkToProject(frameTarget, Utf8string("CoreImage.framework"), true);
             proj.AddFrameworkToProject(frameTarget, Utf8string("MobileCoreServices.framework"), true);
+            proj.AddFrameworkToProject(frameTarget, Utf8string("IOSurface.framework"), true);
 
 
             string targetGuid = proj.GetUnityMainTargetGuid();
@@ -107,12 +108,11 @@ public static class IosPostProcess
             UpdatePermission(buildPath + "/Info.plist");
             UnityEngine.Debug.Log("--ios-- build complete, please use xcode open 【"+buildPath + "/Unity-Iphone.xcodeproj】to run");
             #endif
-        }else if(buildTarget == BuildTarget.StandaloneOSX || 
-            buildTarget == BuildTarget.StandaloneOSXIntel || buildTarget == BuildTarget.StandaloneOSXIntel64){
-            UnityEngine.Debug.Log("--macos--start:"+buildPath);
+        }else if(buildTarget == BuildTarget.StandaloneOSX){
+            // UnityEngine.Debug.Log("--macos--start:"+buildPath);
             // string plistPath = buildPath + "/TRTCUnitySDK/Info.plist";
-            string plistPath = buildPath + "/Contents/Info.plist";
-            // string plistPath = buildPath+".app" + "/Contents/Info.plist"; // strai
+            ///string plistPath = buildPath + "/Contents/Info.plist";
+            string plistPath = buildPath+".app" + "/Contents/Info.plist";
             UpdatePermission(plistPath);
             UnityEngine.Debug.Log("--macos-- build complete, please open 【"+buildPath+".app】to run");
         }

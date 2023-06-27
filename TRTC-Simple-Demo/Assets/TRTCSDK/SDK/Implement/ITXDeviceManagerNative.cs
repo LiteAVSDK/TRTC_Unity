@@ -29,7 +29,7 @@ namespace trtc
 #elif UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
     public const string MyLibName = "trtc-c-wrapper";
 #elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
-    public const string MyLibName = "macosliteav";
+    public const string MyLibName = "trtc-mac-unity-plugin";
 #endif
        #endregion
 
@@ -70,6 +70,20 @@ namespace trtc
         public static extern int TRTCUnitySetCurrentDevice(IntPtr instance, TXMediaDeviceType type, String deviceId);
         [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void TRTCUnityGetCurrentDevice(IntPtr instance, TXMediaDeviceType type, StringBuilder returnData, int returnSize);
+#endif
+
+
+#if UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX
+        [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern int TRTCUnitySetCurrentDeviceVolume(IntPtr instance, TXMediaDeviceType type, UInt32 volume);
+
+        [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern UInt32 TRTCUnityGetCurrentDeviceVolume(IntPtr instance, TXMediaDeviceType type);
+#endif
+
+#if UNITY_STANDALONE_WIN
+        [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void TRTCUnitySetCameraCapturerParam(IntPtr instance, TXCameraCaptureMode type, int width, int height);
 #endif
     }
 }

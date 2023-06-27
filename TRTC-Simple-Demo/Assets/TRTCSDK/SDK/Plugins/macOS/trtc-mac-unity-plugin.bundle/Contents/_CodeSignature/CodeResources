@@ -10,10 +10,10 @@
 		<dict>
 			<key>cdhash</key>
 			<data>
-			rl1qlsWA2itpl4Jt6su7McLDp1A=
+			FApF/tgQ36LmVn6FO3cu/kpW3sg=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"ba38932c3dd4456c446859fabca817789c1b595b" or cdhash H"ae5d6a96c580da2b6997826deacbbb31c2c3a750" or cdhash H"3c7863a2bc21012f12fd1585af00814462ad8afd" or cdhash H"4e890deb61863f1d5fb18878b39d1f3236ac4951"</string>
+			<string>cdhash H"454e33f829a10fbb869cf98f75b7108a544c76fd" or cdhash H"140a45fed810dfa2e6567e853b772efe4a56dec8" or cdhash H"0b6f3af8e08219cc406cd4bfa08d1f099e9f3e8b" or cdhash H"89b0290ee5fe3ace9c313b216055fa4cf8fecb6e"</string>
 		</dict>
 		<key>Frameworks/TXSoundTouch.framework</key>
 		<dict>

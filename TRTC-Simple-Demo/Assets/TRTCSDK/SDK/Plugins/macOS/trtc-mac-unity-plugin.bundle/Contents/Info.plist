@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>BuildMachineOSBuild</key>
-	<string>21F79</string>
+	<string>22F82</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleExecutable</key>
@@ -27,27 +27,25 @@
 	<key>DTCompiler</key>
 	<string>com.apple.compilers.llvm.clang.1_0</string>
 	<key>DTPlatformBuild</key>
-	<string>13F100</string>
+	<string></string>
 	<key>DTPlatformName</key>
 	<string>macosx</string>
 	<key>DTPlatformVersion</key>
-	<string>12.3</string>
+	<string>13.3</string>
 	<key>DTSDKBuild</key>
-	<string>21E226</string>
+	<string>22E245</string>
 	<key>DTSDKName</key>
-	<string>macosx12.3</string>
+	<string>macosx13.3</string>
 	<key>DTXcode</key>
-	<string>1341</string>
+	<string>1431</string>
 	<key>DTXcodeBuild</key>
-	<string>13F100</string>
+	<string>14E300c</string>
 	<key>LSApplicationCategoryType</key>
 	<string></string>
 	<key>LSMinimumSystemVersion</key>
 	<string>10.15</string>
 	<key>NSCameraUsageDescription</key>
 	<string>授权摄像头权限才能正常视频通话</string>
-	<key>NSHumanReadableCopyright</key>
-	<string></string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>授权麦克风权限才能正常语音通话</string>
 </dict>

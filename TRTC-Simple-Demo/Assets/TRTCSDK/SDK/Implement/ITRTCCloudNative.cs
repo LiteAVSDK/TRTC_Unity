@@ -23,7 +23,6 @@ namespace trtc
 #elif UNITY_ANDROID && !UNITY_EDITOR
     public const string MyLibName = "native-lib";
 #elif UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
-    // public const string MyLibName = "liteav";
     public const string MyLibName = "trtc-c-wrapper";
 #elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
     public const string MyLibName = "trtc-mac-unity-plugin";

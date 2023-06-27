@@ -16,7 +16,7 @@ namespace trtc
 #elif UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
     public const string MyLibName = "trtc-c-wrapper";
 #elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
-    public const string MyLibName = "macosliteav";
+    public const string MyLibName = "trtc-mac-unity-plugin";
 #endif
        #endregion
 
@@ -55,7 +55,8 @@ namespace trtc
         [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void TRTCUnitySetVoiceCaptureVolume(IntPtr instance, int volume);
         [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void TRTCUnityStartPlayMusic(IntPtr instance, AudioMusicParam musicParam);
+        public static extern void TRTCUnityStartPlayMusic(IntPtr instance, int musicId, String path, int loopCount, bool publish,
+            bool isShortFile, int startTimeMS, int endTimeMS);
         [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void TRTCUnityStopPlayMusic(IntPtr instance, int id);
 

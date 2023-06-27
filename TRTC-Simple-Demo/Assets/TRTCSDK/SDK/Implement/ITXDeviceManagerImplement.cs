@@ -150,5 +150,32 @@ namespace trtc
             return new ITXDeviceInfo();
 #endif
         }
+
+        public override int setCurrentDeviceVolume(TXMediaDeviceType type, UInt32 volume)
+        {
+#if UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX
+            int ret = ITXDeviceManagerNative.TRTCUnitySetCurrentDeviceVolume(mNativeObj, type, volume);
+            return ret;
+#else
+            return -999;
+#endif
+        }
+
+        public override UInt32 getCurrentDeviceVolume(TXMediaDeviceType type)
+        {
+#if UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX
+            UInt32 volume = ITXDeviceManagerNative.TRTCUnityGetCurrentDeviceVolume(mNativeObj, type);
+            return volume;
+#else
+            return 0;
+#endif
+        }
+
+        public override void setCameraCapturerParam(TXCameraCaptureParam param)
+        {
+#if UNITY_STANDALONE_WIN
+            ITXDeviceManagerNative.TRTCUnitySetCameraCapturerParam(mNativeObj, param.mode, param.width, param.height);
+#endif
+        }
     }
 }

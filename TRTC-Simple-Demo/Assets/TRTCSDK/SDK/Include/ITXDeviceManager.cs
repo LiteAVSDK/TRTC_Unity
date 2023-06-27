@@ -135,6 +135,31 @@ namespace trtc
         /// <param name="type">Device type，See the definition of TXMediaDeviceType for details.</param>
         /// <returns></returns> 
         public abstract ITXDeviceInfo GetCurrentDevice(TXMediaDeviceType type);
+
+        /// <summary>
+        /// Setting the volume of the current device (for desktop OS)
+        /// 
+        /// This API is used to set the capturing volume of the mic or playback volume of the speaker, but not the volume of the camera.
+        /// </summary>
+        /// <param name="type">Device type，See the definition of TXMediaDeviceType for details.</param>
+        /// <param name="volume">Volume. Value range: 0-100; default: 100</param>
+        /// <returns></returns>
+        public abstract int setCurrentDeviceVolume(TXMediaDeviceType type, UInt32 volume);
+
+        /// <summary>
+        /// Getting the volume of the current device (for desktop OS)
+        /// 
+        /// This API is used to get the capturing volume of the mic or playback volume of the speaker, but not the volume of the camera.
+        /// </summary>
+        /// <param name="type">Device type，See the definition of TXMediaDeviceType for details.</param>
+        /// <returns></returns>
+        public abstract UInt32 getCurrentDeviceVolume(TXMediaDeviceType type);
+
+        /// <summary>
+        /// Set camera acquisition preferences (win only)
+        /// </summary>
+        /// <param name="param"></param>
+        public abstract void setCameraCapturerParam(TXCameraCaptureParam param);
     }
 }
 

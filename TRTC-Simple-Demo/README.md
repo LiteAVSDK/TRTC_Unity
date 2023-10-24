@@ -12,8 +12,8 @@ The demo includes the following features:
 
 ## Environmental description
 
-- Unity 2020.2.1f1c1 is recommended.
-- Supported platforms: Android, iOS, Windows, macOS (alpha testing)
+- Unity 2020.2.1f1 is recommended.
+- Supported platforms: Android, iOS, Windows, macOS
 - Modules required: `Android Build Support`, `iOS Build Support`, `Windows Build Support`, `MacOS Build Support`
 - If you are developing for iOS, you also need:
   - Xcode 11.0 or above

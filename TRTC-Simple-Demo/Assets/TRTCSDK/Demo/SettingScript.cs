@@ -19,6 +19,8 @@ namespace TRTCCUnityDemo
 
         public Toggle ctrlClientToggle;
         public Toggle ctrlServerToggle;
+        public Dropdown voiceChangerDropDown;
+        public Slider earMonitorVolumeSlider;
 
         public Dropdown resolutionDropDown;
         public Dropdown fpsDropDown;
@@ -31,6 +33,8 @@ namespace TRTCCUnityDemo
             SetUpScene();
             SetUpRole();
             SetUpNetworkQos();
+            SetUpVoiceChanger();
+            SetupEarMonitorVolume();
             SetUpResolution();
             SetUpFps();
             SetUpDirection();
@@ -93,6 +97,74 @@ namespace TRTCCUnityDemo
             preferClearToggle.onValueChanged.AddListener(this.PreferClearToggleValueChanged);
             ctrlClientToggle.onValueChanged.AddListener(this.CtrlClientToggleValueChanged);
             ctrlServerToggle.onValueChanged.AddListener(this.CtrlServerToggleValueChanged);
+        }
+        private void SetUpVoiceChanger()
+        {
+            List<string> resNames = new List<string>(new string[] {
+                "0 - Original",
+                "1 - Child",
+                "2 - Little girl",
+                "3 - Middle-aged man",
+                "4 - Metal",
+                "5 - Nasal",
+                "6 - Punk",
+                "7 - Beast",
+                "8 - Fat boy",
+                "9 - Electric",
+                "10 - Robot",
+                "11 - Ethereal"
+            });
+            TXVoiceChangeType curType = DataManager.GetInstance().voiceChangeType;
+            int curIndex = 0;
+            switch (curType)
+            {
+                case TXVoiceChangeType.TXVoiceChangeType_0:
+                    curIndex = 0;
+                    break;
+                case TXVoiceChangeType.TXVoiceChangeType_1:
+                    curIndex = 1;
+                    break;
+                case TXVoiceChangeType.TXVoiceChangeType_2:
+                    curIndex = 2;
+                    break;
+                case TXVoiceChangeType.TXVoiceChangeType_3:
+                    curIndex = 3;
+                    break;
+                case TXVoiceChangeType.TXVoiceChangeType_4:
+                    curIndex = 4;
+                    break;
+                case TXVoiceChangeType.TXVoiceChangeType_5:
+                    curIndex = 5;
+                    break;
+                case TXVoiceChangeType.TXVoiceChangeType_6:
+                    curIndex = 6;
+                    break;
+                case TXVoiceChangeType.TXVoiceChangeType_7:
+                    curIndex = 7;
+                    break;
+                case TXVoiceChangeType.TXVoiceChangeType_8:
+                    curIndex = 8;
+                    break;
+                case TXVoiceChangeType.TXVoiceChangeType_9:
+                    curIndex = 9;
+                    break;
+                case TXVoiceChangeType.TXVoiceChangeType_10:
+                    curIndex = 10;
+                    break;
+                case TXVoiceChangeType.TXVoiceChangeType_11:
+                    curIndex = 11;
+                    break;
+            }
+            voiceChangerDropDown.AddOptions(resNames);
+            voiceChangerDropDown.value = curIndex;
+            voiceChangerDropDown.onValueChanged.AddListener(this.VoiceChangerDropDownValueChanged);
+        }
+        private void SetupEarMonitorVolume()
+        {
+            earMonitorVolumeSlider.maxValue =  150;
+            earMonitorVolumeSlider.minValue = 0;
+            earMonitorVolumeSlider.value = DataManager.GetInstance().earMonitorVolume;;
+            earMonitorVolumeSlider.onValueChanged.AddListener(this.EarMonitorVolumeSliderValueChanged);
         }
 
         private void SetUpResolution()
@@ -304,6 +376,55 @@ namespace TRTCCUnityDemo
             DataManager.GetInstance().qosParams = param;
         }
 
+        private void VoiceChangerDropDownValueChanged(int value)
+        {
+            TXVoiceChangeType type = DataManager.GetInstance().voiceChangeType;
+            switch (value)
+            {
+                case 0:
+                    type = TXVoiceChangeType.TXVoiceChangeType_0;
+                    break;
+                case 1:
+                    type = TXVoiceChangeType.TXVoiceChangeType_1;
+                    break;
+                case 2:
+                    type = TXVoiceChangeType.TXVoiceChangeType_2;
+                    break;
+                case 3:
+                    type = TXVoiceChangeType.TXVoiceChangeType_3;
+                    break;
+                case 4:
+                    type = TXVoiceChangeType.TXVoiceChangeType_4;
+                    break;
+                case 5:
+                    type = TXVoiceChangeType.TXVoiceChangeType_5;
+                    break;
+                case 6:
+                    type = TXVoiceChangeType.TXVoiceChangeType_6;
+                    break;
+                case 7:
+                    type = TXVoiceChangeType.TXVoiceChangeType_7;
+                    break;
+                case 8:
+                    type = TXVoiceChangeType.TXVoiceChangeType_8;
+                    break;
+                case 9:
+                    type = TXVoiceChangeType.TXVoiceChangeType_9;
+                    break;
+                case 10:
+                    type = TXVoiceChangeType.TXVoiceChangeType_10;
+                    break;
+                case 11:
+                    type = TXVoiceChangeType.TXVoiceChangeType_11;
+                    break;
+            }
+            DataManager.GetInstance().voiceChangeType = type;
+        }
+        private void EarMonitorVolumeSliderValueChanged(float value)
+        {
+            int volume = (int) value;
+            DataManager.GetInstance().earMonitorVolume = volume;
+        }
         private void ResolutionDropDownValueChanged(int value)
         {
             TRTCVideoEncParam param = DataManager.GetInstance().videoEncParam;

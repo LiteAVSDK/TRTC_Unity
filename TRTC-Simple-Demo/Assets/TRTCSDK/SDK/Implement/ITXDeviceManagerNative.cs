@@ -71,8 +71,8 @@ namespace trtc
         [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void TRTCUnityGetCurrentDevice(IntPtr instance, TXMediaDeviceType type, StringBuilder returnData, int returnSize);
 #endif
-
-
+        
+        
 #if UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX
         [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]
         public static extern int TRTCUnitySetCurrentDeviceVolume(IntPtr instance, TXMediaDeviceType type, UInt32 volume);

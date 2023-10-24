@@ -23,6 +23,7 @@ namespace trtc
 #elif UNITY_ANDROID && !UNITY_EDITOR
     public const string MyLibName = "native-lib";
 #elif UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
+    // public const string MyLibName = "liteav";
     public const string MyLibName = "trtc-c-wrapper";
 #elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
     public const string MyLibName = "trtc-mac-unity-plugin";
@@ -104,6 +105,7 @@ namespace trtc
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate void onRenderVideoFrameHandler(string user_id, int stream_type,
             int video_format, int buffer_type, IntPtr data, int texture_id, UInt32 length, UInt32 width, UInt32 height, UInt64 timestamp, int rotation);
+
         // 音频回调相关
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate void onCapturedRawAudioFrameHandler(int audioFormat,IntPtr data,UInt32 length,UInt32 sampleRate,UInt32 channel,UInt64 timestamp);
@@ -237,10 +239,8 @@ namespace trtc
         public static extern  void TRTCUnityDisconnectOtherRoom(IntPtr instance);
         [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]
         public static extern  void TRTCUnitySetDefaultStreamRecvMode(IntPtr instance,bool autoRecvAudio, bool autoRecvVideo);
-        #if UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
         [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]
         public static extern  int TRTCUnityEnablePayloadPrivateEncryption(IntPtr instance,bool enabled,string encryptionKey,string encryptionSalt);
-        #endif
         [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]
         public static extern  void TRTCUnitySwitchRoom(IntPtr instance,int roomId,string strRoomId,string userSig,string privateMapKey); 
 
@@ -257,7 +257,7 @@ namespace trtc
         #if !UNITY_WEBGL
         [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void TRTCUnitySetMixTranscodingConfig(IntPtr instance, TRTCTranscodingConfigMode mode, UInt32 appId, UInt32 bizId, UInt32 videoWidth, UInt32 videoHeight, UInt32 videoBitrate, UInt32 videoFramerate,
-         UInt32 videoGOP, UInt32 backgroundColor, string backgroundImage, UInt32 audioSampleRate, UInt32 audioBitrate, UInt32 audioChannels, UInt32 mixUsersArraySize, string streamId, TRTCMixUser[] mixUsersArray);
+         UInt32 videoGOP, UInt32 backgroundColor, string backgroundImage, UInt32 audioSampleRate, UInt32 audioBitrate, UInt32 audioChannels, UInt32 mixUsersArraySize, string streamId, TRTCInnerMixUser[] mixUsersArray);
         #endif 
         [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]
 
@@ -298,6 +298,8 @@ namespace trtc
 
         [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void TRTCUnitySetVideoEncoderRotation(IntPtr instance, int rotation);
+        [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void TRTCUnitySetLocalRenderParams(IntPtr instance, int fillMode, int mirrorType, int rotation);
         [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void TRTCUnitySetVideoEncoderMirror(IntPtr instance, bool mirror);
         [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]
@@ -444,12 +446,6 @@ namespace trtc
         public static extern  void TRTCUnityStartSpeedTest(IntPtr instance,int sdkAppId, string userId, string userSig);
         [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void TRTCUnityStopSpeedTest(IntPtr instance);
-#if UNITY_STANDALONE_WIN
-        [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void TRTCUnityStartSystemAudioLoopback(IntPtr instance, string deviceName);
-        [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void TRTCUnityStopSystemAudioLoopback(IntPtr instance);
-#endif
 
         // Discard interface function
         // [DllImport(MyLibName, CallingConvention = CallingConvention.Cdecl)]

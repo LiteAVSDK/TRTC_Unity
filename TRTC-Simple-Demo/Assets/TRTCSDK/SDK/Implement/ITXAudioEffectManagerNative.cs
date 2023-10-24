@@ -63,7 +63,7 @@ namespace trtc
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate void onStartHandler(int id, int errCode);
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate void onPlayProgressHandler(int id, long curPtsMS, long durationMS);
+        public delegate void onPlayProgressHandler(int id, Int32 curPtsMS, Int32 durationMS);
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate void onCompleteHandler(int id, int errCode);
 

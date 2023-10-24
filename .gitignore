@@ -1,1 +1,4 @@
 *.DS_Store
+TRTC-Simple-Demo/obj
+TRTC-Simple-Demo/.idea
+TRTC-Simple-Demo/Builds

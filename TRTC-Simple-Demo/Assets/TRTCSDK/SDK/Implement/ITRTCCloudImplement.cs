@@ -41,13 +41,6 @@ namespace trtc
             #if PLATFORM_ANDROID
                 localUserId = param.userId;
             #endif
-            #if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
-            if(param.sdkAppId.ToString().StartsWith("2")) {
-                ITRTCCloudNative.TRTCUnityCallExperimentalAPI(mNativeObj, "{\"api\":\"setNetEnv\", \"params\": {\"env\":5}}");
-            } else {
-                ITRTCCloudNative.TRTCUnityCallExperimentalAPI(mNativeObj, "{\"api\":\"setNetEnv\", \"params\": {\"env\":0}}");
-            }
-            #endif
             ITRTCCloudNative.TRTCUnityEnterRoom(mNativeObj, param.sdkAppId, param.userId, param.userSig, param.roomId, param.strRoomId, (int)param.role,
                 param.streamId, param.userDefineRecordId, param.privateMapKey, param.businessInfo, (int)scene);
         }
@@ -68,10 +61,7 @@ namespace trtc
         }
         public override int enablePayloadPrivateEncryption(bool enabled,string encryptionKey,string encryptionSalt)
         {
-        #if UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
             return ITRTCCloudNative.TRTCUnityEnablePayloadPrivateEncryption(mNativeObj,enabled,encryptionKey,encryptionSalt);
-        #endif
-        return 0;
         }
         public override void disconnectOtherRoom()
         {
@@ -119,7 +109,26 @@ namespace trtc
                 ITRTCCloudNative.TRTCUnitySetMixTranscodingConfigNull(mNativeObj);
             } else {
                 TRTCTranscodingConfig config = (TRTCTranscodingConfig)lconfig;
-                ITRTCCloudNative.TRTCUnitySetMixTranscodingConfig(mNativeObj, config.mode, config.appId, config.bizId, config.videoWidth, config.videoHeight, config.videoBitrate, config.videoFramerate, config.videoGOP, config.backgroundColor, config.backgroundImage, config.audioSampleRate, config.audioBitrate, config.audioChannels, config.mixUsersArraySize, config.streamId, config.mixUsersArray);
+             
+                TRTCInnerMixUser[] innerMixUser;
+                if (config.mixUsersArraySize > 0)
+                {
+                    innerMixUser = new TRTCInnerMixUser[config.mixUsersArraySize];
+                    for (var i = 0; i < config.mixUsersArraySize; i++)
+                    {
+                        innerMixUser[i] = TRTCTypeConverter.ConvertTRTCMixUser(config.mixUsersArray[i]);
+                    }
+                }
+                else
+                {
+                    innerMixUser = Array.Empty<TRTCInnerMixUser>();
+                }
+
+                ITRTCCloudNative.TRTCUnitySetMixTranscodingConfig(mNativeObj, 
+                    config.mode, config.appId, config.bizId, config.videoWidth, config.videoHeight, config.videoBitrate, 
+                    config.videoFramerate, config.videoGOP, config.backgroundColor, config.backgroundImage, 
+                    config.audioSampleRate, config.audioBitrate, config.audioChannels, 
+                    config.mixUsersArraySize, config.streamId, innerMixUser);
             }
             #endif
         }
@@ -148,6 +157,7 @@ namespace trtc
         {
             return ITRTCCloudNative.TRTCUnityGetVideoRenderData(mNativeObj,userId,ref rotation, ref width,ref height,ref length, isNeedCallBack);
         }
+        
         public override void stopLocalPreview()
         {
             ITRTCCloudNative.TRTCUnityStopLocalPreview(mNativeObj);
@@ -205,6 +215,12 @@ namespace trtc
         {
             ITRTCCloudNative.TRTCUnitySetVideoEncoderRotation(mNativeObj,(int)rotation);
         }
+
+        public override void setLocalRenderParams(TRTCRenderParams trtcParams)
+        {
+            ITRTCCloudNative.TRTCUnitySetLocalRenderParams(mNativeObj, (int)trtcParams.fillMode,(int)trtcParams.mirrorType, (int)trtcParams.rotation);
+        }
+
         public override void setVideoEncoderMirror(bool mirror)
         {
             //Windows doesn't support it at the moment
@@ -540,18 +556,7 @@ namespace trtc
         {
             ITRTCCloudNative.TRTCUnityStopSpeedTest(mNativeObj);
         }
-        public override void startSystemAudioLoopback(string deviceName)
-        {
-            #if UNITY_STANDALONE_WIN
-            ITRTCCloudNative.TRTCUnityStartSystemAudioLoopback(mNativeObj, deviceName);
-            #endif
-        }
-        public override void stopSystemAudioLoopback()
-        {
-            #if UNITY_STANDALONE_WIN
-            ITRTCCloudNative.TRTCUnityStopSystemAudioLoopback(mNativeObj);
-            #endif
-        }
+
         public override void enable3DSpatialAudioEffect(bool enable)
         {
             ITRTCCloudNative.TRTCUnityEnable3DSpatialAudioEffect(mNativeObj, enable);
@@ -1138,26 +1143,33 @@ namespace trtc
         }
 
         // static int mVideoLogCount = 0;
+
         [MonoPInvokeCallback(typeof(ITRTCCloudNative.onRenderVideoFrameHandler))]
         public static void onRenderVideoFrameHandler(string userId, int streamType, int videoFormat, int bufferType,
             IntPtr data, int textureId, UInt32 length, UInt32 width, UInt32 height, UInt64 timestamp, int rotation)
         {
-            // if (mVideoLogCount++ % 100 == 0) {
-            //      LogManager.Log(String.Format("onRenderVideoFormat rotation={0}, w={1}, h={2}, bufferType={3}, length={4}, data={5}", rotation, width, height, bufferType, length, data));
-            // }
             TRTCVideoFrame videoFrame = new TRTCVideoFrame();
             videoFrame.videoFormat = (TRTCVideoPixelFormat)videoFormat;
             videoFrame.bufferType = (TRTCVideoBufferType)bufferType;
             videoFrame.data = new byte[length];
-            if (data != IntPtr.Zero) {
-                Marshal.Copy(data, videoFrame.data, 0, (int)length);
-            }
+            Marshal.Copy(data, videoFrame.data, 0, (int)length);
             videoFrame.length = length;
             videoFrame.width = width;
             videoFrame.height = height;
             videoFrame.timestamp = timestamp;
             videoFrame.rotation = (TRTCVideoRotation)rotation;
             
+            /*
+            if (mVideoLogCount++ % 100 == 0)
+            {
+                Debug.LogFormat("onRenderVideoFormat rotation={0}, w={1}, h={2}", videoFrame.rotation, videoFrame.width, videoFrame.height);
+                Debug.LogFormat("onRenderData {0} {1} {2} {3} {4} {5} {6} {7} {8} {9} {10} {11} {12} {13} {14} {15} {16} {17} {18} {19}",
+                    videoFrame.data[0], videoFrame.data[1], videoFrame.data[2], videoFrame.data[3], videoFrame.data[4],
+                    videoFrame.data[5], videoFrame.data[6], videoFrame.data[7], videoFrame.data[8], videoFrame.data[9],
+                    videoFrame.data[10], videoFrame.data[11], videoFrame.data[12], videoFrame.data[13], videoFrame.data[14],
+                    videoFrame.data[15], videoFrame.data[16], videoFrame.data[17], videoFrame.data[18], videoFrame.data[19]);
+            }
+            */
 #if PLATFORM_ANDROID
                 if(localUserId == userId) {
                     userId = "";

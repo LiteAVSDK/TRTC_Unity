@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using LitJson;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -7,7 +6,6 @@ using UnityEngine.SceneManagement;
 using UnityEngine.Android;
 # endif
 using trtc;
-using TRTCCUnityDemo;
 
 namespace TRTCCUnityDemo
 {
@@ -18,6 +16,8 @@ namespace TRTCCUnityDemo
 
         void Start()
         {
+            LogManager.Log($"ITRTCCloud.PLUGIN_VERSION = {ITRTCCloud.PLUGIN_VERSION}");
+            
             #if PLATFORM_ANDROID
             if (!Permission.HasUserAuthorizedPermission(Permission.Microphone))
             {
@@ -29,21 +29,20 @@ namespace TRTCCUnityDemo
             }
             #endif
             
-            transform.Find("editUserID").GetComponent<InputField>().text = DataManager.GetInstance().GetUserID();
-            transform.Find("editRoomID").GetComponent<InputField>().text = DataManager.GetInstance().GetRoomID().ToString();
+            transform.Find("UserID/editUserID").GetComponent<InputField>().text = DataManager.GetInstance().GetUserID();
+            transform.Find("RoomID/editRoomID").GetComponent<InputField>().text = DataManager.GetInstance().GetRoomID();
+            transform.Find("Oper/Env/dpEnv").GetComponent<Dropdown>().value = DataManager.GetInstance().GetNetEnv();
             
-
-            Button enterRoomBtn = transform.Find("btnEnterRoom").gameObject.GetComponent<Button>();
+            var enterRoomBtn = transform.Find("Oper/btnEnterRoom").gameObject.GetComponent<Button>();
             enterRoomBtn.onClick.AddListener(this.OnEnterRoomClick);
 
-            Button showSettingBtn = transform.Find("btnShowSetting").gameObject.GetComponent<Button>();
+            var showSettingBtn = transform.Find("Oper/btnShowSetting").gameObject.GetComponent<Button>();
             showSettingBtn.onClick.AddListener(this.OnShowSettingClick);
 
-            // Button c = transform.Find("BtnApiTest").gameObject.GetComponent<Button>();
-            // showApiTestBtn.onClick.AddListener(this.OnShowApiTestClick);
-
-            ITRTCCloud mTRTCCloud = ITRTCCloud.getTRTCShareInstance();
-            string version = mTRTCCloud.getSDKVersion();
+            var showApiTestBtn = transform.Find("Oper/btnApiTest").gameObject.GetComponent<Button>();
+            showApiTestBtn.onClick.AddListener(this.OnShowApiTestClick);
+            
+            var version = ITRTCCloud.getTRTCShareInstance().getSDKVersion();
             transform.Find("lblTextVersion").GetComponent<Text>().text = "version:"+version;
         }
 
@@ -52,34 +51,53 @@ namespace TRTCCUnityDemo
 
         }
 
-        void OnEnterRoomClick()
+        private void OnEnterRoomClick()
         {
-            string userID = transform.Find("editUserID").GetComponent<InputField>().text;
-            string roomID = transform.Find("editRoomID").GetComponent<InputField>().text;
+            var userID = transform.Find("UserID/editUserID").GetComponent<InputField>().text;
+            var roomID = transform.Find("RoomID/editRoomID").GetComponent<InputField>().text;
 
             DataManager.GetInstance().SetUserID(userID);
             DataManager.GetInstance().SetRoomID(roomID);
             
-            if (GenerateTestUserSig.SDKAPPID != 0 && !string.IsNullOrEmpty(GenerateTestUserSig.SECRETKEY)) 
+            if (GenerateTestUserSig.SDKAPPID != 0 && !string.IsNullOrEmpty(GenerateTestUserSig.SECRETKEY))
             {
-                SceneManager.LoadScene("RoomSceme", LoadSceneMode.Single);
+                this.ConfigEnv();
+                SceneManager.LoadScene("RoomScene", LoadSceneMode.Single);
             }
             else
             {
                 Debug.Assert(false, "Please fill in your sdkappid && secretkey first");
             }
-            
         }
 
-        void OnShowSettingClick()
+        private void ConfigEnv()
+        {
+            var netEnv = transform.Find("Oper/Env/dpEnv").GetComponent<Dropdown>().value;
+            DataManager.GetInstance().SetNetEnv(netEnv);
+            
+            var data = new JsonData
+            {
+                ["api"] = "setNetEnv"
+            };
+            var param = new JsonData
+            {
+                ["env"] = netEnv
+            };
+            data["params"] = param;
+            var api = data.ToJson();
+            LogManager.Log($"call api => {api}");
+            ITRTCCloud.getTRTCShareInstance().callExperimentalAPI(api);
+        }
+
+        private void OnShowSettingClick()
         {
             var setting = Instantiate(settingPrefab, new Vector3(0, 0, 0), Quaternion.identity);
             setting.transform.SetParent(mainCanvas.transform, false);
         }
 
-        void OnShowApiTestClick()
+        private void OnShowApiTestClick()
         {
-            SceneManager.LoadScene("AudioApiTest", LoadSceneMode.Single);
+            SceneManager.LoadScene("ApiTestScene", LoadSceneMode.Single);
         }
     }
 }

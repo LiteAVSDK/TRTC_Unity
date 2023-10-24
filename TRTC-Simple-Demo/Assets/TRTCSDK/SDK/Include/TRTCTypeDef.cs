@@ -553,7 +553,8 @@ namespace trtc
     /// <summary>
     /// Music and audio effect API parameters
     /// </summary>
-    public struct AudioMusicParam {
+  public struct AudioMusicParam
+  {
         /// <summary>
         /// **Description:** music ID
         /// **Note:** The SDK allows you to play multiple music tracks. You use music ID to identify a music track and control its playback, volume, etc.
@@ -727,11 +728,12 @@ namespace trtc
     /// - Speakerphone: speaker at the bottom of a phone, which plays audio at high volume and is used to play music out loud
     /// - Earpiece: receiver at the top of a phone, which plays audio at low volume and is suitable for calls
     /// </summary>
-    public enum TXAudioRoute {
+  public enum TXAudioRoute
+  {
         TXAudioRouteSpeakerphone = 0,   /// <summary>Speaker</summary>
         TXAudioRouteEarpiece = 1,   /// <summary>Receiver</summary>
     };
-
+    
     /// <summary>
     /// Camera acquisition preferences (for win devices only)
     /// 
@@ -1369,16 +1371,16 @@ namespace trtc
         public int zOrder;
 
         /// <summary>
+        ///**Description:** whether the mixed stream is the primary stream (`TRTCVideoStreamTypeBig`) or screen sharing stream (`TRTCVideoStreamTypeSub`)
+        ///</summary>
+        public TRTCVideoStreamType streamType;
+        
+        /// <summary>
         ///**Description:** whether the user has enabled audio only
         ///**Value:** default value: `NO`
         ///**Note:** This parameter has been disused. Please use `inputType` instead.
         ///</summary>
         public bool pureAudio;
-
-        /// <summary>
-        ///**Description:** whether the mixed stream is the primary stream (`TRTCVideoStreamTypeBig`) or screen sharing stream (`TRTCVideoStreamTypeSub`)
-        ///</summary>
-        public TRTCVideoStreamType streamType;
 
         /// <summary>
         /// **Description:** type of the user’s input stream. This is an upgrade of the `pureAudio` parameter.

@@ -135,7 +135,7 @@ namespace trtc
         /// <param name="type">Device type，See the definition of TXMediaDeviceType for details.</param>
         /// <returns></returns> 
         public abstract ITXDeviceInfo GetCurrentDevice(TXMediaDeviceType type);
-
+        
         /// <summary>
         /// Setting the volume of the current device (for desktop OS)
         /// 
@@ -159,7 +159,7 @@ namespace trtc
         /// Set camera acquisition preferences (win only)
         /// </summary>
         /// <param name="param"></param>
-        public abstract void setCameraCapturerParam(TXCameraCaptureParam param);
+        public abstract void setCameraCaptureParam(TXCameraCaptureParam param);
     }
 }
 

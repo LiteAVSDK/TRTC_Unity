@@ -18,13 +18,12 @@ namespace trtc
             {
                 return;
             }
-
             ITXMusicPlayObserver callback = mCallbacks[id];
             callback.onStart(id, errCode);
         }
 
         [MonoPInvokeCallback(typeof(ITXAudioEffectManagerNative.onPlayProgressHandler))]
-        public static void onPlayProgressHandler(int id, long curPtsMS, long durationMS)
+        public static void onPlayProgressHandler(int id, Int32 curPtsMS, Int32 durationMS)
         {
             if (mCallbacks == null || !mCallbacks.ContainsKey(id))
             {
@@ -70,21 +69,14 @@ namespace trtc
         }
         public override void setMusicObserver(int musicId, ITXMusicPlayObserver observer)
         {
-            if (mCallbacks.ContainsKey(musicId))
-            {
-                mCallbacks[musicId] = observer;
-            }
-            else
-            {
-                mCallbacks.Add(musicId, observer);
-            }
+            mCallbacks[musicId] = observer;
             ITXAudioEffectManagerNative.TRTCUnitySetMusicObserver(mNativeObj, musicId, onStartHandler, onPlayProgressHandler, onCompleteHandler);
         }
-
-        // public override void enableVoiceEarMonitor(bool enable)
-        // {
-        //     ITXAudioEffectManagerNative.TRTCUnityEnableVoiceEarMonitor(mNativeObj,enable);
-        // }
+        
+        public override void enableVoiceEarMonitor(bool enable)
+        {
+            ITXAudioEffectManagerNative.TRTCUnityEnableVoiceEarMonitor(mNativeObj,enable);
+        }
 
         public override int getMusicCurrentPosInMS(int id)
         {
@@ -136,15 +128,15 @@ namespace trtc
             ITXAudioEffectManagerNative.TRTCUnitySetMusicSpeedRate(mNativeObj,id,speedRate);
         }
 
-        //public override void setVoiceChangerType(TXVoiceChangeType changerType)
-        //{
-        //    ITXAudioEffectManagerNative.TRTCUnitySetVoiceChangerType(mNativeObj, changerType);
-        //}
+        public override void setVoiceChangerType(TXVoiceChangeType changerType)
+        {
+            ITXAudioEffectManagerNative.TRTCUnitySetVoiceChangerType(mNativeObj, changerType);
+        }
 
-        //public override void setVoiceEarMonitorVolume(int volume)
-        //{
-        //    ITXAudioEffectManagerNative.TRTCUnitySetVoiceEarMonitorVolume(mNativeObj,volume);
-        //}
+        public override void setVoiceEarMonitorVolume(int volume)
+        {
+            ITXAudioEffectManagerNative.TRTCUnitySetVoiceEarMonitorVolume(mNativeObj,volume);
+        }
 
         public override void setVoiceReverbType(TXVoiceReverbType reverbType)
         {
@@ -159,8 +151,8 @@ namespace trtc
         public override void startPlayMusic(AudioMusicParam musicParam)
         {
             ITXAudioEffectManagerNative.TRTCUnityStartPlayMusic(mNativeObj,
-          musicParam.id, musicParam.path, musicParam.loopCount, musicParam.publish,
-          musicParam.isShortFile, musicParam.startTimeMS, musicParam.endTimeMS);
+                musicParam.id, musicParam.path, musicParam.loopCount, musicParam.publish,
+                musicParam.isShortFile, musicParam.startTimeMS, musicParam.endTimeMS);
         }
         
         public override void stopPlayMusic(int id)

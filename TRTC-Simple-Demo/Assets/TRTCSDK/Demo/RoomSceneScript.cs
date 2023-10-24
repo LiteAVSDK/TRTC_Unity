@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -29,13 +30,80 @@ namespace TRTCCUnityDemo
 
         private ITRTCCloud mTRTCCloud;
 
+        private SynchronizationContext MainContext;
+
         void Start()
         {
-            Toggle toggleSetting = transform.Find("PanelTest/Viewport/Content/ToggleSetting").gameObject.GetComponent<Toggle>();
+            MainContext = SynchronizationContext.Current;
+
+            captureAudioToggle = transform.Find("PanelOperate/Viewport/Content/ToggleMic").gameObject
+                .GetComponent<Toggle>();
+            captureAudioToggle.onValueChanged.AddListener(this.OnToggleMic);
+
+            captureVideoToggle = transform.Find("PanelOperate/Viewport/Content/ToggleCamera").gameObject
+                .GetComponent<Toggle>();
+            captureVideoToggle.onValueChanged.AddListener(this.OnToggleCamera);
+
+            Toggle enableEarMonitorSet = transform.Find("PanelOperate/Viewport/Content/ToggleEnableEarMonitor")
+                .gameObject.GetComponent<Toggle>();
+            enableEarMonitorSet.onValueChanged.AddListener(this.OnToggleEnableEarMonitor);
+
+            muteLocalVideoToggle = transform.Find("PanelOperate/Viewport/Content/ToggleMuteLocalVideo").gameObject
+                .GetComponent<Toggle>();
+            muteLocalVideoToggle.onValueChanged.AddListener(this.OnToggleMuteLocalVideo);
+
+            Toggle toggleMuteRemoteVideo = transform.Find("PanelOperate/Viewport/Content/ToggleMuteRemoteVideo")
+                .gameObject.GetComponent<Toggle>();
+            toggleMuteRemoteVideo.onValueChanged.AddListener(this.OnToggleMuteRemoteVideo);
+
+            muteLocalAudioToggle = transform.Find("PanelOperate/Viewport/Content/ToggleMuteLocalAudio").gameObject
+                .GetComponent<Toggle>();
+            muteLocalAudioToggle.onValueChanged.AddListener(this.OnToggleMuteLocalAudio);
+
+            Toggle toggleMuteRemoteAudio = transform.Find("PanelOperate/Viewport/Content/ToggleMuteRemoteAudio")
+                .gameObject.GetComponent<Toggle>();
+            toggleMuteRemoteAudio.onValueChanged.AddListener(this.OnToggleMuteRemoteAudio);
+
+            Toggle screenCapture = transform.Find("PanelOperate/Viewport/Content/ToggleScreenCapture").gameObject
+                .GetComponent<Toggle>();
+            screenCapture.onValueChanged.AddListener(this.OnToggleScreenCapture);
+
+
+            Toggle toggleShowConsole = transform.Find("PanelTest/Viewport/Content/ToggleShowConsole").gameObject
+                .GetComponent<Toggle>();
+            toggleShowConsole.onValueChanged.AddListener(this.OnToggleShowConsole);
+
+            Toggle toggleShowUserVolume = transform.Find("PanelTest/Viewport/Content/ToggleShowUserVolume").gameObject
+                .GetComponent<Toggle>();
+            toggleShowUserVolume.onValueChanged.AddListener(this.OnToggleShowUserVolume);
+
+            Toggle toggleShowStatis = transform.Find("PanelTest/Viewport/Content/ToggleShowStatis").gameObject
+                .GetComponent<Toggle>();
+            toggleShowStatis.onValueChanged.AddListener(this.OnToggleShowStatis);
+
+            Toggle toggleSetting = transform.Find("PanelTest/Viewport/Content/ToggleSetting").gameObject
+                .GetComponent<Toggle>();
             toggleSetting.onValueChanged.AddListener(this.OnToggleSetting);
 
-            Toggle toggleSendSEIMsg = transform.Find("PanelTest/Viewport/Content/ToggleSendSEIMsg").gameObject.GetComponent<Toggle>();
+            Toggle toggleSendSEIMsg = transform.Find("PanelTest/Viewport/Content/ToggleSendSEIMsg").gameObject
+                .GetComponent<Toggle>();
             toggleSendSEIMsg.onValueChanged.AddListener(this.OnToggleSendSEIMsg);
+
+            Toggle toggleSwitchCamera = transform.Find("PanelTest/Viewport/Content/ToggleSwitchCamera").gameObject
+                .GetComponent<Toggle>();
+            toggleSwitchCamera.onValueChanged.AddListener(this.OnToggleSwitchCamera);
+
+            Toggle beautySet = transform.Find("PanelTest/Viewport/Content/ToggleBeauty").gameObject
+                .GetComponent<Toggle>();
+            beautySet.onValueChanged.AddListener(this.OnToggleBeauty);
+
+            Toggle toggleSetMixTranscodingConfig = transform
+                .Find("PanelTest/Viewport/Content/ToggleSetMixTranscodingConfig").gameObject.GetComponent<Toggle>();
+            toggleSetMixTranscodingConfig.onValueChanged.AddListener(this.OnToggleSetMixTranscodingConfig);
+
+            Toggle toggleSetGSensorMode = transform.Find("PanelTest/Viewport/Content/ToggleGSensorMode").gameObject
+                .GetComponent<Toggle>();
+            toggleSetGSensorMode.onValueChanged.AddListener(this.OnToggleSetGSensorMode);
 
             // Toggle toggleStartPublishing = transform.Find("PanelTest/Viewport/Content/ToggleStartPublishing").gameObject.GetComponent<Toggle>();
             // toggleStartPublishing.onValueChanged.AddListener(this.OnTogglePublishing);
@@ -43,60 +111,18 @@ namespace TRTCCUnityDemo
             // Toggle toggleCustomCapture = transform.Find("PanelOperate/Viewport/Content/ToggleCustomCapture").gameObject.GetComponent<Toggle>();
             // toggleCustomCapture.onValueChanged.AddListener(this.OnToggleCustomCapture);
 
-            Toggle beautySet = transform.Find("PanelOperate/Viewport/Content/Beauty").gameObject.GetComponent<Toggle>();
-            beautySet.onValueChanged.AddListener(this.OnToggleBeauty);
-
             // Toggle videoMirror = transform.Find("PanelOperate/Viewport/Content/VideoMirror").gameObject.GetComponent<Toggle>();
             // videoMirror.onValueChanged.AddListener(this.OnToggleVideoMirror);
 
-            Toggle screenCapture = transform.Find("PanelOperate/Viewport/Content/ToggleScreenCapture").gameObject.GetComponent<Toggle>();
-            screenCapture.onValueChanged.AddListener(this.OnToggleScreenCapture);
-
-            Button leaveRoomButton = transform.Find("PanelTest/Viewport/Content/BtnLeaveRoom").gameObject.GetComponent<Button>();
+            Button leaveRoomButton = transform.Find("BtnLeaveRoom").gameObject.GetComponent<Button>();
             leaveRoomButton.onClick.AddListener(this.OnLeaveRoomClick);
 
-            captureAudioToggle = transform.Find("PanelOperate/Viewport/Content/ToggleMic").gameObject.GetComponent<Toggle>();
-            captureAudioToggle.onValueChanged.AddListener(this.OnToggleMic);
 
-            // muteLocalAudioToggle = transform.Find("PanelOperate/Viewport/Content/ToggleMuteLocalAudio").gameObject.GetComponent<Toggle>();
-            // muteLocalAudioToggle.onValueChanged.AddListener(this.OnToggleMuteLocalAudio);
-
-            Toggle toggleMuteRemoteAudio = transform.Find("PanelOperate/Viewport/Content/ToggleMuteRemoteAudio").gameObject.GetComponent<Toggle>();
-            toggleMuteRemoteAudio.onValueChanged.AddListener(this.OnToggleMuteRemoteAudio);
-
-            captureVideoToggle = transform.Find("PanelOperate/Viewport/Content/ToggleCamera").gameObject.GetComponent<Toggle>();
-            captureVideoToggle.onValueChanged.AddListener(this.OnToggleCamera);
-
-            muteLocalVideoToggle = transform.Find("PanelOperate/Viewport/Content/ToggleMuteLocalVideo").gameObject.GetComponent<Toggle>();
-            muteLocalVideoToggle.onValueChanged.AddListener(this.OnToggleMuteLocalVideo);
-
-            Toggle toggleMuteRemoteVideo = transform.Find("PanelOperate/Viewport/Content/ToggleMuteRemoteVideo").gameObject.GetComponent<Toggle>();
-            toggleMuteRemoteVideo.onValueChanged.AddListener(this.OnToggleMuteRemoteVideo);
-
-            Toggle toggleShowConsole = transform.Find("PanelTest/Viewport/Content/ToggleShowConsole").gameObject.GetComponent<Toggle>();
-            toggleShowConsole.onValueChanged.AddListener(this.OnToggleShowConsole);
-
-            Toggle toggleShowUserVolume = transform.Find("PanelTest/Viewport/Content/ToggleShowUserVolume").gameObject.GetComponent<Toggle>();
-            toggleShowUserVolume.onValueChanged.AddListener(this.OnToggleShowUserVolume);
-
-            Toggle toggleShowStatis = transform.Find("PanelTest/Viewport/Content/ToggleShowStatis").gameObject.GetComponent<Toggle>();
-            toggleShowStatis.onValueChanged.AddListener(this.OnToggleShowStatis);
-
-            Toggle toggleSwitchCamera = transform.Find("PanelTest/Viewport/Content/ToggleSwitchCamera").gameObject.GetComponent<Toggle>();
-            toggleSwitchCamera.onValueChanged.AddListener(this.OnToggleSwitchCamera);
-
-            Toggle toggleSetMixTranscodingConfig = transform.Find("PanelTest/Viewport/Content/ToggleSetMixTranscodingConfig").gameObject.GetComponent<Toggle>();
-            toggleSetMixTranscodingConfig.onValueChanged.AddListener(this.OnToggleSetMixTranscodingConfig);
-            
             mTRTCCloud = ITRTCCloud.getTRTCShareInstance();
             mTRTCCloud.addCallback(this);
 
-            string version = mTRTCCloud.getSDKVersion();
+            var version = mTRTCCloud.getSDKVersion();
             LogManager.Log("trtc sdk version is : " + version);
-
-            mTRTCCloud.callExperimentalAPI("{\"api\": \"setGSensorMode\", \"params\": {\"StreamType\": 1, \"gSensorMode\": 2}}");
-            // int ifSuccess = mTRTCCloud.enablePayloadPrivateEncryption(true, "1111222233334444", "11112222333344445555666677778888");
-            // LogManager.Log("trtc sdk enablePayloadPrivateEncryption ifSuccess : " + ifSuccess);
 
             TRTCParams trtcParams = new TRTCParams();
             trtcParams.sdkAppId = GenerateTestUserSig.SDKAPPID;
@@ -104,7 +130,7 @@ namespace TRTCCUnityDemo
             trtcParams.strRoomId = trtcParams.roomId.ToString();
             trtcParams.userId = DataManager.GetInstance().GetUserID();
             trtcParams.userSig = GenerateTestUserSig.GetInstance().GenTestUserSig(DataManager.GetInstance().GetUserID());
-            
+
             trtcParams.privateMapKey = "";
             trtcParams.businessInfo = "";
             trtcParams.role = DataManager.GetInstance().roleType;
@@ -114,18 +140,30 @@ namespace TRTCCUnityDemo
             TRTCVideoEncParam videoEncParams = DataManager.GetInstance().videoEncParam;
             mTRTCCloud.setVideoEncoderParam(ref videoEncParams);
 
-            TRTCNetworkQosParam qosParams = DataManager.GetInstance().qosParams;      // 网络流控相关参数设置
+            TRTCRenderParams renderParams = new TRTCRenderParams();
+            TRTCVideoRotation videoRotation = TRTCVideoRotation.TRTCVideoRotation0;
+#if UNITY_IOS && !UNITY_EDITOR
+            renderParams.rotation = TRTCVideoRotation.TRTCVideoRotation90;
+            videoRotation = TRTCVideoRotation.TRTCVideoRotation270;
+#endif
+            mTRTCCloud.setVideoEncoderRotation(videoRotation);
+            mTRTCCloud.setLocalRenderParams(renderParams);
+
+            TRTCNetworkQosParam qosParams = DataManager.GetInstance().qosParams; // 网络流控相关参数设置
             mTRTCCloud.setNetworkQosParam(ref qosParams);
 
-            LogManager.Log("Scene:" + scene + ", Role:" + trtcParams.role + ", Qos-Prefer:" + qosParams.preference + ", Qos-CtrlMode:" + qosParams.controlMode);
+            LogManager.Log("Scene:" + scene + ", Role:" + trtcParams.role + ", Qos-Prefer:" + qosParams.preference +
+                           ", Qos-CtrlMode:" + qosParams.controlMode);
 
-            userTableView.DoMuteAudio += new UserTableView.MuteAudioHandler(OnMuteRemoteAudio);
-            userTableView.DoMuteVideo += new UserTableView.MuteVideoHandler(OnMuteRemoteVideo);
-            DataManager.GetInstance().DoRoleChange += new DataManager.ChangeRoleHandler(OnRoleChanged);
-            DataManager.GetInstance().DoVideoEncParamChange += new DataManager.ChangeVideoEncParamHandler(OnVideoEncParamChanged);
-            DataManager.GetInstance().DoQosParamChange += new DataManager.ChangeQosParamHandler(OnQosParamChanged);
+            userTableView.DoMuteAudio += OnMuteRemoteAudio;
+            userTableView.DoMuteVideo += OnMuteRemoteVideo;
+            DataManager.GetInstance().DoRoleChange += OnRoleChanged;
+            DataManager.GetInstance().DoVoiceChange += OnVoiceChangeChanged;
+            DataManager.GetInstance().DoEarMonitorVolumeChange += OnEarMonitorVolumeChanged;
+            DataManager.GetInstance().DoVideoEncParamChange += OnVideoEncParamChanged;
+            DataManager.GetInstance().DoQosParamChange += OnQosParamChanged;
 
-            #if PLATFORM_ANDROID
+#if PLATFORM_ANDROID
             if (!Permission.HasUserAuthorizedPermission(Permission.Microphone))
             {
                 Permission.RequestUserPermission(Permission.Microphone);
@@ -134,17 +172,19 @@ namespace TRTCCUnityDemo
             {
                 Permission.RequestUserPermission(Permission.Camera);
             }
-            #endif
+#endif
         }
 
         void OnDestroy()
         {
             Debug.LogFormat("OnDestroy");
-            DataManager.GetInstance().DoRoleChange -= new DataManager.ChangeRoleHandler(OnRoleChanged);
-            DataManager.GetInstance().DoVideoEncParamChange -= new DataManager.ChangeVideoEncParamHandler(OnVideoEncParamChanged);
-            DataManager.GetInstance().DoQosParamChange -= new DataManager.ChangeQosParamHandler(OnQosParamChanged);
-            userTableView.DoMuteAudio -= new UserTableView.MuteAudioHandler(OnMuteRemoteAudio);
-            userTableView.DoMuteVideo -= new UserTableView.MuteVideoHandler(OnMuteRemoteVideo);
+            DataManager.GetInstance().DoRoleChange -= OnRoleChanged;
+            DataManager.GetInstance().DoVoiceChange -= OnVoiceChangeChanged;
+            DataManager.GetInstance().DoEarMonitorVolumeChange -= OnEarMonitorVolumeChanged;
+            DataManager.GetInstance().DoVideoEncParamChange -= OnVideoEncParamChanged;
+            DataManager.GetInstance().DoQosParamChange -= OnQosParamChanged;
+            userTableView.DoMuteAudio -= OnMuteRemoteAudio;
+            userTableView.DoMuteVideo -= OnMuteRemoteVideo;
 
             mTRTCCloud.removeCallback(this);
             ITRTCCloud.destroyTRTCShareInstance();
@@ -157,20 +197,15 @@ namespace TRTCCUnityDemo
             mTRTCCloud.exitRoom();
             DataManager.GetInstance().ResetLocalAVFlag();
         }
-        void OnToggleBeauty(bool value)
-        {
-            if(value) {
-                mTRTCCloud.setBeautyStyle(TRTCBeautyStyle.TRTCBeautyStyleSmooth, 9, 9, 9);
-            } else {
-                mTRTCCloud.setBeautyStyle(TRTCBeautyStyle.TRTCBeautyStyleSmooth, 0, 0, 0);
-            }
-        }
 
         void OnToggleVideoMirror(bool value)
         {
-            if(value) {
+            if (value)
+            {
                 mTRTCCloud.setVideoEncoderMirror(true);
-            } else {
+            }
+            else
+            {
                 mTRTCCloud.setVideoEncoderMirror(false);
             }
         }
@@ -200,6 +235,7 @@ namespace TRTCCUnityDemo
                 mTRTCCloud.stopLocalPreview();
                 userTableView.UpdateVideoAvailable("", TRTCVideoStreamType.TRTCVideoStreamTypeBig, false);
             }
+
             mTRTCCloud.muteLocalVideo(muteLocalVideo);
 
             if (captureAudio)
@@ -210,6 +246,7 @@ namespace TRTCCUnityDemo
             {
                 mTRTCCloud.stopLocalAudio();
             }
+
             mTRTCCloud.muteLocalAudio(muteLocalAudio);
             captureVideoToggle.interactable = !isAudience;
             captureVideoToggle.SetIsOnWithoutNotify(captureVideo);
@@ -220,6 +257,8 @@ namespace TRTCCUnityDemo
             // muteLocalAudioToggle.interactable = !isAudience;
             // muteLocalAudioToggle.SetIsOnWithoutNotify(muteLocalAudio);
         }
+
+        #region UI Oper
 
         void OnToggleMic(bool value)
         {
@@ -232,14 +271,8 @@ namespace TRTCCUnityDemo
             {
                 mTRTCCloud.stopLocalAudio();
             }
-            DataManager.GetInstance().captureAudio = value;
-        }
 
-        void OnToggleMuteLocalAudio(bool value)
-        {
-            LogManager.Log("OnToggleMuteLocalAudio: " + value);
-            mTRTCCloud.muteLocalAudio(value);
-            DataManager.GetInstance().muteLocalAudio = value;
+            DataManager.GetInstance().captureAudio = value;
         }
 
         void OnToggleCamera(bool value)
@@ -255,13 +288,14 @@ namespace TRTCCUnityDemo
                 mTRTCCloud.stopLocalPreview();
                 userTableView.UpdateVideoAvailable("", TRTCVideoStreamType.TRTCVideoStreamTypeBig, false);
             }
+
             DataManager.GetInstance().captureVideo = value;
         }
 
-        void OnToggleMuteRemoteAudio(bool value)
+        void OnToggleEnableEarMonitor(bool value)
         {
-            LogManager.Log("OnToggleMuteRemoteAudio: " + value);
-            mTRTCCloud.muteAllRemoteAudio(value);
+            LogManager.Log("OnToggleEnableEarMonitor enable =" + value);
+            mTRTCCloud.getAudioEffectManager().enableVoiceEarMonitor(value);
         }
 
         void OnToggleMuteLocalVideo(bool value)
@@ -271,10 +305,72 @@ namespace TRTCCUnityDemo
             DataManager.GetInstance().muteLocalVideo = value;
         }
 
+
         void OnToggleMuteRemoteVideo(bool value)
         {
             LogManager.Log("OnToggleMuteRemoteVideo: " + value);
             mTRTCCloud.muteAllRemoteVideoStreams(value);
+        }
+
+        void OnToggleMuteLocalAudio(bool value)
+        {
+            LogManager.Log("OnToggleMuteLocalAudio: " + value);
+            mTRTCCloud.muteLocalAudio(value);
+            DataManager.GetInstance().muteLocalAudio = value;
+        }
+
+        void OnToggleMuteRemoteAudio(bool value)
+        {
+            LogManager.Log("OnToggleMuteRemoteAudio: " + value);
+            mTRTCCloud.muteAllRemoteAudio(value);
+            // mTRTCCloud.enable3DSpatialAudioEffect(value);
+        }
+
+
+        void OnToggleScreenCapture(bool value)
+        {
+            if (value)
+            {
+                TRTCVideoEncParam videoEncParam = new TRTCVideoEncParam()
+                {
+                    videoResolution = TRTCVideoResolution.TRTCVideoResolution_1280_720,
+                    resMode = TRTCVideoResolutionMode.TRTCVideoResolutionModeLandscape,
+                    videoFps = 10,
+                    videoBitrate = 1600,
+                    minVideoBitrate = 1000
+                };
+#if UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX
+                    int thumbnailWidth = 100;
+                    int thumbnailHeight = 60;
+                    TRTCScreenCaptureSourceInfo[] sources =
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              mTRTCCloud.getScreenCaptureSources(thumbnailWidth, thumbnailHeight);
+                    Debug.LogFormat("sources id={0}", sources.Length);
+                    if (sources.Length > 0)
+                    {
+                        for (int i = 0; i < sources.Length; ++i) {
+                            LogManager.Log(String.Format("item {0}, {1}, {2}", sources.Length, sources[i].sourceId, sources[i].sourceName));
+                            Debug.LogFormat("item id={0}, name={1}", sources[i].sourceId, sources[i].sourceName);
+                        }
+                        mTRTCCloud.selectScreenCaptureTarget(sources[0], new Rect(0, 0, 0, 0), new TRTCScreenCaptureProperty());
+                        mTRTCCloud.startScreenCapture(TRTCVideoStreamType.TRTCVideoStreamTypeSub, ref videoEncParam);
+                        userTableView.AddUser("", TRTCVideoStreamType.TRTCVideoStreamTypeSub);
+                        userTableView.UpdateVideoAvailable("", TRTCVideoStreamType.TRTCVideoStreamTypeSub, true);
+                    }
+#elif UNITY_ANDROID || UNITY_IOS
+                mTRTCCloud.startScreenCapture(TRTCVideoStreamType.TRTCVideoStreamTypeSub, ref videoEncParam);
+#endif
+#if UNITY_IOS
+                IosExtensionLauncher.TRTCUnityExtensionLauncher();
+#endif
+            }
+            else
+            {
+                mTRTCCloud.stopScreenCapture();
+#if UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX
+                userTableView.UpdateVideoAvailable("", TRTCVideoStreamType.TRTCVideoStreamTypeSub, false);
+                userTableView.RemoveUser("", TRTCVideoStreamType.TRTCVideoStreamTypeSub);
+#endif
+            }
         }
 
         void OnToggleShowConsole(bool value)
@@ -292,6 +388,7 @@ namespace TRTCCUnityDemo
             {
                 mTRTCCloud.enableAudioVolumeEvaluation(0);
             }
+
             userTableView.UpdateAudioVolumeVisible(value);
         }
 
@@ -300,27 +397,89 @@ namespace TRTCCUnityDemo
             userTableView.UpdateUserStatisVisible(value);
         }
 
+        void OnToggleSetting(bool value)
+        {
+            if (value)
+            {
+                var setting = Instantiate(settingPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+                setting.transform.SetParent(mainCanvas.transform, false);
+                settingScript = setting.GetComponent<SettingScript>();
+            }
+            else
+            {
+                if (settingScript != null)
+                {
+                    Transform.Destroy(settingScript.gameObject);
+                    settingScript = null;
+                }
+            }
+        }
+
+        void OnToggleSendSEIMsg(bool value)
+        {
+            if (value)
+            {
+                // byte[] seiMsg = new byte[] {2, 0, 0, 0, 0, 0,1,1, 0, 0,1,1};
+                byte[] seiMsg = new byte[]
+                {
+                    2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+                };
+
+                // byte[] seiMsg = m_byteFacialData.ToArray();
+
+                string strInfo = "";
+                for (int i = 0; i < seiMsg.Length; i++)
+                {
+                    strInfo += seiMsg[i].ToString() + ", ";
+                }
+
+                LogManager.Log("seiMsg.Length: " + seiMsg.Length);
+                LogManager.Log("seiMsg strInfo: " + strInfo);
+
+                var result = mTRTCCloud.sendSEIMsg(seiMsg, seiMsg.Length, 1);
+
+
+                // string seiMsg = "test sei messagetest sei messagetest sei messagetest sei messagetest sei messagetest sei message";
+                // int msgSize = System.Text.Encoding.UTF8.GetByteCount(seiMsg);
+                // LogManager.Log(String.Format("----> sendSEIMsg seiMsg= {0}, msgSize = {1}", seiMsg, msgSize));
+                // mTRTCCloud.sendSEIMsg(System.Text.Encoding.UTF8.GetBytes(seiMsg), msgSize, 30);
+            }
+        }
+
         void OnToggleSwitchCamera(bool value)
         {
-            LogManager.Log("OnToggleSwitchCamera: " + value );
+            LogManager.Log("OnToggleSwitchCamera: " + value);
             mTRTCCloud.getDeviceManager().switchCamera(!value);
+        }
+
+        void OnToggleBeauty(bool value)
+        {
+            if (value)
+            {
+                mTRTCCloud.setBeautyStyle(TRTCBeautyStyle.TRTCBeautyStyleSmooth, 9, 9, 9);
+            }
+            else
+            {
+                mTRTCCloud.setBeautyStyle(TRTCBeautyStyle.TRTCBeautyStyleSmooth, 0, 0, 0);
+            }
         }
 
         void OnToggleSetMixTranscodingConfig(bool value)
         {
-            TRTCTranscodingConfig transcodingConfig =new TRTCTranscodingConfig();
-            transcodingConfig.appId=1252463788;
-            transcodingConfig.bizId =3891;
-            transcodingConfig.videoWidth =360;
+            TRTCTranscodingConfig transcodingConfig = new TRTCTranscodingConfig();
+            transcodingConfig.appId = 1252463788;
+            transcodingConfig.bizId = 3891;
+            transcodingConfig.videoWidth = 360;
             transcodingConfig.mode = TRTCTranscodingConfigMode.TRTCTranscodingConfigMode_Manual;
-            transcodingConfig.videoHeight =640;
-            transcodingConfig.videoFramerate =15;
+            transcodingConfig.videoHeight = 640;
+            transcodingConfig.videoFramerate = 15;
             transcodingConfig.videoGOP = 2;
             transcodingConfig.videoBitrate = 1000;
             transcodingConfig.audioBitrate = 64;
             transcodingConfig.audioSampleRate = 48000;
             transcodingConfig.audioChannels = 2;
-            
+
             transcodingConfig.streamId = "streamIdtest";
             TRTCMixUser[] mixUsersArray = new TRTCMixUser[2];
             mixUsersArray[0].userId = DataManager.GetInstance().GetUserID();
@@ -330,11 +489,7 @@ namespace TRTCCUnityDemo
             mixUsersArray[0].rect.top = 0;
             mixUsersArray[0].rect.right = 360;
             mixUsersArray[0].rect.bottom = 640;
-            mixUsersArray[0].renderMode = 0;
-            mixUsersArray[0].soundLevel = 100;
-            mixUsersArray[0].image = "";
 
-            /*
             mixUsersArray[1].userId = "110";
             mixUsersArray[1].zOrder = 5;
             mixUsersArray[1].streamType = 0;
@@ -342,16 +497,38 @@ namespace TRTCCUnityDemo
             mixUsersArray[1].rect.top = 100; //For reference only
             mixUsersArray[1].rect.right = 100; //For reference only
             mixUsersArray[1].rect.bottom = 100; //For reference only
-            mixUsersArray[1].roomId = DataManager.GetInstance().GetRoomID(); // Local users do not need to fill in roomid, remote users need to
-            */
+            mixUsersArray[1].roomId =
+                DataManager.GetInstance()
+                    .GetRoomID(); // Local users do not need to fill in roomid, remote users need to
 
             transcodingConfig.mixUsersArray = mixUsersArray;
-            transcodingConfig.mixUsersArraySize = 1;
-            if(value)
+            transcodingConfig.mixUsersArraySize = 2;
+            if (value)
                 mTRTCCloud.setMixTranscodingConfig(transcodingConfig);
             else
                 mTRTCCloud.setMixTranscodingConfig(null);
         }
+
+        void OnToggleSetGSensorMode(bool value)
+        {
+            var data = new JsonData
+            {
+                ["api"] = "setGSensorMode"
+            };
+            var param = new JsonData
+            {
+                ["StreamType"] = 0, // 0:big, 1:small, 2:sub
+                ["gSensorMode"] = value ? 1 : 0, // 0:Disable 1:UIAutoLayout, 2:UIFixLayout
+            };
+            data["params"] = param;
+            var api = data.ToJson();
+            LogManager.Log($"callExperimentalAPI: {api}");
+            mTRTCCloud.callExperimentalAPI(api);
+        }
+
+        #endregion
+
+        #region Setting UI Callback
 
         void OnMuteRemoteAudio(string userId, bool mute)
         {
@@ -365,50 +542,6 @@ namespace TRTCCUnityDemo
             mTRTCCloud.muteRemoteVideoStream(userId, mute);
         }
 
-        void OnToggleSetting(bool value)
-        {
-            if (value)
-            {
-                var setting = Instantiate(settingPrefab, new Vector3(0, 0, 0), Quaternion.identity);
-                setting.transform.SetParent(mainCanvas.transform, false);
-                settingScript = setting.GetComponent<SettingScript>();
-            }
-            else
-            {
-                if(settingScript!=null){
-                    Transform.Destroy(settingScript.gameObject);
-                    settingScript = null;
-                }
-            }
-        }
-
-        void OnToggleSendSEIMsg(bool value)
-        {
-            if (value)
-            {
-                // byte[] seiMsg = new byte[] {2, 0, 0, 0, 0, 0,1,1, 0, 0,1,1};
-                byte[] seiMsg = new byte[] {2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-                
-                // byte[] seiMsg = m_byteFacialData.ToArray();
-
-                string strInfo = "";
-                for (int i = 0; i < seiMsg.Length; i++)
-                {
-                    strInfo += seiMsg[i].ToString() + ", ";
-                }
-                LogManager.Log("seiMsg.Length: " + seiMsg.Length);
-                LogManager.Log("seiMsg strInfo: " + strInfo);
-
-                var result = mTRTCCloud.sendSEIMsg(seiMsg, seiMsg.Length, 1);
-                
-
-                // string seiMsg = "test sei messagetest sei messagetest sei messagetest sei messagetest sei messagetest sei message";
-                // int msgSize = System.Text.Encoding.UTF8.GetByteCount(seiMsg);
-                // LogManager.Log(String.Format("----> sendSEIMsg seiMsg= {0}, msgSize = {1}", seiMsg, msgSize));
-                // mTRTCCloud.sendSEIMsg(System.Text.Encoding.UTF8.GetBytes(seiMsg), msgSize, 30);
-            }
-        }
-
         void OnTogglePublishing(bool value)
         {
             // Toggle toggleStartPublishing = transform.Find("PanelTest/Viewport/Content/ToggleStartPublishing").gameObject.GetComponent<Toggle>();
@@ -419,54 +552,7 @@ namespace TRTCCUnityDemo
             // else
             // {
             //     mTRTCCloud.stopPublishing();
-
             // }
-        }
-
-        void OnToggleScreenCapture(bool value)
-        {
-            if (value)
-            {
-                // mTRTCCloud.startSystemAudioLoopback(null);
-                TRTCVideoEncParam videoEncParam = new TRTCVideoEncParam()
-                {
-                    videoResolution = TRTCVideoResolution.TRTCVideoResolution_1280_720,
-                    resMode = TRTCVideoResolutionMode.TRTCVideoResolutionModeLandscape,
-                    videoFps = 10,
-                    videoBitrate = 1600,
-                    minVideoBitrate = 1000
-                };
-                #if UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
-                    int thumbnailWidth = 100;
-                    int thumbnailHeight = 60;
-                    TRTCScreenCaptureSourceInfo[] sources = mTRTCCloud.getScreenCaptureSources(thumbnailWidth, thumbnailHeight);
-                    if (sources.Length > 0)
-                    {
-                        for (int i = 0; i < sources.Length; ++i) {
-                            // LogManager.Log(String.Format("item {0}, {1}, {2}", sources.Length, sources[i].sourceId, sources[i].sourceName));
-                            Debug.LogFormat("item id={0}, name={1}", sources[i].sourceId, sources[i].sourceName);
-                        }
-                        mTRTCCloud.selectScreenCaptureTarget(sources[0], new Rect(0, 0, 0, 0), new TRTCScreenCaptureProperty());
-                        mTRTCCloud.startScreenCapture(TRTCVideoStreamType.TRTCVideoStreamTypeSub, ref videoEncParam);
-                        userTableView.AddUser("", TRTCVideoStreamType.TRTCVideoStreamTypeSub);
-                        userTableView.UpdateVideoAvailable("", TRTCVideoStreamType.TRTCVideoStreamTypeSub, true);
-                    }
-                #elif UNITY_ANDROID || UNITY_IOS
-                    mTRTCCloud.startScreenCapture(TRTCVideoStreamType.TRTCVideoStreamTypeSub, ref videoEncParam);
-                #endif
-                #if UNITY_IOS
-                    IosExtensionLauncher.TRTCUnityExtensionLauncher();
-                #endif
-            }
-            else
-            {
-                // mTRTCCloud.stopSystemAudioLoopback();
-                mTRTCCloud.stopScreenCapture();
-                #if UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
-                userTableView.UpdateVideoAvailable("", TRTCVideoStreamType.TRTCVideoStreamTypeSub, false);
-                userTableView.RemoveUser("", TRTCVideoStreamType.TRTCVideoStreamTypeSub);
-                #endif
-            }
         }
 
         void OnToggleCustomCapture(bool value)
@@ -476,8 +562,8 @@ namespace TRTCCUnityDemo
                 var customCapture = Instantiate(customCapturePrefab, new Vector3(0, 0, 0), Quaternion.identity);
                 customCapture.transform.SetParent(mainCanvas.transform, false);
                 customCaptureScript = customCapture.GetComponent<CustomCaptureScript>();
-                customCaptureScript.AudioCallback += new CustomCaptureScript.OnCustomCaptureAudioCallback(CustomCaptureAudioCallback);
-                customCaptureScript.VideoCallback += new CustomCaptureScript.OnCustomCaptureVideoCallback(CustomCaptureVideoCallback);
+                customCaptureScript.AudioCallback += CustomCaptureAudioCallback;
+                customCaptureScript.VideoCallback += CustomCaptureVideoCallback;
             }
             else
             {
@@ -493,6 +579,20 @@ namespace TRTCCUnityDemo
         {
             SetLocalAVStatus();
             mTRTCCloud.switchRole(DataManager.GetInstance().roleType);
+        }
+
+        void OnVoiceChangeChanged()
+        {
+            TXVoiceChangeType type = DataManager.GetInstance().voiceChangeType;
+            LogManager.Log("OnVoiceChangeChanged type =" + type);
+            mTRTCCloud.getAudioEffectManager().setVoiceChangerType(type);
+        }
+
+        void OnEarMonitorVolumeChanged()
+        {
+            int volume = DataManager.GetInstance().earMonitorVolume;
+            LogManager.Log("OnEarMonitorVolumeChanged volume =" + volume);
+            mTRTCCloud.getAudioEffectManager().setVoiceEarMonitorVolume(volume);
         }
 
         void OnVideoEncParamChanged()
@@ -515,13 +615,16 @@ namespace TRTCCUnityDemo
             }
             else
             {
-                Toggle toggleMic = transform.Find("PanelOperate/Viewport/Content/ToggleMic").gameObject.GetComponent<Toggle>();
+                Toggle toggleMic = transform.Find("PanelOperate/Viewport/Content/ToggleMic").gameObject
+                    .GetComponent<Toggle>();
                 if (!toggleMic.isOn)
                 {
                     return;
                 }
+
                 mTRTCCloud.startLocalAudio(TRTCAudioQuality.TRTCAudioQualityDefault);
-                Toggle toggleMuteLocalAudio = transform.Find("PanelOperate/Viewport/Content/ToggleMuteLocalAudio").gameObject.GetComponent<Toggle>();
+                Toggle toggleMuteLocalAudio = transform.Find("PanelOperate/Viewport/Content/ToggleMuteLocalAudio")
+                    .gameObject.GetComponent<Toggle>();
                 if (toggleMuteLocalAudio.isOn)
                 {
                     mTRTCCloud.muteLocalAudio(true);
@@ -541,7 +644,8 @@ namespace TRTCCUnityDemo
             }
             else
             {
-                Toggle toggelCamera = transform.Find("PanelOperate/Viewport/Content/ToggleCamera").gameObject.GetComponent<Toggle>();
+                Toggle toggelCamera = transform.Find("PanelOperate/Viewport/Content/ToggleCamera").gameObject
+                    .GetComponent<Toggle>();
                 if (!toggelCamera.isOn)
                 {
                     return;
@@ -549,7 +653,8 @@ namespace TRTCCUnityDemo
 
                 mTRTCCloud.startLocalPreview(true, null);
 
-                Toggle toggleMuteLocalVideo = transform.Find("PanelOperate/Viewport/Content/ToggleMuteLocalVideo").gameObject.GetComponent<Toggle>();
+                Toggle toggleMuteLocalVideo = transform.Find("PanelOperate/Viewport/Content/ToggleMuteLocalVideo")
+                    .gameObject.GetComponent<Toggle>();
                 if (toggleMuteLocalVideo.isOn)
                 {
                     mTRTCCloud.muteLocalVideo(true);
@@ -561,7 +666,10 @@ namespace TRTCCUnityDemo
             }
         }
 
-#region ITRTCCloudCallback
+        #endregion
+
+        #region ITRTCCloudCallback
+
         public void onError(TXLiteAVError errCode, String errMsg, IntPtr arg)
         {
             LogManager.Log(String.Format("onError {0}, {1}", errCode, errMsg));
@@ -575,15 +683,17 @@ namespace TRTCCUnityDemo
         public void onEnterRoom(int result)
         {
             LogManager.Log(String.Format("onEnterRoom {0}", result));
-            userTableView.AddUser("", TRTCVideoStreamType.TRTCVideoStreamTypeBig);
+            MainContext.Post(_ => { userTableView.AddUser("", TRTCVideoStreamType.TRTCVideoStreamTypeBig); }, null);
         }
 
         public void onExitRoom(int reason)
         {
             LogManager.Log(String.Format("onExitRoom {0}", reason));
-            userTableView.RemoveUser("", TRTCVideoStreamType.TRTCVideoStreamTypeBig);
-
-            SceneManager.LoadScene("HomeScene", LoadSceneMode.Single);
+            MainContext.Post(_ =>
+            {
+                userTableView.RemoveUser("", TRTCVideoStreamType.TRTCVideoStreamTypeBig);
+                SceneManager.LoadScene("HomeScene", LoadSceneMode.Single);
+            }, null);
         }
 
         public void onSwitchRole(TXLiteAVError errCode, String errMsg)
@@ -604,14 +714,14 @@ namespace TRTCCUnityDemo
 
         public void onMicListWeb(String jsonStr)
         {
-            JsonData obj = JsonMapper.ToObject(jsonStr);         
+            JsonData obj = JsonMapper.ToObject(jsonStr);
             LogManager.Log(String.Format("onMicListWeb {0}, {1}", obj[0]["deviceId"], obj[0]["deviceName"]));
         }
 
         public void onSpeakerListWeb(String jsonStr)
         {
             JsonData obj = JsonMapper.ToObject(jsonStr);
-            LogManager.Log(String.Format("onSpeakerListWeb {0}, {1}", obj[0]["deviceId"], obj[0]["deviceName"]));   
+            LogManager.Log(String.Format("onSpeakerListWeb {0}, {1}", obj[0]["deviceId"], obj[0]["deviceName"]));
         }
 
         public void onCurrentSpeakerWeb(String jsonStr)
@@ -629,43 +739,52 @@ namespace TRTCCUnityDemo
         public void onRemoteUserLeaveRoom(String userId, int reason)
         {
             LogManager.Log(String.Format("onRemoteUserLeaveRoom {0}, {1}", userId, reason));
-            userTableView.RemoveUser(userId, TRTCVideoStreamType.TRTCVideoStreamTypeBig);
+            MainContext.Post(_ => { userTableView.RemoveUser(userId, TRTCVideoStreamType.TRTCVideoStreamTypeBig); },
+                null);
         }
 
         public void onUserVideoAvailable(String userId, bool available)
         {
             LogManager.Log(String.Format("onUserVideoAvailable {0}, {1}", userId, available));
             // Important: startRemoteView is needed for receiving video stream.
-            if (available)
+            MainContext.Post(_ =>
             {
-                userTableView.AddUser(userId, TRTCVideoStreamType.TRTCVideoStreamTypeBig);
-                mTRTCCloud.startRemoteView(userId, TRTCVideoStreamType.TRTCVideoStreamTypeBig, null);
-            }
-            else
-            {
-                mTRTCCloud.stopRemoteView(userId, TRTCVideoStreamType.TRTCVideoStreamTypeBig);
-            }
-            userTableView.UpdateVideoAvailable(userId, TRTCVideoStreamType.TRTCVideoStreamTypeBig, available);
+                if (available)
+                {
+                    userTableView.AddUser(userId, TRTCVideoStreamType.TRTCVideoStreamTypeBig);
+                    mTRTCCloud.startRemoteView(userId, TRTCVideoStreamType.TRTCVideoStreamTypeBig, null);
+                }
+                else
+                {
+                    mTRTCCloud.stopRemoteView(userId, TRTCVideoStreamType.TRTCVideoStreamTypeBig);
+                }
+
+                userTableView.UpdateVideoAvailable(userId, TRTCVideoStreamType.TRTCVideoStreamTypeBig, available);
+            }, null);
         }
 
         public void onUserSubStreamAvailable(String userId, bool available)
         {
             LogManager.Log(String.Format("onUserSubStreamAvailable {0}, {1}", userId, available));
             // Important: startRemoteView is needed for receiving video stream.
-            if (available)
+            MainContext.Post(_ =>
             {
-                userTableView.AddUser(userId, TRTCVideoStreamType.TRTCVideoStreamTypeSub);
-                userTableView.UpdateVideoAvailable(userId, TRTCVideoStreamType.TRTCVideoStreamTypeSub, available);
-                mTRTCCloud.startRemoteView(userId, TRTCVideoStreamType.TRTCVideoStreamTypeSub, null);
-            }
-            else
-            {
-                mTRTCCloud.stopRemoteView(userId, TRTCVideoStreamType.TRTCVideoStreamTypeSub);
-                userTableView.RemoveUser(userId, TRTCVideoStreamType.TRTCVideoStreamTypeSub);
-            }
+                if (available)
+                {
+                    userTableView.AddUser(userId, TRTCVideoStreamType.TRTCVideoStreamTypeSub);
+                    userTableView.UpdateVideoAvailable(userId, TRTCVideoStreamType.TRTCVideoStreamTypeSub, available);
+                    mTRTCCloud.startRemoteView(userId, TRTCVideoStreamType.TRTCVideoStreamTypeSub, null);
+                }
+                else
+                {
+                    mTRTCCloud.stopRemoteView(userId, TRTCVideoStreamType.TRTCVideoStreamTypeSub);
+                    userTableView.RemoveUser(userId, TRTCVideoStreamType.TRTCVideoStreamTypeSub);
+                }
+            }, null);
         }
 
-        public void onUserAudioAvailableWeb(String jsonStr) {
+        public void onUserAudioAvailableWeb(String jsonStr)
+        {
             JsonData obj = JsonMapper.ToObject(jsonStr);
             onUserAudioAvailable(obj["userId"].ToString(), (bool)obj["available"]);
         }
@@ -673,11 +792,15 @@ namespace TRTCCUnityDemo
         public void onUserAudioAvailable(String userId, bool available)
         {
             LogManager.Log(String.Format("onUserAudioAvailable {0}, {1}", userId, available));
-            if (available)
+            MainContext.Post(_ =>
             {
-                userTableView.AddUser(userId, TRTCVideoStreamType.TRTCVideoStreamTypeBig);
-            }
-            userTableView.UpdateAudioAvailable(userId, TRTCVideoStreamType.TRTCVideoStreamTypeBig, available);
+                if (available)
+                {
+                    userTableView.AddUser(userId, TRTCVideoStreamType.TRTCVideoStreamTypeBig);
+                }
+
+                userTableView.UpdateAudioAvailable(userId, TRTCVideoStreamType.TRTCVideoStreamTypeBig, available);
+            }, null);
         }
 
         public void onFirstVideoFrame(String userId, TRTCVideoStreamType streamType, int width, int height)
@@ -700,31 +823,40 @@ namespace TRTCCUnityDemo
             LogManager.Log(String.Format("onSendFirstLocalAudioFrame"));
         }
 
-        public void onNetworkQuality(TRTCQualityInfo localQuality, TRTCQualityInfo[] remoteQuality, UInt32 remoteQualityCount)
+        public void onNetworkQuality(TRTCQualityInfo localQuality, TRTCQualityInfo[] remoteQuality,
+            UInt32 remoteQualityCount)
         {
             // LogManager.Log(String.Format("onNetworkQuality {0}, {1}, {2}", localQuality, remoteQuality, remoteQualityCount));
         }
 
         public void onStatistics(TRTCStatistics statis)
         {
-            // LogManager.Log(String.Format("onStatistics {0}", statis));
-            string localStatisText = "";
-            foreach (TRTCLocalStatistics local in statis.localStatisticsArray)
+            MainContext.Post(_ =>
             {
-                localStatisText = string.Format("width: {0}\r\nheight: {1}\r\nvideoframerate: {2}\r\nvideoBitrate: {3}\r\naudioSampleRate: {4}\r\naudioBitrate:{5}\r\nstreamType:{6}\r\n",
+                // LogManager.Log(String.Format("onStatistics {0}", statis));
+                string localStatisText = "";
+                foreach (TRTCLocalStatistics local in statis.localStatisticsArray)
+                {
+                    localStatisText = string.Format(
+                        "width: {0}\r\nheight: {1}\r\nvideoframerate: {2}\r\nvideoBitrate: {3}\r\naudioSampleRate: {4}\r\naudioBitrate:{5}\r\nstreamType:{6}\r\n",
                         local.width, local.height,
-                        local.frameRate, local.videoBitrate, local.audioSampleRate, local.audioBitrate, local.streamType);
-                userTableView.updateUserStatistics("", local.streamType, localStatisText);
-            }
-            foreach (TRTCRemoteStatistics remote in statis.remoteStatisticsArray)
-            {
-                string remoteStatisText = "";
-                remoteStatisText = string.Format("finalLoss: {7}\r\njitterBufferDelay: {8}\r\nwidth: {0}\r\nheight: {1}\r\nvideoframerate: {2}\r\nvideoBitrate: {3}\r\naudioSampleRate: {4}\r\naudioBitrate:{5}\r\nstreamType:{6}\r\n",
+                        local.frameRate, local.videoBitrate, local.audioSampleRate, local.audioBitrate,
+                        local.streamType);
+                    userTableView.updateUserStatistics("", local.streamType, localStatisText);
+                }
+
+                foreach (TRTCRemoteStatistics remote in statis.remoteStatisticsArray)
+                {
+                    string remoteStatisText = "";
+                    remoteStatisText = string.Format(
+                        "finalLoss: {7}\r\njitterBufferDelay: {8}\r\nwidth: {0}\r\nheight: {1}\r\nvideoframerate: {2}\r\nvideoBitrate: {3}\r\naudioSampleRate: {4}\r\naudioBitrate:{5}\r\nstreamType:{6}\r\n",
                         remote.width, remote.height,
-                        remote.frameRate, remote.videoBitrate, remote.audioSampleRate, remote.audioBitrate, remote.streamType,
+                        remote.frameRate, remote.videoBitrate, remote.audioSampleRate, remote.audioBitrate,
+                        remote.streamType,
                         remote.finalLoss, remote.jitterBufferDelay);
-                userTableView.updateUserStatistics(remote.userId, remote.streamType, remoteStatisText);
-            }
+                    userTableView.updateUserStatistics(remote.userId, remote.streamType, remoteStatisText);
+                }
+            }, null);
         }
 
         public void onConnectionLost()
@@ -754,17 +886,21 @@ namespace TRTCCUnityDemo
 
         public void onUserVoiceVolume(TRTCVolumeInfo[] userVolumes, UInt32 userVolumesCount, UInt32 totalVolume)
         {
-            
-            foreach (TRTCVolumeInfo userVolume in userVolumes)
+            MainContext.Post(_ =>
             {
-                userTableView.UpdateAudioVolume(userVolume.userId, TRTCVideoStreamType.TRTCVideoStreamTypeBig, userVolume.volume);
-            }
+                foreach (TRTCVolumeInfo userVolume in userVolumes)
+                {
+                    userTableView.UpdateAudioVolume(userVolume.userId, TRTCVideoStreamType.TRTCVideoStreamTypeBig,
+                        userVolume.volume);
+                }
+            }, null);
         }
 
         public void onDeviceChange(String deviceId, TRTCDeviceType type, TRTCDeviceState state)
         {
             LogManager.Log(String.Format("onSwitchRole {0}, {1}, {2}", deviceId, type, state));
         }
+
         public void onRecvSEIMsg(String userId, Byte[] message, UInt32 msgSize)
         {
             LogManager.Log("onRecvSEIMsg: " + userId + ", " + msgSize + ", " + msgSize);
@@ -774,6 +910,7 @@ namespace TRTCCUnityDemo
             {
                 strInfo += message[i].ToString() + ", ";
             }
+
             LogManager.Log("strInfo: " + strInfo);
 
             // string seiMessage = System.Text.Encoding.UTF8.GetString(message, 0, (int)msgSize);
@@ -822,54 +959,58 @@ namespace TRTCCUnityDemo
 
         public void onConnectOtherRoom(string userId, TXLiteAVError errCode, string errMsg)
         {
-            LogManager.Log(String.Format("onConnectOtherRoom {0}, {1}, {2}", userId, errCode , errMsg));
+            LogManager.Log(String.Format("onConnectOtherRoom {0}, {1}, {2}", userId, errCode, errMsg));
         }
 
         public void onDisconnectOtherRoom(TXLiteAVError errCode, string errMsg)
         {
-            LogManager.Log(String.Format("onDisconnectOtherRoom {0}, {1}",  errCode , errMsg));
+            LogManager.Log(String.Format("onDisconnectOtherRoom {0}, {1}", errCode, errMsg));
         }
 
         public void onSwitchRoom(TXLiteAVError errCode, string errMsg)
         {
-            LogManager.Log(String.Format("onSwitchRoom {0}, {1}",  errCode , errMsg));
+            LogManager.Log(String.Format("onSwitchRoom {0}, {1}", errCode, errMsg));
         }
 
         public void onSpeedTest(TRTCSpeedTestResult currentResult, int finishedCount, int totalCount)
         {
-            LogManager.Log(String.Format("onSpeedTest {0}, {1} ,{2}",  currentResult.upLostRate , finishedCount , totalCount));
+            LogManager.Log(String.Format("onSpeedTest {0}, {1} ,{2}", currentResult.upLostRate, finishedCount,
+                totalCount));
         }
 
         public void onTestMicVolume(int volume)
         {
-            LogManager.Log(String.Format("onTestMicVolume {0}",  volume ));
+            LogManager.Log(String.Format("onTestMicVolume {0}", volume));
         }
 
         public void onTestSpeakerVolume(int volume)
         {
-            LogManager.Log(String.Format("onTestSpeakerVolume {0}",  volume ));
+            LogManager.Log(String.Format("onTestSpeakerVolume {0}", volume));
         }
 
         public void onAudioDeviceCaptureVolumeChanged(int volume, bool muted)
         {
-            LogManager.Log(String.Format("onAudioDeviceCaptureVolumeChanged {0} , {1}",  volume ,muted));
+            LogManager.Log(String.Format("onAudioDeviceCaptureVolumeChanged {0} , {1}", volume, muted));
         }
 
         public void onAudioDevicePlayoutVolumeChanged(int volume, bool muted)
         {
-            LogManager.Log(String.Format("onAudioDevicePlayoutVolumeChanged {0} , {1}",  volume ,muted));
+            LogManager.Log(String.Format("onAudioDevicePlayoutVolumeChanged {0} , {1}", volume, muted));
         }
-       
+
         public void onRecvCustomCmdMsg(string userId, int cmdID, int seq, byte[] message, int messageSize)
         {
             string msg = System.Text.Encoding.UTF8.GetString(message, 0, messageSize);
             LogManager.Log(Environment.NewLine + String.Format("onRecvCustomCmdMsg {0}, {1} ,{2}", userId, cmdID, msg));
         }
+
         public void onMissCustomCmdMsg(string userId, int cmdID, int errCode, int missed)
         {
             LogManager.Log(String.Format("onMissCustomCmdMsg {0}, {1}", userId, cmdID));
         }
-        public void onSnapshotComplete(string userId, TRTCVideoStreamType type, byte[] data, int length, int width, int height, TRTCVideoPixelFormat format)
+
+        public void onSnapshotComplete(string userId, TRTCVideoStreamType type, byte[] data, int length, int width,
+            int height, TRTCVideoPixelFormat format)
         {
             LogManager.Log(String.Format("onSnapshotComplete {0} , {1}", userId, type));
         }
@@ -878,6 +1019,7 @@ namespace TRTCCUnityDemo
         {
             LogManager.Log(String.Format("onSetMixTranscodingConfig {0} , {1}", errCode, errMsg));
         }
-#endregion
+
+        #endregion
     }
 }

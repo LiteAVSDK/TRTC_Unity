@@ -28,6 +28,8 @@ namespace trtc
     /// </example>
     public abstract class ITRTCCloud
     {
+        public static string PLUGIN_VERSION = "20231020.66";
+        
         /// <summary>
         /// Get an `ITRTCCloud` singleton object
         /// </summary>
@@ -392,6 +394,12 @@ namespace trtc
         /// </remarks>
         /// <param name="rotation">Currently supports two rotation angles of 0 and 180. 0 (default): no rotation</param>
         public abstract void setVideoEncoderRotation(TRTCVideoRotation rotation);
+        
+        /// <summary>
+        /// Set the rendering parameters of local video image
+        /// </summary>
+        /// <param name="trtcParams"></param>
+        public abstract void setLocalRenderParams(TRTCRenderParams trtcParams);
 
         /// <summary>
         /// Set the mirror mode of encoded video (not supported on Windows)
@@ -780,32 +788,32 @@ namespace trtc
 
         /// <summary>
         /// Enable 3D audio effects
-        /// <param name="enable">Whether to enable 3D audio effects. Default value: `false`</param>
         /// </summary>
+        /// <param name="enable">Whether to enable 3D audio effects. Default value: `false`</param>
         public abstract void enable3DSpatialAudioEffect(bool enable);
 
         /// <summary>
         /// Set 3D audio effect parameters
         /// <para>Note that an array of length 3 should be passed in.</para>
+        /// </summary>
         /// <param name="position">Sound source location. Your own coordinates in the world coordinate system. The order is front, right, top</param>
         /// <param name="axisForward">The unit vector of the front axis of the own coordinate system.</param>
         /// <param name="axisRight">The unit vector of the right axis of the own coordinate system.</param>
         /// <param name="axisUp">The unit vector of the axis in the own coordinate system.</param>
-        /// </summary>
         public abstract void updateSelf3DSpatialPosition(int[] position, float[] axisForward, float[] axisRight, float[] axisUp);
 
         /// <summary>
         /// Set the acceptable range of the sound emitted by the specified user
+        /// </summary>
         /// <param name="userId">Specify the ID of the remote user</param>
         /// <param name="range">Maximum acceptable range of sound</param>
-        /// </summary>
         public abstract void set3DSpatialReceivingRange(string userId, int range);
 
         /// <summary>
         /// Set remote user coordinate information in 3D sound effect
+        /// </summary>
         /// <param name="userId">Specify the ID of the remote user</param>
         /// <param name="position">Sound source location. Your own coordinates in the world coordinate system. The order is front, right, top</param>
-        /// </summary>
         public abstract void updateRemote3DSpatialPosition(string userId, int[] position);
 
         /// <summary>
@@ -918,17 +926,6 @@ namespace trtc
         /// Stop network speed testing
         /// </summary>
         public abstract void stopSpeedTest();
-
-        /// <summary>
-        /// Enable system sound collection (only applicable to desktop systems)
-        /// </summary>
-        /// <param name="deviceName">You can specify this parameter as null, which means that the SDK can collect the sound of the whole system</param>
-        public abstract void startSystemAudioLoopback(string deviceName);
-
-        /// <summary>
-        /// Stop system sound collection (desktop system only)
-        /// </summary>
-        public abstract void stopSystemAudioLoopback();
 
         /// @}
 

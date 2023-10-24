@@ -10,19 +10,19 @@
 		<dict>
 			<key>cdhash</key>
 			<data>
-			FApF/tgQ36LmVn6FO3cu/kpW3sg=
+			nylCyv1IEgDK4PcACJLY/kKcFPs=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"454e33f829a10fbb869cf98f75b7108a544c76fd" or cdhash H"140a45fed810dfa2e6567e853b772efe4a56dec8" or cdhash H"0b6f3af8e08219cc406cd4bfa08d1f099e9f3e8b" or cdhash H"89b0290ee5fe3ace9c313b216055fa4cf8fecb6e"</string>
+			<string>cdhash H"58bcc178d37b835183f6ee1cbbb1309e655d866d" or cdhash H"9f2942cafd481200cae0f7000892d8fe429c14fb" or cdhash H"d49bc96dee289e2c243f6c4ec1644e0b90a92ede" or cdhash H"0bebe764bcb1148f49952d2776c4789b1aae6bdb"</string>
 		</dict>
 		<key>Frameworks/TXSoundTouch.framework</key>
 		<dict>
 			<key>cdhash</key>
 			<data>
-			kqLDlPi/04xeoHCJ3Six1CrqplE=
+			wQzdxBAZUJPRmokf/1omxW25tuY=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"1617b8557de995cc209e0b35a4301ba127e5fac0" or cdhash H"92a2c394f8bfd38c5ea07089dd28b1d42aeaa651" or cdhash H"d1b41c7e8f1f0b213d25bc0b5727ebf7fe8331df" or cdhash H"01cd153ac9d09596e0b02975ddd10b4e1b36a689"</string>
+			<string>cdhash H"c77b856b7024b7a79976d45d511a537b2576be85" or cdhash H"c10cddc410195093d19a891fff5a26c56db9b6e6" or cdhash H"4a597c0b28bcafbd4c1e3172aef5b29e97f35c4a" or cdhash H"427bef968fb4e6c3a5b7ba6bf22b6c5c3f0efa41"</string>
 		</dict>
 	</dict>
 	<key>rules</key>

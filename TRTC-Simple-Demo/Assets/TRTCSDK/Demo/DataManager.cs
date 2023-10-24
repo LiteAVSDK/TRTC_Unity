@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
@@ -10,7 +11,7 @@ namespace TRTCCUnityDemo
     {
         public string GetUserID()
         {
-            string randomUserID = GetRandomString(8);
+            var randomUserID = Convert.ToString(UnityEngine.Random.Range(10000000, 99999999));
             return PlayerPrefs.GetString("UserID", randomUserID);
         }
         public void SetUserID(string userID)
@@ -19,28 +20,23 @@ namespace TRTCCUnityDemo
         }
         public string GetRoomID()
         {
-            return System.Convert.ToString(PlayerPrefs.GetString("RoomID", "1222222"));
+            return Convert.ToString(PlayerPrefs.GetString("RoomID", "1222222"));
         }
         public void SetRoomID(string roomID)
         {
-            PlayerPrefs.SetString("RoomID", System.Convert.ToString(roomID));
+            PlayerPrefs.SetString("RoomID", Convert.ToString(roomID));
         }
 
-        public string GetRandomString(int length)
+        public int GetNetEnv()
         {
-            string buffer = "0123456789";
-            StringBuilder sb = new StringBuilder();
-            System.Random r = new System.Random(length);
-            int range = buffer.Length;
-            for (int i = 0; i < length; i++)
-            {
-                sb.Append(buffer.Substring(r.Next(range), 1));
-            }
-            return sb.ToString();
+            return Convert.ToInt32(PlayerPrefs.GetInt("NetEnv", 0));
         }
 
-
-
+        public void SetNetEnv(int netEnv)
+        {
+            PlayerPrefs.SetInt("NetEnv", netEnv);
+        }
+        
         public struct VideoResBitrateTable
         {
             public int defaultBitrate;
@@ -80,6 +76,42 @@ namespace TRTCCUnityDemo
             }
         }
 
+        public delegate void ChangeVoiceChangerHandler();
+        public event ChangeVoiceChangerHandler DoVoiceChange;
+        private TXVoiceChangeType _voiceChangeType;
+        public TXVoiceChangeType voiceChangeType
+        {
+            get
+            {
+                return _voiceChangeType;
+            }
+            set
+            {
+                _voiceChangeType = value;
+                if (DoVoiceChange != null)
+                {
+                    DoVoiceChange();
+                }
+            }
+        }
+        public delegate void ChangeEarMonitorVolumeHandler();
+        public event ChangeEarMonitorVolumeHandler DoEarMonitorVolumeChange;
+        private int _earMonitorVolume;
+        public int earMonitorVolume
+        {
+            get
+            {
+                return _earMonitorVolume;
+            }
+            set
+            {
+                _earMonitorVolume = value;
+                if (DoEarMonitorVolumeChange != null)
+                {
+                    DoEarMonitorVolumeChange();
+                }
+            }
+        }
         public delegate void ChangeVideoEncParamHandler();
         public event ChangeVideoEncParamHandler DoVideoEncParamChange;
         private TRTCVideoEncParam _videoEncParam;
@@ -149,6 +181,8 @@ namespace TRTCCUnityDemo
             appScene = TRTCAppScene.TRTCAppSceneVideoCall;
             roleType = TRTCRoleType.TRTCRoleAnchor;
 
+            voiceChangeType = TXVoiceChangeType.TXVoiceChangeType_0;
+            earMonitorVolume = 100;
             videoEncParam = new TRTCVideoEncParam()
             {
                 videoResolution = TRTCVideoResolution.TRTCVideoResolution_640_360,

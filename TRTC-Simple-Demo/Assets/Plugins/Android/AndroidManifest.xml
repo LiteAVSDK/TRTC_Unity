@@ -1,15 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:versionCode="1"
-    android:versionName="1.0"
-    android:installLocation="2"
-    android:compileSdkVersion="30"
-    android:compileSdkVersionCodename="10"
-    package="com.Tencent.TRTCUnityDemo"
-    platformBuildVersionCode="30"
-    platformBuildVersionName="10">
-     <uses-permission android:name="android.permission.INTERNET" />
+    xmlns:tools="http://schemas.android.com/tools">
+    
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -51,12 +45,8 @@
             android:hardwareAccelerated="false">
 
             <intent-filter>
-
-                <action
-                    android:name="android.intent.action.MAIN" />
-
-                <category
-                    android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
             <meta-data

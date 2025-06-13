@@ -209,7 +209,7 @@
  * 开启接收 SEI 消息
  *
  * @param enable      YES: 开启接收 SEI 消息; NO: 关闭接收 SEI 消息。【默认值】: NO。
- * @param payloadType 指定接收 SEI 消息的 payloadType，支持 5、242，请与发送端的 payloadType 保持一致。
+ * @param payloadType 指定接收 SEI 消息的 payloadType，支持 5、242、243，请与发送端的 payloadType 保持一致。
  * @return 返回值 {@link V2TXLiveCode}。
  *         - V2TXLIVE_OK: 成功。
  */
@@ -242,6 +242,26 @@
  *         - V2TXLIVE_ERROR_INVALID_PARAMETER: 操作失败，key 不允许为 nil。
  */
 - (V2TXLiveCode)setProperty:(NSString *)key value:(NSObject *)value;
+
+/**
+ * 开始录制音视频流
+ *
+ * @param  请参考 V2TXLiveDef.java 中关于 {@link V2TXLiveLocalRecordingParams}的介绍。
+ * @return 返回值 {@link V2TXLiveCode}。
+ *          - `V2TXLIVE_OK`: 成功。
+ *          - `V2TXLIVE_ERROR_INVALID_PARAMETER` : 参数不合法，比如filePath 为空。
+ *          - `V2TXLIVE_ERROR_REFUSED`: API被拒绝，拉流尚未开始。
+ * @note   拉流开启后才能开始录制，非拉流状态下开启录制无效。
+ *        - 录制过程中不要动态切换软/硬解，生成的视频极有可能出现异常。
+ */
+- (V2TXLiveCode)startLocalRecording:(V2TXLiveLocalRecordingParams *)params;
+
+/**
+ * 停止录制音视频流
+ *
+ * @note  当停止拉流后，如果视频还在录制中，SDK 内部会自动结束录制。
+ */
+- (void)stopLocalRecording;
 
 @end
 

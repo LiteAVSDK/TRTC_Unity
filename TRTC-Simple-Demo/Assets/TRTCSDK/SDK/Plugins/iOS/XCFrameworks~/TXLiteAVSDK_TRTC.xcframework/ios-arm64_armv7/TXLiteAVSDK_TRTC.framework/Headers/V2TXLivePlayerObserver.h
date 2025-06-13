@@ -168,6 +168,47 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)onPictureInPictureStateUpdate:(id<V2TXLivePlayer>)player state:(V2TXLivePictureInPictureState)state message:(NSString *)msg extraInfo:(NSDictionary *)extraInfo;
 
+/**
+ * 录制任务开始的事件回调
+ * 开始录制任务时，SDK 会抛出该事件回调，用于通知您录制任务是否已经顺利启动。对应于 {@link startLocalRecording} 接口。
+ *
+ * @param player 回调该通知的播放器对象。
+ * @param code 状态码。
+ *               - 0：录制任务启动成功。
+ *               - -1：内部错误导致录制任务启动失败。
+ *               - -2：文件后缀名有误（比如不支持的录制格式）。
+ *               - -6：录制已经启动，需要先停止录制。
+ *               - -7：录制文件已存在，需要先删除文件。
+ *               - -8：录制目录无写入权限，请检查目录权限问题。
+ * @param storagePath 录制的文件地址。
+ */
+- (void)onLocalRecordBegin:(id<V2TXLivePlayer>)player errCode:(NSInteger)errCode storagePath:(NSString *)storagePath;
+
+/**
+ * 录制任务正在进行中的进展事件回调
+ * 当您调用 {@link startLocalRecording} 成功启动本地媒体录制任务后，SDK 变会按一定间隔抛出本事件回调，【默认】：不抛出本事件回调。
+ * 您可以在 {@link startLocalRecording} 时，设定本事件回调的抛出间隔参数。
+ *
+ * @param player       回调该通知的播放器对象。
+ * @param durationMs   录制时长。
+ * @param storagePath  录制的文件地址。
+ */
+- (void)onLocalRecording:(id<V2TXLivePlayer>)player durationMs:(NSInteger)durationMs storagePath:(NSString *)storagePath;
+
+/**
+ * 录制任务已经结束的事件回调
+ * 停止录制任务时，SDK 会抛出该事件回调，用于通知您录制任务的最终结果。对应于 {@link stopLocalRecording} 接口。
+ *
+ * @param player 回调该通知的播放器对象。
+ * @param code 状态码。
+ *               -  0：结束录制任务成功。
+ *               - -1：录制失败。
+ *               - -2：切换分辨率或横竖屏导致录制结束。
+ *               - -3：录制时间太短，或未采集到任何视频或音频数据，请检查录制时长，或是否已开启音、视频采集。
+ * @param storagePath 录制的文件地址。
+ */
+- (void)onLocalRecordComplete:(id<V2TXLivePlayer>)player errCode:(NSInteger)errCode storagePath:(NSString *)storagePath;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -26,7 +26,7 @@
 		</data>
 		<key>Headers/TXSoundTouch.h</key>
 		<data>
-		KlOJXIl1torOHEJLskFpNxXFARg=
+		1gOwP9Wpo9UZpgRyCnpvueC5s2c=
 		</data>
 		<key>Headers/soundtouch_config.h</key>
 		<data>
@@ -34,15 +34,19 @@
 		</data>
 		<key>Info.plist</key>
 		<data>
-		9TWMPx85PEmpQiXx+D8RffkpHUA=
+		4g1kd1yKAiQe2sqvile05RKD9u8=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
 		swiQ6wOQI8GPPCUUnC+qMiEuDYk=
 		</data>
+		<key>PrivacyInfo.xcprivacy</key>
+		<data>
+		ucg9pita0v8d353x3NuGfxweQYU=
+		</data>
 		<key>TXSoundTouch_arm</key>
 		<data>
-		tbjS12ZdNYkXSOqMa2O+G1KYN4A=
+		aZ5jEccoYtS8fS4QzVJxyKBmE4w=
 		</data>
 	</dict>
 	<key>files2</key>
@@ -106,11 +110,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			KlOJXIl1torOHEJLskFpNxXFARg=
+			1gOwP9Wpo9UZpgRyCnpvueC5s2c=
 			</data>
 			<key>hash2</key>
 			<data>
-			MsSs4N75PCwCQw+mo5pqITrh7r5JE0I4HyEBpj1IGPw=
+			lL0xRhKMGOpgYW1tP3YHvSDr3Rh2F1kp7Nv0k2uPYF0=
 			</data>
 		</dict>
 		<key>Headers/soundtouch_config.h</key>
@@ -135,15 +139,26 @@
 			m9duYxe73qIPAbsyr272zwThI4zTg1MZvqJrq3utYD0=
 			</data>
 		</dict>
+		<key>PrivacyInfo.xcprivacy</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			ucg9pita0v8d353x3NuGfxweQYU=
+			</data>
+			<key>hash2</key>
+			<data>
+			Uh6274Qwdz5cAQ4YOP6d2PpdYre3bRzqjX2NqtyxROI=
+			</data>
+		</dict>
 		<key>TXSoundTouch_arm</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			tbjS12ZdNYkXSOqMa2O+G1KYN4A=
+			aZ5jEccoYtS8fS4QzVJxyKBmE4w=
 			</data>
 			<key>hash2</key>
 			<data>
-			ZVWFe8yxSG3opaJEAhDijoiDjEcgKq5eXUAxaTnhuGA=
+			Y5NPtiMSsKibSTTf0tlOwrPEtrasOT5VfkO7RxBSY0M=
 			</data>
 		</dict>
 	</dict>

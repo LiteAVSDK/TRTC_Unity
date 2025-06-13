@@ -32,6 +32,7 @@ enum EventID
     PUSH_EVT_CHANGE_BITRATE                     =  1006,     ///< 推流事件: SDK 主动调整了编码码率以适应当前主播的网络速度
     PUSH_EVT_FIRST_FRAME_AVAILABLE              =  1007,     ///< 推流事件: SDK 完成了首帧画面的采集
     PUSH_EVT_START_VIDEO_ENCODER                =  1008,     ///< 推流事件: 编码器已经启动
+    PUSH_EVT_SEND_FIRST_VIDEO_FRAME             =  1009,     ///< 推流事件: 发送首帧视频
 
     PUSH_EVT_CAMERA_REMOVED                     =  1023,     ///< 推流事件: 摄像头已被移除（适用于 Windows 和 Mac OS 版）
     PUSH_EVT_CAMERA_AVAILABLE                   =  1024,     ///< 推流事件: 摄像头已经可用（适用于 Windows 和 Mac OS 版）
@@ -96,6 +97,8 @@ enum EventID
     PLAY_EVT_GET_METADATA                       =  2028,     ///< 播放事件: TXLivePlayer 接收到视频流中的 metadata 头信息（一条视频流仅触发一次）
     PLAY_EVT_GET_FLVSESSIONKEY                  =  2031,     ///< 播放事件: TXLivePlayer 接收到 http 响应头中的 flvSessionKey 信息
     PLAY_EVT_AUDIO_SESSION_INTERRUPT            =  2032,     ///< 播放事件: Audio Session 被其他 App 中断（仅适用于 iOS 平台）
+    PLAY_EVT_RECV_FIRST_VIDEO_FRAME             =  2034,     ///< 播放事件: 接收首帧视频
+    PLAY_EVT_DECODE_FIRST_VIDEO_FRAME           =  2035,     ///< 播放事件: 解码首帧视频
 
     PLAY_ERR_NET_DISCONNECT                     = -2301,     ///< 直播错误: 网络连接断开（已经经过三次重试并且未能重连成功）
     PLAY_ERR_GET_RTMP_ACC_URL_FAIL              = -2302,     ///< 直播错误: 获取加速流失败，可能是由于您指定的加速流URL中没有携带正确的txTime和txSecret参数，SDK会自动切换到高延迟的 CDN 地址。
@@ -201,6 +204,7 @@ enum EventID
 #define WARNING_LIVE_STREAM_SERVER_RECONNECT   PLAY_WARNING_RECONNECT
 #define WARNING_RECV_DATA_LAG                  PLAY_WARNING_RECV_DATA_LAG
 #define WARNING_VIDEO_PLAY_LAG                 PLAY_WARNING_VIDEO_PLAY_LAG
+#define WARNING_VIDEO_TIMESTAMP_ROLLBACK       PLAY_WARNING_VIDEO_TIMESTAMP_ROLLBACK     
 
 #define EVT_SNAPSHOT_COMPLETE                  1022       ///< 已经完成一帧截图
 

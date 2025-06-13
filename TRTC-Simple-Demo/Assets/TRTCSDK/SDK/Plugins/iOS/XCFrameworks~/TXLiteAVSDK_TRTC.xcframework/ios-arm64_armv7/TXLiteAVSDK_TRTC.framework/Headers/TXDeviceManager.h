@@ -33,13 +33,13 @@ NS_ASSUME_NONNULL_BEGIN
 #if TARGET_OS_IPHONE
 typedef NS_ENUM(NSInteger, TXSystemVolumeType) {
 
-    ///自动切换模式
+    /// 自动切换模式
     TXSystemVolumeTypeAuto = 0,
 
-    ///全程媒体音量
+    /// 全程媒体音量
     TXSystemVolumeTypeMedia = 1,
 
-    ///全程通话音量
+    /// 全程通话音量
     TXSystemVolumeTypeVOIP = 2,
 
 };
@@ -73,16 +73,16 @@ typedef NS_ENUM(NSInteger, TXAudioRoute) {
 #if TARGET_OS_MAC && !TARGET_OS_IPHONE
 typedef NS_ENUM(NSInteger, TXMediaDeviceType) {
 
-    ///未定义的设备类型
+    /// 未定义的设备类型
     TXMediaDeviceTypeUnknown = -1,
 
-    ///麦克风类型设备
+    /// 麦克风类型设备
     TXMediaDeviceTypeAudioInput = 0,
 
-    ///扬声器类型设备
+    /// 扬声器类型设备
     TXMediaDeviceTypeAudioOutput = 1,
 
-    ///摄像头类型设备
+    /// 摄像头类型设备
     TXMediaDeviceTypeVideoCamera = 2,
 
 };
@@ -96,20 +96,62 @@ typedef NS_ENUM(NSInteger, TXMediaDeviceType) {
 #if TARGET_OS_MAC && !TARGET_OS_IPHONE
 typedef NS_ENUM(NSInteger, TXMediaDeviceState) {
 
-    ///设备已被插入
+    /// 设备已被插入
     TXMediaDeviceStateAdd = 0,
 
-    ///设备已被移除
+    /// 设备已被移除
     TXMediaDeviceStateRemove = 1,
 
-    ///设备已启用
+    /// 设备已启用
     TXMediaDeviceStateActive = 2,
 
-    ///系统默认设备变更
+    /// 系统默认设备变更
     TXMediaDefaultDeviceChanged = 3,
 
 };
 #endif
+
+/**
+ * 摄像头采集偏好
+ *
+ * 该枚举类型用于摄像头采集参数设置。
+ */
+typedef NS_ENUM(NSInteger, TXCameraCaptureMode) {
+
+    /// 自动调整采集参数。
+    /// SDK 根据实际的采集设备性能及网络情况，选择合适的摄像头输出参数，在设备性能及视频预览质量之间，维持平衡。
+    TXCameraResolutionStrategyAuto = 0,
+
+    /// 优先保证设备性能。
+    /// SDK 根据用户设置编码器的分辨率和帧率，选择最接近的摄像头输出参数，从而保证设备性能。
+    TXCameraResolutionStrategyPerformance,
+
+    /// 优先保证视频预览质量。
+    /// SDK选择较高的摄像头输出参数，从而提高预览视频的质量。在这种情况下，会消耗更多的 CPU 及内存做视频前处理。
+    TXCameraResolutionStrategyHighQuality,
+
+    /// 允许用户设置本地摄像头采集的视频宽高。
+    TXCameraCaptureManual,
+
+};
+
+/**
+ * 摄像头采集参数
+ *
+ * 该设置能决定本地预览图像画质。
+ */
+LITEAV_EXPORT @interface TXCameraCaptureParam : NSObject
+
+/// **字段含义：** 摄像头采集偏好，请参见 {@link TXCameraCaptureMode}
+@property(nonatomic, assign) TXCameraCaptureMode mode;
+
+/// **字段含义：** 采集图像长度
+@property(nonatomic, assign) NSInteger width;
+
+/// **字段含义：** 采集图像宽度
+@property(nonatomic, assign) NSInteger height;
+
+@end
 
 /**
  * 音视频设备的相关信息（仅适用于桌面平台）
@@ -119,16 +161,16 @@ typedef NS_ENUM(NSInteger, TXMediaDeviceState) {
 #if TARGET_OS_MAC && !TARGET_OS_IPHONE
 LITEAV_EXPORT @interface TXMediaDeviceInfo : NSObject
 
-///设备类型
+/// 设备类型
 @property(assign, nonatomic) TXMediaDeviceType type;
 
-///设备 ID （UTF-8）
+/// 设备 ID （UTF-8）
 @property(copy, nonatomic, nullable) NSString *deviceId;
 
-///设备名称 （UTF-8）
+/// 设备名称 （UTF-8）
 @property(copy, nonatomic, nullable) NSString *deviceName;
 
-///设备属性
+/// 设备属性
 @property(copy, nonatomic, nullable) NSString *deviceProperties;
 
 @end
@@ -356,6 +398,11 @@ LITEAV_EXPORT @interface TXDeviceManager : NSObject
  */
 - (void)setObserver:(nullable id<TXDeviceObserver>)observer;
 #endif
+
+/**
+ * 2.22 设置摄像头采集偏好
+ */
+- (void)setCameraCapturerParam:(TXCameraCaptureParam *)params;
 
 /////////////////////////////////////////////////////////////////////////////////
 //

@@ -1662,7 +1662,7 @@ typedef struct AVFormatContext {
 #define AVFMT_EVENT_FLAG_FINDSTREAM_MEET_DISCONTINUITY  0x0008 ///< The call resulted in find stream
                                                                ///< info meet discontinuity must be
                                                                ///< terminated.
-
+#define AVFMT_EVENT_FLAG_DURATION_UPDATED 0x0010 ///< The call resulted in updated duration.
 
     /**
      * Maximum number of packets to read while waiting for the first timestamp.

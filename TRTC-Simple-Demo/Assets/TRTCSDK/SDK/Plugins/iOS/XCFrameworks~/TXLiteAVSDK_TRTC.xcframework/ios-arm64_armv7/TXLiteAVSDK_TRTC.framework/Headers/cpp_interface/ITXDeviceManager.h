@@ -35,13 +35,13 @@ class ITRTCVideoRenderCallback;
  */
 enum TXSystemVolumeType {
 
-    ///自动切换模式
+    /// 自动切换模式
     TXSystemVolumeTypeAuto = 0,
 
-    ///全程媒体音量
+    /// 全程媒体音量
     TXSystemVolumeTypeMedia = 1,
 
-    ///全程通话音量
+    /// 全程通话音量
     TXSystemVolumeTypeVOIP = 2,
 
 };
@@ -71,16 +71,16 @@ enum TXAudioRoute {
  */
 enum TXMediaDeviceType {
 
-    ///未定义的设备类型
+    /// 未定义的设备类型
     TXMediaDeviceTypeUnknown = -1,
 
-    ///麦克风类型设备
+    /// 麦克风类型设备
     TXMediaDeviceTypeMic = 0,
 
-    ///扬声器类型设备
+    /// 扬声器类型设备
     TXMediaDeviceTypeSpeaker = 1,
 
-    ///摄像头类型设备
+    /// 摄像头类型设备
     TXMediaDeviceTypeCamera = 2,
 
 };
@@ -92,16 +92,16 @@ enum TXMediaDeviceType {
  */
 enum TXMediaDeviceState {
 
-    ///设备已被插入
+    /// 设备已被插入
     TXMediaDeviceStateAdd = 0,
 
-    ///设备已被移除
+    /// 设备已被移除
     TXMediaDeviceStateRemove = 1,
 
-    ///设备已启用
+    /// 设备已启用
     TXMediaDeviceStateActive = 2,
 
-    ///系统默认设备变更
+    /// 系统默认设备变更
     TXMediaDefaultDeviceChanged = 3,
 
 };
@@ -111,22 +111,21 @@ enum TXMediaDeviceState {
  *
  * 该枚举类型用于摄像头采集参数设置。
  */
-#ifdef _WIN32
 enum TXCameraCaptureMode {
 
-    ///自动调整采集参数。
+    /// 自动调整采集参数。
     /// SDK 根据实际的采集设备性能及网络情况，选择合适的摄像头输出参数，在设备性能及视频预览质量之间，维持平衡。
     TXCameraResolutionStrategyAuto = 0,
 
-    ///优先保证设备性能。
+    /// 优先保证设备性能。
     /// SDK 根据用户设置编码器的分辨率和帧率，选择最接近的摄像头输出参数，从而保证设备性能。
     TXCameraResolutionStrategyPerformance = 1,
 
-    ///优先保证视频预览质量。
+    /// 优先保证视频预览质量。
     /// SDK选择较高的摄像头输出参数，从而提高预览视频的质量。在这种情况下，会消耗更多的 CPU 及内存做视频前处理。
     TXCameraResolutionStrategyHighQuality = 2,
 
-    ///允许用户设置本地摄像头采集的视频宽高。
+    /// 允许用户设置本地摄像头采集的视频宽高。
     TXCameraCaptureManual = 3,
 
 };
@@ -137,19 +136,18 @@ enum TXCameraCaptureMode {
  * 该设置能决定本地预览图像画质。
  */
 struct TXCameraCaptureParam {
-    ///**字段含义：** 摄像头采集偏好，请参见 {@link TXCameraCaptureMode}
+    /// **字段含义：** 摄像头采集偏好，请参见 {@link TXCameraCaptureMode}
     TXCameraCaptureMode mode;
 
-    ///**字段含义：** 采集图像长度
+    /// **字段含义：** 采集图像长度
     int width;
 
-    ///**字段含义：** 采集图像宽度
+    /// **字段含义：** 采集图像宽度
     int height;
 
     TXCameraCaptureParam() : mode(TXCameraResolutionStrategyAuto), width(640), height(360) {
     }
 };
-#endif
 
 /**
  * 音视频设备的相关信息（仅适用于桌面平台）
@@ -164,10 +162,10 @@ class ITXDeviceInfo {
    public:
     virtual void release() = 0;
 
-    ///设备 ID （UTF-8）
+    /// 设备 ID （UTF-8）
     virtual const char* getDevicePID() = 0;
 
-    ///设备名称 （UTF-8）
+    /// 设备名称 （UTF-8）
     virtual const char* getDeviceName() = 0;
 };
 
@@ -182,26 +180,26 @@ class ITXDeviceCollection {
     }
 
    public:
-    ///设备数量
+    /// 设备数量
     virtual uint32_t getCount() = 0;
 
-    ///设备名字 (UTF-8)，index 为设备索引，值为 [0,getCount)。返回值为设备名称 （UTF-8）
+    /// 设备名字 (UTF-8)，index 为设备索引，值为 [0,getCount)。返回值为设备名称 （UTF-8）
     virtual const char* getDeviceName(uint32_t index) = 0;
 
-    ///设备唯一标识 (UTF-8) index 为设备索引，值为 [0,getCount)
+    /// 设备唯一标识 (UTF-8) index 为设备索引，值为 [0,getCount)
     virtual const char* getDevicePID(uint32_t index) = 0;
 
-    ///设备信息（JSON 格式）
+    /// 设备信息（JSON 格式）
     ///@note
-    ///示例：{"SupportedResolution":[{"width":640,"height":480},{"width":320,"height":240}]}
+    /// 示例：{"SupportedResolution":[{"width":640,"height":480},{"width":320,"height":240}]}
     /// param index 设备索引，值为 [0,getCount)，return 返回 JSON 格式的设备信息
     virtual const char* getDeviceProperties(uint32_t index) = 0;
 
-    ///释放设备列表，请不要使用 delete 释放资源 !!!
+    /// 释放设备列表，请不要使用 delete 释放资源 !!!
     virtual void release() = 0;
 };
 
-#if (__APPLE__ && TARGET_OS_MAC && !TARGET_OS_IPHONE) || _WIN32 || (!__ANDROID__ && __linux__)
+#if (__APPLE__ && TARGET_OS_MAC && !TARGET_OS_IPHONE) || _WIN32 || (!__ANDROID__ && !__OHOS__ && __linux__)
 class ITXDeviceObserver {
    public:
     virtual ~ITXDeviceObserver() {
@@ -237,7 +235,7 @@ class ITXDeviceManager {
 /**
  * 1.1 判断当前是否为前置摄像头（仅适用于移动端）
  */
-#if __ANDROID__ || (__APPLE__ && TARGET_OS_IOS)
+#if __ANDROID__ || __OHOS__ || (__APPLE__ && TARGET_OS_IOS)
     virtual bool isFrontCamera() = 0;
 
     /**
@@ -307,7 +305,7 @@ class ITXDeviceManager {
  *   - type 只支持 TXMediaDeviceTypeMic、TXMediaDeviceTypeSpeaker、TXMediaDeviceTypeCamera。
  *   - 此接口只支持 Mac 和 Windows 平台。
  */
-#if (__APPLE__ && TARGET_OS_MAC && !TARGET_OS_IPHONE) || _WIN32 || (!__ANDROID__ && __linux__)
+#if (__APPLE__ && TARGET_OS_MAC && !TARGET_OS_IPHONE) || _WIN32 || (!__ANDROID__ && !__OHOS__ && __linux__)
     virtual ITXDeviceCollection* getDevicesList(TXMediaDeviceType type) = 0;
 
     /**
@@ -451,14 +449,14 @@ class ITXDeviceManager {
 /**
  * 2.22 设置摄像头采集偏好
  */
-#ifdef _WIN32
+#if (__APPLE__ && TARGET_OS_MAC && !TARGET_OS_IPHONE) || _WIN32 || (!__ANDROID__ && !__OHOS__ && __linux__)
     virtual void setCameraCapturerParam(const TXCameraCaptureParam& params) = 0;
 #endif
 
 /**
  * 2.23 设置 onDeviceChanged 事件回调
  */
-#if (__APPLE__ && TARGET_OS_MAC && !TARGET_OS_IPHONE) || _WIN32 || (!__ANDROID__ && __linux__)
+#if (__APPLE__ && TARGET_OS_MAC && !TARGET_OS_IPHONE) || _WIN32 || (!__ANDROID__ && !__OHOS__ && __linux__)
     virtual void setDeviceObserver(ITXDeviceObserver* observer) = 0;
 #endif
 
@@ -473,7 +471,7 @@ class ITXDeviceManager {
  *
  * @deprecated v9.5 版本开始不推荐使用，建议使用 `TRTCCloud` 中的 startLocalAudio(quality) 接口替代之，通过 quality 参数来决策音质。
  */
-#if __ANDROID__ || (__APPLE__ && TARGET_OS_IOS)
+#if __ANDROID__ || __OHOS__ || (__APPLE__ && TARGET_OS_IOS)
     virtual int setSystemVolumeType(TXSystemVolumeType type) = 0;
 #endif
 };

@@ -519,6 +519,55 @@ class IDeprecatedTRTCCloud {
 #if TARGET_PLATFORM_DESKTOP
     trtc_attribute_deprecated virtual void selectScreenCaptureTarget(const TRTCScreenCaptureSourceInfo& source, const RECT& captureRect, bool captureMouse = true, bool highlightWindow = true) = 0;
 #endif
+
+    /**
+     * 设置视频编码器输出的画面方向
+     *
+     * @deprecated v11.7 版本开始不推荐使用。
+     */
+    trtc_attribute_deprecated virtual void setVideoEncoderRotation(TRTCVideoRotation rotation) = 0;
+
+    /**
+     * 设置编码器输出的画面镜像模式
+     *
+     * @deprecated v11.7 版本开始不推荐使用。
+     */
+    trtc_attribute_deprecated virtual void setVideoEncoderMirror(bool mirror) = 0;
+
+    /**
+     * 开始向腾讯云直播 CDN 上发布音视频流
+     *
+     * @deprecated v12.0 版本开始不推荐使用。建议使用 {@link startPublishMediaStream} 接口替代之。
+     */
+    trtc_attribute_deprecated virtual void startPublishing(const char* streamId, TRTCVideoStreamType streamType) = 0;
+
+    /**
+     * 停止向腾讯云直播 CDN 上发布音视频流
+     *
+     * @deprecated v12.0 版本开始不推荐使用。建议使用 {@link stopPublishMediaStream} 接口替代之。
+     */
+    trtc_attribute_deprecated virtual void stopPublishing() = 0;
+
+    /**
+     * 开始向非腾讯云 CDN 上发布音视频流
+     *
+     * @deprecated v12.0 版本开始不推荐使用。建议使用 {@link startPublishMediaStream} 接口替代之。
+     */
+    trtc_attribute_deprecated virtual void startPublishCDNStream(const TRTCPublishCDNParam& param) = 0;
+
+    /**
+     * 停止向非腾讯云 CDN 上发布音视频流
+     *
+     * @deprecated v12.0 版本开始不推荐使用。建议使用 {@link stopPublishMediaStream} 接口替代之。
+     */
+    trtc_attribute_deprecated virtual void stopPublishCDNStream() = 0;
+
+    /**
+     * 设置云端混流的排版布局和转码参数
+     *
+     * @deprecated v12.0 版本开始不推荐使用。建议使用 {@link startPublishMediaStream}， {@link updatePublishMediaStream} 和 {@link stopPublishMediaStream} 接口替代之。
+     */
+    trtc_attribute_deprecated virtual void setMixTranscodingConfig(TRTCTranscodingConfig* config) = 0;
 };
 }  // namespace liteav
 #endif

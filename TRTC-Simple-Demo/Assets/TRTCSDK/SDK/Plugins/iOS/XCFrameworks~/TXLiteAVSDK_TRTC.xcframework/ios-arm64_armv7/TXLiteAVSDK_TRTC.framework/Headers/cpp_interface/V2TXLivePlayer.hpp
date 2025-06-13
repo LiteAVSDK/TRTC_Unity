@@ -23,7 +23,7 @@ class V2TXLivePlayer;
 }
 
 extern "C" {
-#ifdef __ANDROID__
+#if defined(__ANDROID__) || defined(__OHOS__)
 
 /////////////////////////////////////////////////////////////////////////////////
 //
@@ -239,7 +239,7 @@ class V2TXLivePlayer {
      * 开启接收 SEI 消息
      *
      * @param enable      true: 开启接收 SEI 消息; false: 关闭接收 SEI 消息。【默认值】: false。
-     * @param payloadType 指定接收 SEI 消息的 payloadType，支持 5、242，请与发送端的 payloadType 保持一致。
+     * @param payloadType 指定接收 SEI 消息的 payloadType，支持 5、242、243，请与发送端的 payloadType 保持一致。
      * @return 返回值 {@link V2TXLiveCode}。
      *         - V2TXLIVE_OK: 成功。
      */

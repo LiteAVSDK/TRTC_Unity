@@ -16,6 +16,20 @@ NS_ASSUME_NONNULL_BEGIN
 /////////////////////////////////////////////////////////////////////////////////
 
 /**
+ * 销毁 TRTCCloud 实例（单例模式）
+ *
+ * @deprecated 11.5 版本不推荐使用 建议使用 {@link destroySharedInstance}
+ */
++ (void)destroySharedIntance __attribute__((deprecated("use destroySharedInstance instead")));
+
+/**
+ * 设置 TRTC 事件回调
+ *
+ * @deprecated v11.4 版本开始不推荐使用，建议使用 {@link addDelegate} 替代之。
+ */
+@property(nonatomic, weak, nullable) id<TRTCCloudDelegate> delegate __attribute__((deprecated("use addDelegate instead")));
+
+/**
  * 设置美颜、美白以及红润效果级别
  *
  * @deprecated v6.9 版本开始不推荐使用，建议使用 {@link getBeautyManager} 替代之。
@@ -736,6 +750,62 @@ NS_ASSUME_NONNULL_BEGIN
  * @deprecated v8.6 版本开始不推荐使用，建议使用 {@link startScreenCaptureInApp} 接口替代之。
  */
 - (void)startScreenCaptureInApp:(TRTCVideoEncParam *)encParams __attribute__((deprecated("use startScreenCaptureInApp:encParam: instead")));
+
+/**
+ * 设置视频编码器输出的画面方向
+ *
+ * @deprecated v11.7 版本开始不推荐使用。
+ */
+- (void)setVideoEncoderRotation:(TRTCVideoRotation)rotation __attribute__((deprecated("no use")));
+
+/**
+ * 设置编码器输出的画面镜像模式
+ *
+ * @deprecated v11.7 版本开始不推荐使用。
+ */
+- (void)setVideoEncoderMirror:(BOOL)mirror __attribute__((deprecated("no use")));
+
+/**
+ * 设置重力感应的适配模式
+ *
+ * @deprecated v11.7 版本开始不推荐使用。建议使用 {@link setGravitySensorAdaptiveMode} 接口替代之。
+ */
+- (void)setGSensorMode:(TRTCGSensorMode)mode __attribute__((deprecated("use setGravitySensorAdaptiveMode: instead")));
+
+/**
+ * 开始向腾讯云直播 CDN 上发布音视频流
+ *
+ * @deprecated v12.0 版本开始不推荐使用。建议使用 {@link startPublishMediaStream} 接口替代之。
+ */
+- (void)startPublishing:(NSString *)streamId type:(TRTCVideoStreamType)streamType __attribute__((deprecated("use startPublishMediaStream instead")));
+
+/**
+ * 停止向腾讯云直播 CDN 上发布音视频流
+ *
+ * @deprecated v12.0 版本开始不推荐使用。建议使用 {@link stopPublishMediaStream} 接口替代之。
+ */
+- (void)stopPublishing __attribute__((deprecated("use stopPublishMediaStream instead")));
+
+/**
+ * 开始向非腾讯云 CDN 上发布音视频流
+ *
+ * @deprecated v12.0 版本开始不推荐使用。建议使用 {@link startPublishMediaStream} 接口替代之。
+ */
+- (void)startPublishCDNStream:(TRTCPublishCDNParam *)param __attribute__((deprecated("use startPublishMediaStream instead")));
+
+/**
+ * 停止向非腾讯云 CDN 上发布音视频流
+ *
+ * @deprecated v12.0 版本开始不推荐使用。建议使用 {@link stopPublishMediaStream} 接口替代之。
+ */
+- (void)stopPublishCDNStream __attribute__((deprecated("use stopPublishMediaStream instead")));
+
+/**
+ * 设置云端混流的排版布局和转码参数
+ *
+ * @deprecated v12.0 版本开始不推荐使用。建议使用 {@link startPublishMediaStream}， {@link updatePublishMediaStream} 和 {@link stopPublishMediaStream} 接口替代之。
+ */
+- (void)setMixTranscodingConfig:(nullable TRTCTranscodingConfig *)config __attribute__((deprecated("use startPublishMediaStream, updatePublishMediaStream and stopPublishMediaStream instead")));
 
 @end
 NS_ASSUME_NONNULL_END

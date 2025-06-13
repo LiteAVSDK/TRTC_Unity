@@ -127,11 +127,6 @@ LITEAV_EXPORT @interface TXLiveBase : NSObject
 + (NSString *)getLicenceInfo;
 
 /**
- * @brief 设置 HEVC 外部解码器工厂实例
- */
-+ (void)setExternalDecoderFactory:(id)decoderFactory;
-
-/**
  * 启动 NTP 校时服务
  *
  * @return 0：启动成功；< 0：启动失败。

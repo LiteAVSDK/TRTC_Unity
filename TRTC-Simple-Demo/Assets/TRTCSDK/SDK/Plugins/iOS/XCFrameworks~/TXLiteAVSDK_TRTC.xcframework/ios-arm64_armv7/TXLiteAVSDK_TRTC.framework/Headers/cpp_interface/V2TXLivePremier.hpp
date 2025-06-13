@@ -10,9 +10,7 @@
 
 namespace liteav {
 class V2TXLivePremier;
-#ifdef _WIN32
 class V2TXLivePremierObserver;
-#endif
 }  // namespace liteav
 
 /**
@@ -63,19 +61,15 @@ class V2TXLivePremier {
      */
     virtual const char* getSDKVersionStr() = 0;
 
-/**
- * 设置 V2TXLivePremier 回调接口
- */
-#ifdef _WIN32
+    /**
+     * 设置 V2TXLivePremier 回调接口
+     */
     virtual void setObserver(V2TXLivePremierObserver* observer) = 0;
-#endif
 
-/**
- * 设置 Log 的配置信息
- */
-#ifdef _WIN32
+    /**
+     * 设置 Log 的配置信息
+     */
     virtual int32_t setLogConfig(const V2TXLiveLogConfig& config) = 0;
-#endif
 
     /**
      * 设置 SDK 接入环境
@@ -88,28 +82,35 @@ class V2TXLivePremier {
     virtual int32_t setEnvironment(const char* env) = 0;
 
 /**
- * 设置 SDK socks5 代理配置
+ * 设置 SDK 的授权 License
  *
- * @param host socks5 代理服务器的地址。
- * @param port socks5 代理服务器的端口。
- * @param username socks5 代理服务器的验证的用户名。
- * @param password socks5 代理服务器的验证的密码。
- * @param config 配置使用 socks5 代理服务器的协议。
+ * 文档地址：https://cloud.tencent.com/document/product/454/34750。
+ * @param url license的地址。
+ * @param key license的秘钥。
  */
-#ifdef _WIN32
-    virtual int32_t setSocks5Proxy(const char* host, unsigned short port, const char* username, const char* password, V2TXLiveSocks5ProxyConfig* config = nullptr) = 0;
+#if TARGET_PLATFORM_PHONE
+    virtual void setLicense(const char* url, const char* key) = 0;
 #endif
 
-/**
- * 开启/关闭对音频采集数据的监听回调（可读写）
- *
- * @param enable 是否开启。 【默认值】：false。
- * @param format 设置回调出的 AudioFrame 的格式。
- * @note 需要在 {@link startPush} 之前调用，才会生效。
- */
-#ifdef _WIN32
+    /**
+     * 设置 SDK socks5 代理配置
+     *
+     * @param host socks5 代理服务器的地址。
+     * @param port socks5 代理服务器的端口。
+     * @param username socks5 代理服务器的验证的用户名。
+     * @param password socks5 代理服务器的验证的密码。
+     * @param config 配置使用 socks5 代理服务器的协议。
+     */
+    virtual int32_t setSocks5Proxy(const char* host, unsigned short port, const char* username, const char* password, V2TXLiveSocks5ProxyConfig* config = nullptr) = 0;
+
+    /**
+     * 开启/关闭对音频采集数据的监听回调（可读写）
+     *
+     * @param enable 是否开启。 【默认值】：false。
+     * @param format 设置回调出的 AudioFrame 的格式。
+     * @note 需要在 {@link startPush} 之前调用，才会生效。
+     */
     virtual int32_t enableAudioCaptureObserver(bool enable, const V2TXLiveAudioFrameObserverFormat& format) = 0;
-#endif
 
     /**
      * 设置 userId
@@ -117,6 +118,17 @@ class V2TXLivePremier {
      * @param userId 业务侧自身维护的用户/设备id。
      */
     virtual void setUserId(const char* userId) = 0;
+
+    /**
+     * 调用实验性 API 接口
+     *
+     * @note  该接口用于调用一些实验性功能。
+     * @param jsonStr 接口及参数描述的 JSON 字符串。
+     * @return 返回值 {@link V2TXLiveCode}。
+     *         - V2TXLIVE_OK: 成功。
+     *         - V2TXLIVE_ERROR_INVALID_PARAMETER: 操作失败，参数非法。
+     */
+    virtual int32_t callExperimentalAPI(const char* jsonStr) = 0;
 };
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -125,7 +137,6 @@ class V2TXLivePremier {
 //
 /////////////////////////////////////////////////////////////////////////////////
 
-#ifdef _WIN32
 class V2TXLivePremierObserver {
    public:
     virtual ~V2TXLivePremierObserver() {
@@ -134,7 +145,19 @@ class V2TXLivePremierObserver {
     /**
      * 自定义 Log 输出回调接口
      */
-    virtual void onLog(V2TXLiveLogLevel level, const char* log){};
+    virtual void onLog(V2TXLiveLogLevel level, const char* log) {
+    }
+
+/**
+ * setLicence 接口回调
+ *
+ * @param result 设置 licence 结果 0 成功，负数失败。
+ * @param reason 设置 licence 失败原因。
+ */
+#if TARGET_PLATFORM_PHONE
+    virtual void onLicenceLoaded(int result, const char* msg) {
+    }
+#endif
 
     /**
      * 本地麦克风采集到的音频数据回调
@@ -149,9 +172,9 @@ class V2TXLivePremierObserver {
      * - 此接口回调出的音频数据**不包含**背景音、音效、混响等前处理效果，延迟极低。
      * - 需要您调用 {@link enableAudioCaptureObserver} 开启回调开关。
      */
-    virtual void onCaptureAudioFrame(V2TXLiveAudioFrame* frame){};
+    virtual void onCaptureAudioFrame(V2TXLiveAudioFrame* frame) {
+    }
 };
-#endif
 
 }  // namespace liteav
 #endif

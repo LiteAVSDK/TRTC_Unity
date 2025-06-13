@@ -286,4 +286,13 @@ LITEAV_EXPORT @interface TXLivePlayer : NSObject
  */
 - (void)callExperimentalAPI:(NSString *)jsonStr;
 
+/**
+ * 6.5 开启画中画功能，仅支持直播和快直播播放
+ *
+ * @param enable      YES: 开启画中画功能; NO: 关闭画中画功能。【默认值】: NO。
+ * @return YES：成功。
+ *          NO：当前设备不支持。
+ */
+- (BOOL)enablePictureInPicture:(BOOL)enable;
+
 @end

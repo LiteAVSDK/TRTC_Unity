@@ -24,7 +24,7 @@ LITEAV_EXPORT @interface TRTCCloud : NSObject
 /**
  * 1.1 创建 TRTCCloud 实例（单例模式）
  *
- * @param context 仅适用于 Android 平台，SDK 内部会将其转化为 Android 平台的 ApplicationContext 用于调用 Androud System API。
+ * @param context 仅适用于 Android 平台，SDK 内部会将其转化为 Android 平台的 ApplicationContext 用于调用 Android System API。
  *        如果传入的 context 参数为空，SDK 内部会自动获取当前进程的 ApplicationContext。
  * @note
  * 1. 如果您使用 delete ITRTCCloud* 会导致编译错误，请使用 destroyTRTCCloud 释放对象指针。
@@ -36,30 +36,22 @@ LITEAV_EXPORT @interface TRTCCloud : NSObject
 /**
  * 1.2 销毁 TRTCCloud 实例（单例模式）
  */
-+ (void)destroySharedIntance;
++ (void)destroySharedInstance;
 
 /**
- * 1.3 设置 TRTC 事件回调
- *
- * 您可以通过 {@link TRTCCloudDelegate} 获得来自 SDK 的各类事件通知（比如：错误码，警告码，音视频状态参数等）。
- * 从 11.4.0 版本以后，我们推荐您使用功能更加强大的{@link addDelegate}接口，支持添加/移除多个监听。
- */
-@property(nonatomic, weak, nullable) id<TRTCCloudDelegate> delegate;
-
-/**
- * 1.4 添加 TRTC 事件回调
+ * 1.3 添加 TRTC 事件回调
  *
  * 您可以通过 {@link TRTCCloudDelegate} 获得来自 SDK 的各类事件通知（比如：错误码，警告码，音视频状态参数等）。
  */
 - (void)addDelegate:(id<TRTCCloudDelegate>)delegate;
 
 /**
- * 1.5 移除 TRTC 事件回调
+ * 1.4 移除 TRTC 事件回调
  */
 - (void)removeDelegate:(id<TRTCCloudDelegate>)delegate;
 
 /**
- * 1.6 设置驱动 TRTCCloudDelegate 事件回调的队列
+ * 1.5 设置驱动 TRTCCloudDelegate 事件回调的队列
  *
  * 如果您不指定自己的 delegateQueue，SDK 默认会采用 MainQueue 作为驱动 {@link TRTCCloudDelegate} 事件回调的队列。
  * 也就是当您不设置 delegateQueue 属性时，{@link TRTCCloudDelegate} 中的所有回调函数都是由 MainQueue 来驱动的。
@@ -313,70 +305,7 @@ LITEAV_EXPORT @interface TRTCCloud : NSObject
 /////////////////////////////////////////////////////////////////////////////////
 
 /**
- * 3.1 开始向腾讯云直播 CDN 上发布音视频流
- *
- * 该接口会向 TRTC 服务器发送指令，要求其将当前用户的音视频流旁路到直播 CDN 上。您可以通过参数 streamId 设定直播流的 StreamId，从而可以指定该用户的音视频流对应在直播 CDN 上的播放地址。
- * 例如：您可以通过该接口将当前用户的直播流 ID 指定为 user_stream_001，那么该用户音视频流对应的 CDN 播放地址为：
- * “http://yourdomain/live/user_stream_001.flv”，其中 yourdomain 为您自己备案的播放域名，
- * 您可以在[直播控制台](https://console.cloud.tencent.com/live) 配置您的播放域名，腾讯云不提供默认的播放域名。
- * <pre>
- * TRTCCloud *trtcCloud = [TRTCCloud sharedInstance];
- * [trtcCloud enterRoom:params appScene:TRTCAppSceneLIVE];
- * [trtcCloud startLocalPreview:frontCamera view:localView];
- * [trtcCloud startLocalAudio];
- * [trtcCloud startPublishing: @"user_stream_001" type:TRTCVideoStreamTypeBig];
- * </pre>
- *
- * 您也可以在设置 enterRoom 的参数 TRTCParams 时指定 streamId, 而且我们更推荐您采用这种方案。
- * @param streamId 自定义流 ID。
- * @param streamType 仅支持 {@link TRTCVideoStreamTypeBig} 和 {@link TRTCVideoStreamTypeSub}。
- * @note 您需要提前在 [实时音视频控制台](https://console.cloud.tencent.com/trtc/) 中的功能配置页面上开启“启用旁路推流”才能生效。
- * - 若您选择“指定流旁路”，则您可以通过该接口将对应音视频流推送到腾讯云 CDN 且指定为填写的流 ID。
- * - 若您选择“全局自动旁路”，则您可以通过该接口调整默认的流 ID。
- */
-- (void)startPublishing:(NSString *)streamId type:(TRTCVideoStreamType)streamType;
-
-/**
- * 3.2 停止向腾讯云直播 CDN 上发布音视频流
- */
-- (void)stopPublishing;
-
-/**
- * 3.3 开始向非腾讯云 CDN 上发布音视频流
- *
- * 该接口跟 startPublishing 功能类似，不同之处在于，startPublishing 仅支持向腾讯云的 CDN 发布，而本接口支持向非腾讯云的直播 CDN 上转推音视频流。
- * @param param CDN 转推参数，详情请参见 {@link TRTCPublishCDNParam}
- * @note
- * - 使用 startPublishing 接口向腾讯云的直播 CDN 上发布音视频流不会收取额外费用。
- * - 使用 startPublishCDNStream 接口向非腾讯云的直播 CDN 上发布音视频流，需要收取额外的转推带宽费用。
- */
-- (void)startPublishCDNStream:(TRTCPublishCDNParam *)param;
-
-/**
- * 3.4 停止向非腾讯云 CDN 上发布音视频流
- */
-- (void)stopPublishCDNStream;
-
-/**
- * 3.5 设置云端混流的排版布局和转码参数
- *
- * 在一个直播间中可能同时会有多个主播发布自己的音视频流，但对于直播 CDN 上的观众而言，只需要观看一条 HTTP-FLV 或 HLS 格式的视频流即可。
- * 当您调用本接口函数时，SDK 会向腾讯云的 TRTC 混流服务器发送一条指令，混流服务器会将房间里的多路音视频流混合成一路。
- * 您可以通过 {@link TRTCTranscodingConfig} 参数来调整每一路画面的排版布局，也可以设置混合后的音视频流的各项编码参数。
- * 参考文档：[云端混流转码](https://cloud.tencent.com/document/product/647/16827)。
- * ![](https://qcloudimg.tencent-cloud.cn/raw/c9e87b2e5799db9da4f50af3c0f2e7a9.png)
- * @param config 如果 config 不为空，则开启云端混流，如果 config 为空则停止云端混流。详情请参见 {@link TRTCTranscodingConfig} 。
- * @note 关于云端混流的注意事项：
- * - 混流转码为收费功能，调用接口将产生云端混流转码费用，详见 [云端混流转码计费说明](https://cloud.tencent.com/document/product/647/49446) 。
- * - 调用该接口的用户，如果没设定 config 参数中的 streamId 字段，TRTC 会将房间中的多路画面混合到当前用户所对应的音视频流上，即 A + B => A。
- * - 调用该接口的用户，如果设定了 config 参数中的 streamId 字段，TRTC 会将房间中的多路画面混合到您指定的 streamId 上，即 A + B => streamId。
- * - 请注意，若您还在房间中且不再需要混流，请务必再次调用本接口并将 config 设置为空以进行取消，不及时取消混流可能会引起不必要的计费损失。
- * - 请放心，当您退房时 TRTC 会自动取消混流状态。
- */
-- (void)setMixTranscodingConfig:(nullable TRTCTranscodingConfig *)config;
-
-/**
- * 3.6  开始发布媒体流
+ * 3.1  开始发布媒体流
  *
  * 该接口会向 TRTC 服务器发送指令，要求其将当前用户的音视频流转推/转码到直播 CDN 或者回推到 TRTC 房间中您可以通过 {@link TRTCPublishTarget} 配置中的 {@link TRTCPublishMode} 指定具体的发布模式
  * @param target 媒体流发布的目标地址，具体配置参考 {@link TRTCPublishTarget}。支持转推/转码到腾讯或者第三方 CDN，也支持转码回推到 TRTC 房间中。
@@ -386,12 +315,12 @@ LITEAV_EXPORT @interface TRTCCloud : NSObject
  * 1. SDK 会通过回调 {@link onStartPublishMediaStream} 带给您后台启动的任务标识（即 taskId）。
  * 2. 同一个任务（TRTCPublishMode 与 TRTCPublishCdnUrl 均相同）仅支持启动一次。若您后续需要更新或者停止该项任务，需要记录并使用返回的 taskId，通过 {@link updatePublishMediaStream} 或者 {@link stopPublishMediaStream} 来操作。
  * 3. target 支持同时配置多个 CDN URL（最多同时 10 个）。若您的同一个转推/转码任务需要发布至多路 CDN，则仅需要在 target 中配置多个 CDN URL 即可。同一个转码任务即使有多个转推地址，对应的转码计费仍只收取一份。
- * 4. 使用时需要注意不要多个任务同时往相同的 URL 地址推送，以免引起异常推流状态。一种推荐的方案是 URL 中使用 “sdkappid_roomid_userid_main” 作为区分标识，这中命名方式容易辨认且不会在您的多个应用中发生冲突。
+ * 4. 使用时需要注意不要多个任务同时往相同的 URL 地址推送，以免引起异常推流状态。一种推荐的方案是 URL 中使用 “sdkappid_roomid_userid_main” 作为区分标识，这种命名方式容易辨认且不会在您的多个应用中发生冲突。
  */
 - (void)startPublishMediaStream:(TRTCPublishTarget *)target encoderParam:(nullable TRTCStreamEncoderParam *)param mixingConfig:(nullable TRTCStreamMixingConfig *)config;
 
 /**
- * 3.7 更新发布媒体流
+ * 3.2 更新发布媒体流
  *
  * 该接口会向 TRTC 服务器发送指令，更新通过 {@link startPublishMediaStream} 启动的媒体流
  * @param taskId 通过回调 {@link onStartPublishMediaStream} 带给您后台启动的任务标识（即 taskId）
@@ -407,7 +336,7 @@ LITEAV_EXPORT @interface TRTCCloud : NSObject
 - (void)updatePublishMediaStream:(NSString *)taskId publishTarget:(TRTCPublishTarget *)target encoderParam:(nullable TRTCStreamEncoderParam *)param mixingConfig:(nullable TRTCStreamMixingConfig *)config;
 
 /**
- * 3.8 停止发布媒体流
+ * 3.3 停止发布媒体流
  *
  * 该接口会向 TRTC 服务器发送指令，停止通过 {@link startPublishMediaStream} 启动的媒体流
  * @param taskId 通过回调 {@link onStartPublishMediaStream} 带给您后台启动的任务标识（即 taskId）
@@ -547,8 +476,8 @@ LITEAV_EXPORT @interface TRTCCloud : NSObject
  * - 低清小画面：{@link TRTCVideoStreamTypeSmall}。
  * - 辅流画面（常用于屏幕分享）：{@link TRTCVideoStreamTypeSub}。
  * @param mute 是否暂停接收。
- * @note 该接口支持您在进入房间（{@link enterRoom}）前调用，暂停状态在退出房间（{@link exitRoom}）之后会被重置。
- * @note 调用该接口暂停接收指定用户的视频流后，只调用 {@link startRemoteView} 接口无法播放指定用户的视频，需要调用 {@link muteRemoteVideoStream}(NO) 或 {@link muteAllRemoteVideoStreams}(NO) 才能恢复。
+ * @note 该接口支持您在进入房间（{@link enterRoom}）前调用，暂停状态在退出房间（{@link exitRoom}）之后会被重置。调用该接口暂停接收指定用户的视频流后，只调用 {@link startRemoteView} 接口无法播放指定用户的视频，需要调用 {@link
+ * muteRemoteVideoStream}(NO) 或 {@link muteAllRemoteVideoStreams}(NO) 才能恢复。
  */
 - (void)muteRemoteVideoStream:(NSString *)userId streamType:(TRTCVideoStreamType)streamType mute:(BOOL)mute;
 
@@ -567,6 +496,7 @@ LITEAV_EXPORT @interface TRTCCloud : NSObject
  *
  * 该设置能够决定远端用户看到的画面质量，同时也能决定云端录制出的视频文件的画面质量。
  * @param param 用于设置视频编码器的相关参数，详情请参见 {@link TRTCVideoEncParam}。
+ * @note 从v11.5版本开始，编码输出分辨率会按照宽8高2字节对齐，并且是向下调整，eg:输入分辨率540x960，实际编码输出分辨率536x960。
  */
 - (void)setVideoEncoderParam:(TRTCVideoEncParam *)param;
 
@@ -597,35 +527,6 @@ LITEAV_EXPORT @interface TRTCCloud : NSObject
 - (void)setRemoteRenderParams:(NSString *)userId streamType:(TRTCVideoStreamType)streamType params:(TRTCRenderParams *)params;
 
 /**
- * 4.17 设置视频编码器输出的画面方向
- *
- * 该设置不影响本地画面的预览方向，但会影响房间中其他用户所观看到（以及云端录制文件）的画面方向。
- * 当用户将手机或 Pad 上下颠倒时，由于摄像头的采集方向没有变，所以房间中其他用户所看到的画面会变成上下颠倒的，
- * 在这种情况下，您可以通过调用该接口将 SDK 编码出的画面方向旋转180度，如此一来，房间中其他用户所看到的画面可保持正常的方向。
- * 如果您希望实现上述这种友好的交互体验，我们更推荐您直接调用 {@link setGSensorMode} 实现更加智能的方向适配，无需您手动调用本接口。
- * @param rotation 目前支持 0、90、180、270 两个旋转角度，默认值：TRTCVideoRotation_0，即不旋转。
- */
-- (void)setVideoEncoderRotation:(TRTCVideoRotation)rotation;
-
-/**
- * 4.18 设置编码器输出的画面镜像模式
- *
- * 该设置不影响本地画面的镜像模式，但会影响房间中其他用户所观看到（以及云端录制文件）的镜像模式。
- * @param mirror 是否开启远端镜像，YES：开启远端画面镜像；NO：关闭远端画面镜像，默认值：NO。
- */
-- (void)setVideoEncoderMirror:(BOOL)mirror;
-
-/**
- * 4.19 设置重力感应的适配模式
- *
- * 您可以通过本接口实现如下这种友好的交互体验：
- * 当用户将手机或 Pad 上下颠倒时，由于摄像头的采集方向没有变，所以房间中其他用户所看到的画面会变成上下颠倒的，
- * 在这种情况下，您可以通过调用该接口让 SDK 根据设备陀螺仪的朝向自动调整本地画面和编码器输出画面的旋转方向，以使远端观众可以看到正常朝向的画面。
- * @param mode 重力感应模式，详情请参见 {@link TRTCGSensorMode}，默认值：TRTCGSensorMode_UIAutoLayout。
- */
-- (void)setGSensorMode:(TRTCGSensorMode)mode;
-
-/**
  * 4.20 开启大小画面双路编码模式
  *
  * 开启双路编码模式后，当前用户的编码器会同时输出【高清大画面】和【低清小画面】两路视频流（但只有一路音频流）。
@@ -654,7 +555,7 @@ LITEAV_EXPORT @interface TRTCCloud : NSObject
  * 您可以通过本接口截取本地的视频画面，远端用户的主路画面以及远端用户的辅路（屏幕分享）画面。
  * @param userId 用户 ID，如指定空置表示截取本地的视频画面。
  * @param streamType 视频流类型，可选择截取主路画面（{@link TRTCVideoStreamTypeBig}，常用于摄像头）或辅路画面（{@link TRTCVideoStreamTypeSub}，常用于屏幕分享）。
- * @param sourceType 画面来源，可选择截取视频流画面（{@link TRTCSnapshotSourceTypeStream}）或视频渲染画面（{@link TRTCSnapshotSourceTypeView}），前者一般更清晰。
+ * @param sourceType 画面来源，可选择截取视频流画面（{@link TRTCSnapshotSourceTypeStream}）、视频渲染画面（{@link TRTCSnapshotSourceTypeView}）或 采集画面（{@link TRTCSnapshotSourceTypeCapture}），采集画面截图更清晰。
  * @note Windows 平台目前仅支持截取 {@link TRTCSnapshotSourceTypeStream} 来源的视频画面。
  */
 - (void)snapshotVideo:(nullable NSString *)userId type:(TRTCVideoStreamType)streamType sourceType:(TRTCSnapshotSourceType)sourceType completionBlock:(void (^)(TXImage *image))completionBlock;
@@ -669,6 +570,18 @@ LITEAV_EXPORT @interface TRTCCloud : NSObject
  */
 - (void)setPerspectiveCorrectionWithUser:(nullable NSString *)userId srcPoints:(nullable NSArray *)srcPoints dstPoints:(nullable NSArray *)dstPoints;
 
+/**
+ * 4.25 设置重力感应的适配模式（11.7 及以上版本）
+ *
+ * 开启重力感应后，如果采集端的设备发生旋转，采集端和观众端的画面都会进行相应地渲染以确保视野中的画面始终朝上。
+ * 只在sdk内部摄像头采集场景生效，并且只在移动端生效。
+ * 1. 该接口仅对采集端起作用，如果只是观看房间中的画面，开启此接口是无效的
+ * 2. 当采集端设备发生 90 度或 270 度旋转时，采集端或者观众看到的画面可能会被裁剪以保持比例的协调
+ * @param mode 重力感应模式，详情请参见 {@link TRTCGravitySensorAdaptiveMode_Disable}、{@link TRTCGravitySensorAdaptiveMode_FillByCenterCrop} 和 {@link TRTCGravitySensorAdaptiveMode_FitWithBlackBorder} 默认值：{@link
+ * TRTCGravitySensorAdaptiveMode_Disable}。
+ */
+- (void)setGravitySensorAdaptiveMode:(TRTCGravitySensorAdaptiveMode)mode;
+
 /////////////////////////////////////////////////////////////////////////////////
 //
 //                    音频相关接口函数
@@ -681,9 +594,9 @@ LITEAV_EXPORT @interface TRTCCloud : NSObject
  * SDK 默认不开启麦克风，当用户需要发布本地音频时，需要调用该接口开启麦克风采集，并将音频编码并发布到当前的房间中。
  * 开启本地音频的采集和发布后，房间中的其他用户会收到 {@link onUserAudioAvailable}(userId, YES) 的通知。
  * @param quality 声音音质
- * - {@link TRTCAudioQualitySpeech}，流畅：采样率：16k；单声道；音频裸码率：16kbps；适合语音通话为主的场景，比如在线会议，语音通话。
- * - {@link TRTCAudioQualityDefault}，默认：采样率：48k；单声道；音频裸码率：50kbps；SDK 默认的音频质量，如无特殊需求推荐选择之。
- * - {@link TRTCAudioQualityMusic}，高音质：采样率：48k；双声道 + 全频带；音频裸码率：128kbps；适合需要高保真传输音乐的场景，比如在线K歌、音乐直播等。
+ * - {@link TRTCAudioQualitySpeech}，流畅：单声道；音频裸码率：18kbps；适合语音通话为主的场景，比如在线会议，语音通话。
+ * - {@link TRTCAudioQualityDefault}，默认：单声道；音频裸码率：50kbps；SDK 默认的音频质量，如无特殊需求推荐选择之。
+ * - {@link TRTCAudioQualityMusic}，高音质：双声道 + 全频带；音频裸码率：128kbps；适合需要高保真传输音乐的场景，比如在线K歌、音乐直播等。
  * @note 该函数会检查麦克风的使用权限，如果当前 App 没有麦克风权限，SDK 会自动向用户申请麦克风使用权限。
  */
 - (void)startLocalAudio:(TRTCAudioQuality)quality;
@@ -698,8 +611,8 @@ LITEAV_EXPORT @interface TRTCCloud : NSObject
 /**
  * 5.3 暂停/恢复发布本地的音频流
  *
- * 当您暂停发布本地音频流之后，房间中的其他他用户会收到 {@link onUserAudioAvailable}(userId, NO) 的通知。
- * 当您恢复发布本地音频流之后，房间中的其他他用户会收到 {@link onUserAudioAvailable}(userId, YES) 的通知。
+ * 当您暂停发布本地音频流之后，房间中的其他用户会收到 {@link onUserAudioAvailable}(userId, NO) 的通知。
+ * 当您恢复发布本地音频流之后，房间中的其他用户会收到 {@link onUserAudioAvailable}(userId, YES) 的通知。
  * 与 {@link stopLocalAudio} 的不同之处在于，muteLocalAudio(YES) 并不会释放麦克风权限，而是继续发送码率极低的静音包。
  * 这对于需要云端录制的场景非常适用，因为 MP4 等格式的视频文件，对于音频数据的连续性要求很高，使用 {@link stopLocalAudio} 会导致录制出的 MP4 文件不易播放。
  * 因此在对录制文件的质量要求较高的场景中，建议选择 muteLocalAudio 而不建议使用 stopLocalAudio。
@@ -710,7 +623,7 @@ LITEAV_EXPORT @interface TRTCCloud : NSObject
 /**
  * 5.4 暂停/恢复播放远端的音频流
  *
- * 当您静音某用户的远端音频时，SDK 会停止播放指定用户的声音，同时也会停止拉取该用户的音频数据数据。
+ * 当您静音某用户的远端音频时，SDK 会停止播放指定用户的声音，同时也会停止拉取该用户的音频数据。
  * @param userId 用于指定远端用户的 ID。
  * @param mute YES：静音；NO：取消静音。
  * @note 在进入房间（enterRoom）之前或之后调用本接口均生效，静音状态在退出房间（exitRoom）之后会被重置为 NO。
@@ -788,8 +701,10 @@ LITEAV_EXPORT @interface TRTCCloud : NSObject
  *
  * 当您调用该接口后， SDK 会将本地和远端的所有音频（包括本地音频，远端音频，背景音乐和音效等）混合并录制到一个本地文件中。
  * 该接口在进入房间前后调用均可生效，如果录制任务在退出房间前尚未通过 stopAudioRecording 停止，则退出房间后录制任务会自动被停止。
+ * 本次录制的启动、完成状态会通过本地录制相关回调进行通知。参见 TRTCCloud 相关回调。
  * @param param 录音参数，请参见 {@link TRTCAudioRecordingParams}。
  * @return 0：成功；-1：录音已开始；-2：文件或目录创建失败；-3：后缀指定的音频格式不支持。
+ * @note 自 v11.5 版本，音频录制的状态结果由返回值统一调整为异步回调进行通知。参见 TRTCCloud 相关回调。
  */
 - (int)startAudioRecording:(TRTCAudioRecordingParams *)param;
 
@@ -928,7 +843,7 @@ LITEAV_EXPORT @interface TRTCCloud : NSObject
 - (TXAudioEffectManager *)getAudioEffectManager;
 
 /**
- * 8.2 开启系统声音采集（仅适用于 Mac 系统）
+ * 8.2 开启系统声音采集（iOS 端暂未支持）
  *
  * 该接口会从电脑的声卡中采集音频数据，并将其混入到 SDK 当前的音频数据流中，从而使房间中的其他用户也能听到主播的电脑所播放出的声音。
  * 在线教育场景中，老师可以使用此功能让 SDK 采集教学影片中的声音，并广播给同房间中的学生。
@@ -942,7 +857,7 @@ LITEAV_EXPORT @interface TRTCCloud : NSObject
 #endif
 
 /**
- * 8.3 停止系统声音采集（仅适用于桌面系统和 Android 系统）
+ * 8.3 停止系统声音采集（iOS 端暂未支持）
  */
 #if !TARGET_OS_IPHONE && TARGET_OS_MAC
 - (void)stopSystemAudioLoopback;
@@ -1024,6 +939,8 @@ LITEAV_EXPORT @interface TRTCCloud : NSObject
 
 /**
  * 9.3 暂停屏幕分享
+ *
+ * @note 从v11.5版本开始，暂停屏幕采集会使用最后一帧按照1fps帧率输出。
  */
 - (int)pauseScreenCapture API_AVAILABLE(ios(11.0));
 
@@ -1068,7 +985,6 @@ LITEAV_EXPORT @interface TRTCCloud : NSObject
  * - {@link setVideoEncoderParam} 用于设置主路画面（{@link TRTCVideoStreamTypeBig}，一般用于摄像头）的视频编码参数。
  * - {@link setSubStreamEncoderParam} 用于设置辅路画面（{@link TRTCVideoStreamTypeSub}，一般用于屏幕分享）的视频编码参数。
  * @param param 辅流编码参数，详情请参见 {@link TRTCVideoEncParam}。
- * @note 即使您使用主路传输屏幕分享（在调用 startScreenCapture 时设置 type = TRTCVideoStreamTypeBig），依然要使用 {@link setSubStreamEncoderParam} 设定屏幕分享的编码参数，而不要使用 {@link setVideoEncoderParam} 。
  */
 - (void)setSubStreamEncoderParam:(TRTCVideoEncParam *)param;
 
@@ -1205,7 +1121,7 @@ LITEAV_EXPORT @interface TRTCCloud : NSObject
  * - channel：声道数（如果是立体声，数据是交叉的），单声道：1； 双声道：2。
  * - timestamp：时间戳，单位为毫秒（ms），请使用音频帧在采集时被记录下来的时间戳（可以在采集到一帧音频帧之后，通过调用 {@link generateCustomPTS} 获取时间戳）。
  *
- * 参考文档：[自定义采集和渲染](https://cloud.tencent.com/document/product/647/34066)。
+ * 参考文档：[自定义采集和渲染](https://cloud.tencent.com/document/product/647/74692)。
  * @param frame 音频数据
  * @note 请您精准地按每帧时长的间隔调用本接口，数据投送间隔不均匀时极易触发声音卡顿。
  */
@@ -1433,7 +1349,7 @@ LITEAV_EXPORT @interface TRTCCloud : NSObject
  * @param repeatCount 发送数据次数
  * @return YES：消息已通过限制，等待后续视频帧发送；NO：消息被限制发送
  * @note 本接口有以下限制：
- * 1. 数据在接口调用完后不会被即时发送出去，而是从下一帧视频帧开始带在视频帧中发送。
+ * 1. 数据在接口调用完后不会被即时发送出去，而是从下一帧视频帧开始与视频帧一起发送。
  * 2. 发送消息到房间内所有用户，每秒最多能发送 30 条消息（与 sendCustomCmdMsg 共享限制）。
  * 3. 每个包最大为 1KB，若发送大量数据，会导致视频码率增大，可能导致视频画质下降甚至卡顿（与 sendCustomCmdMsg 共享限制）。
  * 4. 每个客户端每秒最多能发送总计8KB数据（与 sendCustomCmdMsg 共享限制）。
@@ -1552,7 +1468,8 @@ LITEAV_EXPORT @interface TRTCCloud : NSObject
  * 用户退出房间后，SDK 会自动关闭私有加密。如需重新开启私有加密，您需要在用户再次加入房间前调用该方法。
  * @param enabled 是否开启媒体流私有加密。
  * @param config 配置媒体流私有加密的算法和密钥，参见 {@link TRTCPayloadPrivateEncryptionConfig}。
- * @return 接口调用结果，0: 方法调用成功， -1: 传入参数无效， -2: 功能已过期。若需解锁：请前往中国大陆站点开通 [TRTC 旗舰版套餐](https://buy.cloud.tencent.com/trtc?tab=month&trtcversion=ultimate)。
+ * @return 接口调用结果，0: 方法调用成功， -1: 传入参数无效， -2: 功能已过期。若需解锁：请前往中国大陆站点开通 [TRTC 旗舰版套餐](https://buy.cloud.tencent.com/trtc?tab=month&trtcversion=ultimate)，并填写
+ * [申请](https://cloud.tencent.com/apply/p/diifjcmffhw)，审核通过后方可使用。
  * @note TRTC 已经内置对媒体流进行加密后再传输，启用媒体流私有加密后将使用您传入的密匙与初始向量进行再次加密。
  */
 - (int)enablePayloadPrivateEncryption:(BOOL)enabled params:(TRTCPayloadPrivateEncryptionConfig *)config;

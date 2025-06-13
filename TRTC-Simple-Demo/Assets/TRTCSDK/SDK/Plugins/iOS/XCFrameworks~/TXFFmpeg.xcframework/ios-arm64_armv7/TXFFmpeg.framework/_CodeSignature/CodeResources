@@ -6,7 +6,7 @@
 	<dict>
 		<key>Headers/TXFFmpeg.h</key>
 		<data>
-		wAAGh76bSEqKCfAs897bo5qlUy0=
+		CUzXj8dpHPp4uzeg2iinP8OiL7I=
 		</data>
 		<key>Headers/ffmpeg_rename_defines.h</key>
 		<data>
@@ -114,7 +114,7 @@
 		</data>
 		<key>Headers/libavformat/avformat.h</key>
 		<data>
-		aTOjkKeL0fKCsRqI2252ZZEoLKM=
+		RRNZA644h9bYOB74oHpvvNBVncg=
 		</data>
 		<key>Headers/libavformat/avio.h</key>
 		<data>
@@ -482,15 +482,19 @@
 		</data>
 		<key>Info.plist</key>
 		<data>
-		QBqv5jmXeqPerOd+rWJ9C6+eAgU=
+		MHt9LkI97NQyiBEuIeG/15iJ7pU=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
 		s/Mc0hdiuH7zOubtnON2Skw6z+k=
 		</data>
+		<key>PrivacyInfo.xcprivacy</key>
+		<data>
+		ovFJMFOLMjzh8DLJKmXncj8JIgU=
+		</data>
 		<key>TXFFmpeg_arm</key>
 		<data>
-		MBxDPT43TWRNw9m8NDrt5i7KAeU=
+		QksVgH9LTskZVqZ81fjwnaorV3E=
 		</data>
 	</dict>
 	<key>files2</key>
@@ -499,11 +503,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			wAAGh76bSEqKCfAs897bo5qlUy0=
+			CUzXj8dpHPp4uzeg2iinP8OiL7I=
 			</data>
 			<key>hash2</key>
 			<data>
-			Bti/V+wGN69ht9D1yB4McB6exQLU33OUdsg09mv9Dco=
+			VLn9BOzNEWE0rczOxkT4g2+z5ZybeSqLmrSKjMHLg24=
 			</data>
 		</dict>
 		<key>Headers/ffmpeg_rename_defines.h</key>
@@ -796,11 +800,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			aTOjkKeL0fKCsRqI2252ZZEoLKM=
+			RRNZA644h9bYOB74oHpvvNBVncg=
 			</data>
 			<key>hash2</key>
 			<data>
-			oTWB05cK4WYiWt8pUuQHMD2u0TeoDwORTuJ/OHawxX4=
+			eNduLblk4iIS5peL6g8asJnVCjTE1vjDFVFSybgtHLM=
 			</data>
 		</dict>
 		<key>Headers/libavformat/avio.h</key>
@@ -1815,15 +1819,26 @@
 			WIaDXyP0QCMaBdRzrIeOtldbJ8DYc9She/5FhtTUk98=
 			</data>
 		</dict>
+		<key>PrivacyInfo.xcprivacy</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			ovFJMFOLMjzh8DLJKmXncj8JIgU=
+			</data>
+			<key>hash2</key>
+			<data>
+			CNkOaUbb/qDQtbF/tlnXfu0j5EO3Rdjntbn6N4y3RHc=
+			</data>
+		</dict>
 		<key>TXFFmpeg_arm</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			MBxDPT43TWRNw9m8NDrt5i7KAeU=
+			QksVgH9LTskZVqZ81fjwnaorV3E=
 			</data>
 			<key>hash2</key>
 			<data>
-			FlSSs/GTt5Acyp9nEY+n7p8LO8HyRKeispXOW1SS/LA=
+			zmjnBaehQ7HVWViOF40mPALxWEpu0TS1Rp/Ij9l+58s=
 			</data>
 		</dict>
 	</dict>

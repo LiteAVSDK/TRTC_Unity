@@ -4,7 +4,7 @@ This document describes how to quickly integrate TRTC SDK for Unity into your pr
 
 ## Environment Requirements
 
-- Unity 2020.2.1f1c1 is recommended.
+- Unity 2022.3.13f1 is recommended.
 - Supported platforms: Android, iOS, Windows, macOS (Mac only supports the sdkAppId starting with 1)
 - Modules required: `Android Build Support`, `iOS Build Support`, `Windows Build Support`, `MacOS Build Support`
 

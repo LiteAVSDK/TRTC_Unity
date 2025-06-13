@@ -6,7 +6,7 @@
 	<dict>
 		<key>Headers/TXFFmpeg.h</key>
 		<data>
-		wAAGh76bSEqKCfAs897bo5qlUy0=
+		CUzXj8dpHPp4uzeg2iinP8OiL7I=
 		</data>
 		<key>Headers/ffmpeg_rename_defines.h</key>
 		<data>
@@ -114,7 +114,7 @@
 		</data>
 		<key>Headers/libavformat/avformat.h</key>
 		<data>
-		aTOjkKeL0fKCsRqI2252ZZEoLKM=
+		RRNZA644h9bYOB74oHpvvNBVncg=
 		</data>
 		<key>Headers/libavformat/avio.h</key>
 		<data>
@@ -482,15 +482,19 @@
 		</data>
 		<key>Info.plist</key>
 		<data>
-		ToVAEOmKzg0k49eecIcLERcfVSo=
+		khfbrd1SDr9vw02Xj5M2aOppZZ0=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
 		s/Mc0hdiuH7zOubtnON2Skw6z+k=
 		</data>
+		<key>PrivacyInfo.xcprivacy</key>
+		<data>
+		ovFJMFOLMjzh8DLJKmXncj8JIgU=
+		</data>
 		<key>TXFFmpeg_x64</key>
 		<data>
-		Reuq+M4BMoclDbjfugNGV7Z0N18=
+		5jpcK5U7YvtUfwLZIbU8kOJkbgo=
 		</data>
 	</dict>
 	<key>files2</key>
@@ -499,7 +503,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			Bti/V+wGN69ht9D1yB4McB6exQLU33OUdsg09mv9Dco=
+			VLn9BOzNEWE0rczOxkT4g2+z5ZybeSqLmrSKjMHLg24=
 			</data>
 		</dict>
 		<key>Headers/ffmpeg_rename_defines.h</key>
@@ -688,7 +692,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			oTWB05cK4WYiWt8pUuQHMD2u0TeoDwORTuJ/OHawxX4=
+			eNduLblk4iIS5peL6g8asJnVCjTE1vjDFVFSybgtHLM=
 			</data>
 		</dict>
 		<key>Headers/libavformat/avio.h</key>
@@ -1335,11 +1339,18 @@
 			WIaDXyP0QCMaBdRzrIeOtldbJ8DYc9She/5FhtTUk98=
 			</data>
 		</dict>
+		<key>PrivacyInfo.xcprivacy</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			CNkOaUbb/qDQtbF/tlnXfu0j5EO3Rdjntbn6N4y3RHc=
+			</data>
+		</dict>
 		<key>TXFFmpeg_x64</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			wx5j8fcgZfRpO09tFe0ug+89eFZjpBShrV1ewznJAeY=
+			anUqcw1eewfXhk5EpB0LeM0SyzPCz9Ou3w6uT8mwT0M=
 			</data>
 		</dict>
 	</dict>

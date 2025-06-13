@@ -3,7 +3,7 @@
 本文主要介绍如何快速地将腾讯云 TRTC SDK（Unity）集成到您的项目中，只要按照如下步骤进行配置，就可以完成 SDK 的集成工作。
 
 ## 环境要求
-* Unity 建议版本： 2020.2.1f1c1。
+* Unity 建议版本： 2022.3.13f1。
 * 目前支持 Android、iOS、Windows、Mac（Mac仅支持1开头的应用id）平台。
 * 需要包含 `Android Build Support`、`iOS Build Support`、 `Winodows Build Support` 和 `MacOs Build Support` 模块。
 - 其中 iOS  端开发还需要：

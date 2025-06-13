@@ -21,4 +21,12 @@
  */
 - (void)onNetStatus:(NSDictionary *)param;
 
+@optional
+/**
+ * 画中画状态通知
+ * @param state 参见 TXLiveSDKTypeDef.h。
+ */
+- (void)onPictureInPictureStateUpdate:(TXLivePictureInPictureState)state
+                              message:(NSString *)msg
+                            extraInfo:(NSDictionary *)extraInfo;
 @end

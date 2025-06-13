@@ -25,40 +25,40 @@ class AudioMusicParam;
  */
 enum TXVoiceReverbType {
 
-    ///关闭特效
+    /// 关闭特效
     TXLiveVoiceReverbType_0 = 0,
 
     /// KTV
     TXLiveVoiceReverbType_1 = 1,
 
-    ///小房间
+    /// 小房间
     TXLiveVoiceReverbType_2 = 2,
 
-    ///大会堂
+    /// 大会堂
     TXLiveVoiceReverbType_3 = 3,
 
-    ///低沉
+    /// 低沉
     TXLiveVoiceReverbType_4 = 4,
 
-    ///洪亮
+    /// 洪亮
     TXLiveVoiceReverbType_5 = 5,
 
-    ///金属声
+    /// 金属声
     TXLiveVoiceReverbType_6 = 6,
 
-    ///磁性
+    /// 磁性
     TXLiveVoiceReverbType_7 = 7,
 
-    ///空灵
+    /// 空灵
     TXLiveVoiceReverbType_8 = 8,
 
-    ///录音棚
+    /// 录音棚
     TXLiveVoiceReverbType_9 = 9,
 
-    ///悠扬
+    /// 悠扬
     TXLiveVoiceReverbType_10 = 10,
 
-    ///录音棚2
+    /// 录音棚2
     TXLiveVoiceReverbType_11 = 11,
 
 };
@@ -71,40 +71,40 @@ enum TXVoiceReverbType {
  */
 enum TXVoiceChangerType {
 
-    ///关闭
+    /// 关闭
     TXVoiceChangerType_0 = 0,
 
-    ///熊孩子
+    /// 熊孩子
     TXVoiceChangerType_1 = 1,
 
-    ///萝莉
+    /// 萝莉
     TXVoiceChangerType_2 = 2,
 
-    ///大叔
+    /// 大叔
     TXVoiceChangerType_3 = 3,
 
-    ///重金属
+    /// 重金属
     TXVoiceChangerType_4 = 4,
 
-    ///感冒
+    /// 感冒
     TXVoiceChangerType_5 = 5,
 
-    ///外语腔
+    /// 外语腔
     TXVoiceChangerType_6 = 6,
 
-    ///困兽
+    /// 困兽
     TXVoiceChangerType_7 = 7,
 
-    ///肥宅
+    /// 肥宅
     TXVoiceChangerType_8 = 8,
 
-    ///强电流
+    /// 强电流
     TXVoiceChangerType_9 = 9,
 
-    ///重机械
+    /// 重机械
     TXVoiceChangerType_10 = 10,
 
-    ///空灵
+    /// 空灵
     TXVoiceChangerType_11 = 11,
 
 };
@@ -127,7 +127,10 @@ class ITXMusicPreloadObserver {
 
     /**
      * 背景音乐预加载出错
-     * @param errorCode -4001:打开文件失败，如音频文件格式不支持，本地音频文件不存在，网络音频文件无法访问等；-4002:解码失败，如音频文件损坏，网络音频文件服务器无法访问等；-4003:预加载数量超上限，请先调用 stopPlayMusic 释放无用的预加载。
+     * @param errorCode -4001:打开文件失败，如音频数据无效，FFMPEG 协议未找到等；-4002:解码失败，如音频文件损坏，网络音频文件服务器无法访问等；-4003:预加载数量超上限，请先调用 stopPlayMusic
+     * 释放无用的预加载；-4005:非法路径导致打开文件失败，请检查您传入的路径参数是否指向一个合法的音乐文件；-4006:非法URL导致打开文件失败，请用浏览器检查您传入的 URL
+     * 地址是否可以下载到期望的音乐文件；-4007:无音频流导致打开文件失败，请确认您传入的文件是否是合法的音频文件，以及文件是否被损坏；-4008:格式不支持导致打开文件失败，请确认您传入的文件格式是否是支持的文件格式，移动端支持【mp3，aac，m4a，wav，ogg，mp4，mkv】，桌面端支持
+     * 【mp3，aac，m4a，wav，mp4，mkv】。
      */
     virtual void onLoadError(int id, int errorCode) = 0;
 };
@@ -148,7 +151,10 @@ class ITXMusicPlayObserver {
      *
      * 在背景音乐开始播放成功或者失败时调用。
      * @param id 音乐 ID。
-     * @param errCode 错误码。0: 开始播放成功；-4001: 打开文件失败，如音频文件格式不支持，本地音频文件不存在，网络音频文件无法访问等。
+     * @param errCode 错误码。0: 开始播放成功；-4001:打开文件失败，如音频数据无效，FFMPEG 协议未找到等；-4005:非法路径导致打开文件失败，请检查您传入的路径参数是否指向一个合法的音乐文件；-4006:非法URL导致打开文件失败，请用浏览器检查您传入的 URL
+     * 地址是否可以下载到期望的音乐文件，如果操作系统为 iOS 或 MacOS 请确保使用 https
+     * 链接；-4007:无音频流导致打开文件失败，请确认您传入的文件是否是合法的音频文件，以及文件是否被损坏；-4008:格式不支持导致打开文件失败，请确认您传入的文件格式是否是支持的文件格式，移动端支持【mp3，aac，m4a，wav，ogg，mp4，mkv】，桌面端支持
+     * 【mp3，aac，m4a，wav，mp4，mkv】；-4009:同时播放 bgm 数量超过限定值，如当前同时播放 bgm 数量超过 10 后提示该错误，请检查并发播放 bgm 数量。
      */
     virtual void onStart(int id, int errCode) = 0;
 
@@ -183,29 +189,29 @@ class ITXMusicPlayObserver {
  */
 class AudioMusicParam {
    public:
-    ///【字段含义】音乐 ID。
-    ///【特殊说明】SDK 允许播放多路音乐，因此需要使用 ID 进行标记，用于控制音乐的开始、停止、音量等。
+    /// 【字段含义】音乐 ID。
+    /// 【特殊说明】SDK 允许播放多路音乐，因此需要使用 ID 进行标记，用于控制音乐的开始、停止、音量等。
     int id;
 
-    ///【字段含义】音效文件的完整路径或 URL 地址。支持的音频格式包括 MP3、AAC、M4A、WAV。
+    /// 【字段含义】音效文件的完整路径或 URL 地址。支持的音频格式包括 MP3、AAC、M4A、WAV。
     char* path;
 
-    ///【字段含义】音乐循环播放的次数。
-    ///【推荐取值】取值范围为0 - 任意正整数，默认值：0。0 表示播放音乐一次；1 表示播放音乐两次；以此类推。
+    /// 【字段含义】音乐循环播放的次数。
+    /// 【推荐取值】取值范围为0 - 任意正整数，默认值：0。0 表示播放音乐一次；1 表示播放音乐两次；以此类推。
     int loopCount;
 
-    ///【字段含义】是否将音乐传到远端。
-    ///【推荐取值】true：音乐在本地播放的同时，远端用户也能听到该音乐；false：主播只能在本地听到该音乐，远端观众听不到。默认值：false。
+    /// 【字段含义】是否将音乐传到远端。
+    /// 【推荐取值】true：音乐在本地播放的同时，远端用户也能听到该音乐；false：主播只能在本地听到该音乐，远端观众听不到。默认值：false。
     bool publish;
 
-    ///【字段含义】播放的是否为短音乐文件。
-    ///【推荐取值】true：需要重复播放的短音乐文件；false：正常的音乐文件。默认值：false。
+    /// 【字段含义】播放的是否为短音乐文件。
+    /// 【推荐取值】true：需要重复播放的短音乐文件；false：正常的音乐文件。默认值：false。
     bool isShortFile;
 
-    ///【字段含义】音乐开始播放时间点，单位：毫秒。
+    /// 【字段含义】音乐开始播放时间点，单位：毫秒。
     long startTimeMS;
 
-    ///【字段含义】音乐结束播放时间点，单位毫秒，0表示播放至文件结尾。
+    /// 【字段含义】音乐结束播放时间点，单位毫秒，0表示播放至文件结尾。
     long endTimeMS;
 
     AudioMusicParam(int id_, char* path_) {
@@ -299,7 +305,7 @@ class ITXAudioEffectManager {
      * @param musicId   音乐 ID。
      * @param observer  具体参考 ITXMusicPlayObserver 中定义接口。
      * @note
-     * 1. 如果要该ID不需要使用，observer 可设置为 NULL 彻底释放。
+     * 1. 如果该 ID 不需要使用，observer 可设置为 NULL 彻底释放。
      */
     virtual void setMusicObserver(int musicId, ITXMusicPlayObserver* observer) = 0;
 

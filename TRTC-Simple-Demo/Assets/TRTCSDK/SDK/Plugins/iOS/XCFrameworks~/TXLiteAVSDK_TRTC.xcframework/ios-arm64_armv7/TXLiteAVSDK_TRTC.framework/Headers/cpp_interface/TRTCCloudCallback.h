@@ -282,8 +282,7 @@ class ITRTCCloudCallback {
      * 4.1 网络质量的实时统计回调
      *
      * 该统计回调每间隔2秒抛出一次，用于通知 SDK 感知到的当前网络的上行和下行质量。
-     * SDK 会使用一组内嵌的自研算法对当前网络的延迟高低、带宽大小以及稳定情况进行评估，并计算出一个的评估结果：
-     * 如果评估结果为 1（Excellent） 代表当前的网络情况非常好，如果评估结果为 6（Down）代表当前网络无法支撑 TRTC 的正常通话。
+     * SDK 会使用一组内嵌的自研算法对当前网络的延迟高低、带宽大小以及稳定情况进行评估，并计算出一个评估结果：如果评估结果为 1（Excellent） 代表当前的网络情况非常好，如果评估结果为 6（Down）代表当前网络无法支撑 TRTC 的正常通话。
      * @param localQuality 上行网络质量。
      * @param remoteQuality 下行网络质量，代表数据流历经“远端->云端->本端”这样一条完整的传输链路后，最终在本端统计到的数据质量。因此，这里的下行网络质量代表的是远端上行链路与本端下行链路共同影响的结果。
      * @note 暂时无法通过该接口单独判定远端用户的上行质量。
@@ -308,7 +307,7 @@ class ITRTCCloudCallback {
      * 4.3 网速测试的结果回调
      *
      * 该统计回调由 {@link startSpeedTest:} 触发。
-     * @param result 网速测试数据数据，包括丢包、往返延迟、上下行的带宽速率，详情请参见 {@link TRTCSpeedTestResult}。
+     * @param result 网速测试结果，包括丢包、往返延迟、上下行的带宽速率，详情请参见 {@link TRTCSpeedTestResult}。
      */
     virtual void onSpeedTestResult(const TRTCSpeedTestResult& result) {
     }
@@ -390,8 +389,8 @@ class ITRTCCloudCallback {
  *
  * 当本地设备（包括摄像头、麦克风以及扬声器）被插入或者拔出时，SDK 便会抛出此事件回调。
  * @param deviceId 设备 ID。
- * @param deviceType 设备类型。
- * @param state 通断状态，0：设备已添加；1：设备已被移除；1：设备已启用。
+ * @param deviceType 设备类型。0：麦克风设备；1：扬声器设备；2：摄像头设备。
+ * @param state 通断状态，0：设备已添加；1：设备已被移除；2：设备已启用。
  */
 #if TARGET_PLATFORM_DESKTOP
     virtual void onDeviceChange(const char* deviceId, TRTCDeviceType type, TRTCDeviceState state) {
@@ -403,7 +402,7 @@ class ITRTCCloudCallback {
  *
  * 在 Mac 或 Windows 这样的桌面操作系统上，用户可以在设置中心找到声音相关的设置面板，并设置麦克风的采集音量大小。
  * 用户将麦克风的采集音量设置得越大，麦克风采集到的声音的原始音量也就会越大，反之就会越小。
- * 在有些型号的键盘以及笔记本电脑上，用户还可以通过按下“禁用麦克风”按钮（图标是一个话筒上上叠加了一道代表禁用的斜线）来将麦克风静音。
+ * 在有些型号的键盘以及笔记本电脑上，用户还可以通过按下`禁用麦克风`按钮（图标是一个`话筒`叠加了一道代表禁用的斜线）来将麦克风静音。
  * 当用户通过系统设置界面或者通过键盘上的快捷键设定操作系统的麦克风采集音量时，SDK 便会抛出此事件。
  * @param volume 系统采集音量，取值范围 0 - 100，用户可以在系统的声音设置面板上进行拖拽调整。
  * @param muted 麦克风是否被用户禁用了：true 被禁用，false 被启用。
@@ -430,14 +429,15 @@ class ITRTCCloudCallback {
 #endif
 
 /**
- * 6.8 系统声音采集是否被成功开启的事件回调（仅适用于 Mac 系统）
+ * 6.8 系统声音采集是否被成功开启的事件回调（仅适用于桌面系统）
  *
  * 在 Mac 系统上，您可以通过调用 {@link startSystemAudioLoopback} 为当前系统安装一个音频驱动，并让 SDK 通过该音频驱动捕获当前 Mac 系统播放出的声音。
+ * 在 Windows 系统上，您可以通过调用 {@link startSystemAudioLoopback} 让 SDK 捕获当前 Windows 系统播放出的声音。
  * 当用于播片教学或音乐直播中，比如老师端可以使用此功能，让 SDK 能够采集老师所播放的电影中的声音，使同房间的学生端也能听到电影中的声音。
- * SDK 会将统声音采集是否被成功开启的结果，通过本事件回调抛出，需要您关注参数中的错误码。
+ * SDK 会将系统声音采集是否被成功开启的结果，通过本事件回调抛出，需要您关注参数中的错误码。
  * @param err ERR_NULL 表示成功，其余值表示失败。
  */
-#if TARGET_PLATFORM_MAC
+#if TARGET_PLATFORM_DESKTOP
     virtual void onSystemAudioLoopbackError(TXLiteAVError errCode) {
     }
 #endif
@@ -475,7 +475,7 @@ class ITRTCCloudCallback {
     /**
      * 7.1 收到自定义消息的事件回调
      *
-     * 当房间中的某个用户使用 {@link sendCustomCmdMsg} 发送自定义 UDP 消息时，房间中的其它用户可以通过 onRecvCustomCmdMsg 事件回调接收到该条消息。
+     * 当房间中的某个用户使用 {@link sendCustomCmdMsg} 发送自定义 UDP 消息时，房间中的其他用户可以通过 onRecvCustomCmdMsg 事件回调接收到该条消息。
      * @param userId 用户标识。
      * @param cmdID 命令 ID。
      * @param seq   消息序号。
@@ -487,7 +487,7 @@ class ITRTCCloudCallback {
     /**
      * 7.2 自定义消息丢失的事件回调
      *
-     * 当您使用 {@link sendCustomCmdMsg} 发送自定义 UDP 消息时，即使设置了可靠传输（reliable），也无法确保100@%不丢失，只是丢消息概率极低，能满足常规可靠性要求。
+     * 当您使用 {@link sendCustomCmdMsg} 发送自定义 UDP 消息时，即使设置了可靠传输（reliable），也无法确 100% 不丢失，只是丢消息概率极低，能满足常规可靠性要求。
      * 在发送端设置了可靠运输（reliable）后，SDK 都会通过此回调通知过去时间段内（通常为5s）传输途中丢失的自定义消息数量统计信息。
      * @param userId 用户标识。
      * @param cmdID 命令 ID。
@@ -501,7 +501,7 @@ class ITRTCCloudCallback {
     /**
      * 7.3 收到 SEI 消息的回调
      *
-     * 当房间中的某个用户使用 {@link sendSEIMsg} 借助视频数据帧发送 SEI 消息时，房间中的其它用户可以通过 onRecvSEIMsg 事件回调接收到该条消息。
+     * 当房间中的某个用户使用 {@link sendSEIMsg} 借助视频数据帧发送 SEI 消息时，房间中的其他用户可以通过 onRecvSEIMsg 事件回调接收到该条消息。
      * @param userId   用户标识。
      * @param message  数据。
      */
@@ -707,7 +707,7 @@ class ITRTCCloudCallback {
     /**
      * 10.2 本地录制任务正在进行中的进展事件回调
      *
-     * 当您调用 {@link startLocalRecording} 成功启动本地媒体录制任务后，SDK 变会定时地抛出本事件回调。
+     * 当您调用 {@link startLocalRecording} 成功启动本地媒体录制任务后，SDK 会定时地抛出本事件回调。
      * 您可通过捕获该事件回调来获知录制任务的健康状况。
      * 您可以在 {@link startLocalRecording} 时设定本事件回调的抛出间隔。
      * @param duration 已经录制的累计时长，单位毫秒。
@@ -974,6 +974,21 @@ class ITRTCAudioFrameCallback {
      * 3. 此接口回调出的是对各路待播放音频数据的混合，但其中并不包含耳返的音频数据。
      */
     virtual void onMixedPlayAudioFrame(TRTCAudioFrame* frame) {
+    }
+
+    /**
+     * SDK 所有音频混合后的音频数据（包括采集到的和待播放的）
+     *
+     * 当您设置完音频数据自定义回调之后，SDK 内部会把所有采集到的和待播放的音频数据混合起来，以 PCM 格式的形式通过本接口回调给您，便于您进行自定义录制。
+     * - 此接口回调出的音频时间帧长固定为0.02s，格式为 PCM 格式。
+     * - 由时间帧长转化为字节帧长的公式为 `采样率 × 时间帧长 × 声道数 × 采样点位宽`。
+     * - 以 TRTC 默认的音频录制格式48000采样率、单声道、16采样点位宽为例，字节帧长为 `48000 × 0.02s × 1 × 16bit = 15360bit = 1920字节`。
+     * @param frame PCM 格式的音频数据帧。
+     * @note
+     * 1. 此接口回调出的是SDK所有音频数据的混合数据，包括：经过 3A 前处理、特效叠加以及背景音乐混音后的本地音频，所有远端音频，但不包括耳返音频。
+     * 2. 此接口回调出的音频数据不支持修改。
+     */
+    virtual void onMixedAllAudioFrame(TRTCAudioFrame* frame) {
     }
 };
 

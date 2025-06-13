@@ -363,6 +363,19 @@ typedef NS_ENUM(NSInteger, TXCaptureVideoInputSource) {
 };
 #endif
 
+/**
+ * 2.8 画中画状态
+ */
+typedef NS_ENUM(NSInteger, TXLivePictureInPictureState) {
+  TXLivePictureInPictureStateUndefined = 0,
+  TXLivePictureInPictureStateOccurError,
+  TXLivePictureInPictureStateWillStart,
+  TXLivePictureInPictureStateDidStart,
+  TXLivePictureInPictureStateWillStop,
+  TXLivePictureInPictureStateDidStop,
+  TXLivePictureInPictureStateRestoreUI
+};
+
 /////////////////////////////////////////////////////////////////////////////////
 //
 //                    【状态通知字段名 onNetStatus】
@@ -413,6 +426,10 @@ typedef NS_ENUM(NSInteger, TXCaptureVideoInputSource) {
                             /// TXLivePlayer：音频缓冲时长阈值，缓冲超过该阈值后，播放器会开始调控延时。
 #define NET_STATUS_AUDIO_BLOCK_TIME @"AUDIO_BLOCK_TIME"  ///> 拉流专用：音频卡顿时长，单位ms
 #define NET_STATUS_AUDIO_INFO @"AUDIO_INFO"  ///> 音频信息：包括采样率信息和声道数信息
+#define NET_STATUS_VIDEO_LIGHT_BLOCK_COUNT "VIDEO_LIGHT_BLOCK_COUNT"  ///> 拉流专用：视频轻卡（帧间隔大于200ms）次数
+#define NET_STATUS_VIDEO_MEDIUM_BLOCK_COUNT "VIDEO_MEDIUM_BLOCK_COUNT"  ///> 拉流专用：视频中卡（帧间隔大于500ms）次数
+#define NET_STATUS_VIDEO_LARGE_BLOCK_COUNT "VIDEO_LARGE_BLOCK_COUNT"  ///> 拉流专用：视频大卡（帧间隔大于1000ms）次数
+#define NET_STATUS_VIDEO_BLOCK_TIME "VIDEO_BLOCK_TIME"  ///> 拉流专用：视频（帧间隔大于200ms）卡顿时长，单位ms
 #define NET_STATUS_NET_JITTER @"NET_JITTER"  ///> 网络抖动：数值越大表示抖动越大，网络越不稳定
 #define NET_STATUS_QUALITY_LEVEL \
   @"NET_QUALITY_LEVEL"  ///> 网络质量：0：未定义 1：最好 2：好 3：一般 4：差 5：很差 6：不可用

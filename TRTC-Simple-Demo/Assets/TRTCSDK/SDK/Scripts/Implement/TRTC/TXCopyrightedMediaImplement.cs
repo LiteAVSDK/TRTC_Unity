@@ -6,32 +6,38 @@ using System.Collections.Generic;
 using AOT;
 
 namespace trtc {
+  public interface ITXCopyrightedMediaCallback : ITXMusicPreloadCallback {
+    void onPreloadStart(string musicId, string bitrateDefinition);
+    void onPreloadProgress(string musicId, string bitrateDefinition, float progress);
+    void onPreloadComplete(string musicId, string bitrateDefinition, int errorCode, string msg);
+  }
+
   public class TXCopyrightedMediaImplement : ITXCopyrightedMedia {
 #region callbaks
-    private static readonly Dictionary<IntPtr, ITXCopyrightedMediaCallback> TXCopyrightedMediaCallbackDic =
-        new Dictionary<IntPtr, ITXCopyrightedMediaCallback>();
+    private static readonly Dictionary<IntPtr, ITXMusicPreloadCallback> musicPreloadCallbackDic =
+        new Dictionary<IntPtr, ITXMusicPreloadCallback>();
     private static UnityEngine.Object callbackDicLock = new UnityEngine.Object();
-    private static ITXCopyrightedMediaCallback getTXCopyrightedMediaCallback(IntPtr instance) {
+    private static ITXMusicPreloadCallback getTXCopyrightedMediaCallback(IntPtr instance) {
       if (instance == IntPtr.Zero) {
         return null;
       }
 
-      ITXCopyrightedMediaCallback mediaPreloadCallback;
+      ITXMusicPreloadCallback musicPreloadCallback;
       lock(callbackDicLock) {
-        TXCopyrightedMediaCallbackDic.TryGetValue(instance, out mediaPreloadCallback);
+        musicPreloadCallbackDic.TryGetValue(instance, out musicPreloadCallback);
       }
-      return mediaPreloadCallback;
+      return musicPreloadCallback;
     }
 
-    private static void  addTXCopyrightedMediaCallback(IntPtr instance, ITXCopyrightedMediaCallback mediaPreloadCallback) {
+    private static void  addTXCopyrightedMediaCallback(IntPtr instance, ITXMusicPreloadCallback musicPreloadCallback) {
       if (instance == IntPtr.Zero) {
         return;
       }
       lock(callbackDicLock) {
-        if (TXCopyrightedMediaCallbackDic.ContainsKey(instance)) {
+        if (musicPreloadCallbackDic.ContainsKey(instance)) {
           return;
         }
-        TXCopyrightedMediaCallbackDic.Add(instance, mediaPreloadCallback);
+        musicPreloadCallbackDic.Add(instance, musicPreloadCallback);
       }
     }
 
@@ -40,8 +46,8 @@ namespace trtc {
         return;
       }
       lock(callbackDicLock) {
-        if (TXCopyrightedMediaCallbackDic.ContainsKey(instance)) {
-          TXCopyrightedMediaCallbackDic.Remove(instance);
+        if (musicPreloadCallbackDic.ContainsKey(instance)) {
+          musicPreloadCallbackDic.Remove(instance);
         }
       }
     }
@@ -98,7 +104,7 @@ namespace trtc {
       return TXCopyrightedMediaNative.tx_copyrighted_media_gen_music_url(_nativeObj, musicId, bgmType, bitrateDefinition, outData, outDataSize) == 0 ? true : false;
     }
 
-    public override void setMusicPreloadCallback(ITXCopyrightedMediaCallback callback) {
+    public override void setMusicPreloadCallback(ITXMusicPreloadCallback callback) {
       if(callback == null) {
         TRTCLogger.Info("remove musicPreloadCallback");
         removeTXCopyrightedMediaCallback(_nativeObj);

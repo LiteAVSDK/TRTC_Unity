@@ -6,7 +6,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace trtc {
-  internal sealed class TRTCActionQueue : MonoBehaviour {
+  internal sealed class TRTCActionQueue
+  {
     private readonly Queue<Action> _actions = new Queue<Action>();
     private bool _paused = false;
     private bool _destroyed = false;
@@ -43,32 +44,35 @@ namespace trtc {
       return action;
     }
 
-    private void Update() {
-      DateTime startTime = DateTime.UtcNow;
-      lock (_actions) {
-        while (_actions.Count > 0) {
-          try {
-            var action = _actions.Dequeue();
-            action?.Invoke();
-          } catch (Exception exception) {
-            Debug.Log($"TRTCActionQueue Invoke {exception}");
-          }
+    internal void Update() {
+        DateTime startTime = DateTime.UtcNow;
 
-          if(((Int64)(DateTime.UtcNow - startTime).TotalMilliseconds) >= 20) {
-            break;
-          }
+        while (true) {
+            if (((Int64)(DateTime.UtcNow - startTime).TotalMilliseconds) >= 20) {
+                break;
+            }
+
+            Action action = Dequeue();
+            if (action != null) {
+                try {
+                    action?.Invoke();
+                } catch (Exception exception) {
+                    Debug.Log($"TRTCActionQueue Invoke {exception}");
+                }
+            } else {
+                break;
+            }
         }
-      }
     }
 
-    public void Destroy() {
+    internal void Destroy() {
       lock (_actions) {
         _destroyed = true;
         _actions.Clear();
       }
     }
 
-    void OnApplicationPause(bool pauseStatus) {
+    internal void OnApplicationPause(bool pauseStatus) {
       _paused = pauseStatus;
     }
   }

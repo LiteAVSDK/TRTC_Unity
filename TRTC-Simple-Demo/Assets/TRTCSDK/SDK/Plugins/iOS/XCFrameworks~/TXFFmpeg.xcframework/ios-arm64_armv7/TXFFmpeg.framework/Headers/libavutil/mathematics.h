@@ -29,10 +29,9 @@
 #define AVUTIL_MATHEMATICS_H
 
 #include <stdint.h>
-#include <math.h>
 #include "attributes.h"
-#include "rational.h"
 #include "intfloat.h"
+#include "rational.h"
 
 #ifndef M_E
 #define M_E            2.7182818284590452354   /* e */

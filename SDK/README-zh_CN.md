@@ -21,7 +21,7 @@
 2. 连接 iPhone 真机，单击【Build And Run】，需要选择一个新的目录存放编译出来的 iOS 工程，等待编译完成，会有新窗口弹出 Xcode 工程。
 3. 单击 Link Binary with Libraries 项展开，单击底下的“+”号图标去添加依赖库 **libc++.tbd** 、 **libresolv.tbd**、**Accelerate.framework**、**MetalKit.framework**、**MobileCoreServices.framework**、**SystemConfiguration.framework**、**ReplayKit.framework**、**CoreTelephony.framework**。(Unity-iPhone/UnityFramework 也需要加上)
 ![](https://imgcache.qq.com/operation/dianshi/other/link.743c57b230fa1be24a2226b6cd1c99378eca81ca.png)
-4. 单击 **General**，选择 **Frameworks,Libraries,and Embedded Content**，单击底下的“+”号图标依次添加 TXLiteAVSDK_TRTC.framework 所需要动态库**TXFFmpeg.xcframework**、**TXSoundTouch.xcframework**，选择 **Embed & Sign**。(Unity-iPhone/UnityFramework 也需要加上) [两个动态库的下载地址](https://liteav.sdk.qcloud.com/download/latest/TXLiteAVSDK_TRTC_iOS_latest.zip)
+4. 单击 **General**，选择 **Frameworks,Libraries,and Embedded Content**，单击底下的“+”号图标依次添加 TXLiteAVSDK_TRTC.framework 所需要动态库**TXFFmpeg.xcframework**、**TXSoundTouch.xcframework**，选择 **Embed & Sign**。(Unity-iPhone/UnityFramework 也需要加上)
 ![](https://qcloudimg.tencent-cloud.cn/raw/a159c5fb799cf50611387bdae7275863.png)
 5. 单击 Other Linker Flags 项展开，添加 `-ObjC`
 ![](https://imgcache.qq.com/operation/dianshi/other/8.6-objc.e0df060a638c1056fc07d1cb51c303a9de5b542f.png)

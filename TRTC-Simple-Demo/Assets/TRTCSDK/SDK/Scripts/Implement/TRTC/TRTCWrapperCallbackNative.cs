@@ -139,6 +139,12 @@ namespace trtc {
     public delegate void OnMicDidReadyHandler(IntPtr instance, IntPtr userData);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void OnAudioRouteChangedHandler(IntPtr instance,
+                                                    TRTCAudioRoute newRoute,
+                                                    TRTCAudioRoute oldRoute,
+                                                    IntPtr userData);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate void OnUserVoiceVolumeHandler(IntPtr instance,
                                                   string userVolumes,
                                                   uint totalVolume,
@@ -426,6 +432,12 @@ namespace trtc {
     public static extern void trtc_cloud_set_on_mic_did_ready_handler(
         IntPtr instance,
         OnMicDidReadyHandler onMicDidReady,
+        IntPtr userDataPtr);
+
+    [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void trtc_cloud_set_on_audio_route_changed_handler(
+        IntPtr instance,
+        OnAudioRouteChangedHandler onAudioRouteChanged,
         IntPtr userDataPtr);
 
     [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]

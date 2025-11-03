@@ -63,7 +63,7 @@ typedef NS_ENUM(NSInteger, TXVoiceReverbType) {
  * 1.2 变声特效
  *
  * 变声特效可以作用于人声之上，通过声学算法对人声进行二次处理，以获得与原始声音所不同的音色，目前支持如下几种变声特效：
- * 0：关闭；1：熊孩子；2：萝莉；3：大叔；4：重金属；5：感冒；6：外语腔；7：困兽；8：肥宅；9：强电流；10：重机械；11：空灵。
+ * 0：关闭；1：熊孩子；2：萝莉；3：大叔；4：重金属；5：感冒；6：外语腔；7：困兽；8：肥宅；9：强电流；10：重机械；11：空灵；12：猪八戒；13：绿巨人。
  */
 typedef NS_ENUM(NSInteger, TXVoiceChangeType) {
 
@@ -102,6 +102,12 @@ typedef NS_ENUM(NSInteger, TXVoiceChangeType) {
 
     /// 空灵
     TXVoiceChangeType_11 = 11,
+
+    /// 猪八戒
+    TXVoiceChangeType_12 = 12,
+
+    /// 绿巨人
+    TXVoiceChangeType_13 = 13,
 
 };
 
@@ -181,7 +187,7 @@ LITEAV_EXPORT @interface TXAudioMusicParam : NSObject
 @property(nonatomic, copy) NSString *path;
 
 /// 【字段含义】音乐循环播放的次数。
-/// 【推荐取值】取值范围为0 - 任意正整数，默认值：0。0 表示播放音乐一次；1 表示播放音乐两次；以此类推。
+/// 【推荐取值】取值范围为 [0, 任意正整数]，默认值：0。0 表示播放音乐一次；1 表示播放音乐两次；以此类推。
 @property(nonatomic) NSInteger loopCount;
 
 /// 【字段含义】是否将音乐传到远端。
@@ -203,7 +209,7 @@ LITEAV_EXPORT @interface TXAudioMusicParam : NSObject
 LITEAV_EXPORT @interface TXAudioEffectManager : NSObject
 
 /**
- * TXAudioEffectManager 对象不可直接被创建，要通过 `TRTCCloud` 或 `TXLivePush` 中的 `getAudioEffectManager` 接口获取。
+ * TXAudioEffectManager 对象不可直接被创建，要通过 `TRTCCloud` 或 `TXLivePush` 中的 {@link getAudioEffectManager} 接口获取。
  */
 - (instancetype)init NS_UNAVAILABLE;
 
@@ -214,7 +220,7 @@ LITEAV_EXPORT @interface TXAudioEffectManager : NSObject
 /////////////////////////////////////////////////////////////////////////////////
 
 /**
- * 1.1 开启耳返
+ * 1.1 开启耳返。
  *
  * 主播开启耳返后，可以在耳机里听到麦克风采集到的自己发出的声音，该特效适用于主播唱歌的应用场景中。
  * 需要您注意的是，由于蓝牙耳机的硬件延迟非常高，所以在主播佩戴蓝牙耳机时无法开启此特效，请尽量在用户界面上提示主播佩戴有线耳机。
@@ -225,16 +231,16 @@ LITEAV_EXPORT @interface TXAudioEffectManager : NSObject
 - (void)enableVoiceEarMonitor:(BOOL)enable;
 
 /**
- * 1.2 设置耳返音量
+ * 1.2 设置耳返音量。
  *
  * 通过该接口您可以设置耳返特效中声音的音量大小。
- * @param volume 音量大小，取值范围为 0 - 100，默认值：100。
+ * @param volume 音量大小，取值范围为 [0, 150]，默认值：100。
  * @note 如果将 volume 设置成 100 之后感觉音量还是太小，可以将 volume 最大设置成 150，但超过 100 的 volume 会有爆音的风险，请谨慎操作。
  */
 - (void)setVoiceEarMonitorVolume:(NSInteger)volume;
 
 /**
- * 1.3 设置人声的混响效果
+ * 1.3 设置人声的混响效果。
  *
  * 通过该接口您可以设置人声的混响效果，具体特效请参见枚举定义 {@link TXVoiceReverbType}。
  * @note 设置的效果在退出房间后会自动失效，如果下次进房还需要对应特效，需要调用此接口再次进行设置。
@@ -242,7 +248,7 @@ LITEAV_EXPORT @interface TXAudioEffectManager : NSObject
 - (void)setVoiceReverbType:(TXVoiceReverbType)reverbType;
 
 /**
- * 1.4 设置人声的变声特效
+ * 1.4 设置人声的变声特效。
  *
  * 通过该接口您可以设置人声的变声特效，具体特效请参见枚举定义 {@link TXVoiceChangeType}。
  * @note 设置的效果在退出房间后会自动失效，如果下次进房还需要对应特效，需要调用此接口再次进行设置。
@@ -250,19 +256,19 @@ LITEAV_EXPORT @interface TXAudioEffectManager : NSObject
 - (void)setVoiceChangerType:(TXVoiceChangeType)changerType;
 
 /**
- * 1.5 设置语音音量
+ * 1.5 设置语音音量。
  *
  * 该接口可以设置语音音量的大小，一般配合音乐音量的设置接口 {@link setAllMusicVolume} 协同使用，用于调谐语音和音乐在混音前各自的音量占比。
- * @param volume 音量大小，取值范围为0 - 100，默认值：100。
+ * @param volume 音量大小，取值范围为 [0 - 150]，默认值：100。
  * @note 如果将 volume 设置成 100 之后感觉音量还是太小，可以将 volume 最大设置成 150，但超过 100 的 volume 会有爆音的风险，请谨慎操作。
  */
 - (void)setVoiceVolume:(NSInteger)volume;
 
 /**
- * 1.6 设置语音音调
+ * 1.6 设置语音音调。
  *
  * 该接口可以设置语音音调，用于实现变调不变速的目的。
- * @param pitch 音调，取值范围为-1.0f~1.0f，默认值：0.0f。
+ * @param pitch 音调，取值范围[-1.0f, 1.0f]，默认值：0.0f。
  */
 - (void)setVoicePitch:(double)pitch;
 
@@ -273,7 +279,7 @@ LITEAV_EXPORT @interface TXAudioEffectManager : NSObject
 /////////////////////////////////////////////////////////////////////////////////
 
 /**
- * 2.1 开始播放背景音乐
+ * 2.1 开始播放背景音乐。
  *
  * 每个音乐都需要您指定具体的 ID，您可以通过该 ID 对音乐的开始、停止、音量等进行设置。
  * @param musicParam 音乐参数。
@@ -288,75 +294,75 @@ LITEAV_EXPORT @interface TXAudioEffectManager : NSObject
 - (void)startPlayMusic:(TXAudioMusicParam *)musicParam onStart:(TXAudioMusicStartBlock _Nullable)startBlock onProgress:(TXAudioMusicProgressBlock _Nullable)progressBlock onComplete:(TXAudioMusicCompleteBlock _Nullable)completeBlock;
 
 /**
- * 2.2 停止播放背景音乐
+ * 2.2 停止播放背景音乐。
  *
  * @param id  音乐 ID。
  */
 - (void)stopPlayMusic:(int32_t)id;
 
 /**
- * 2.3 暂停播放背景音乐
+ * 2.3 暂停播放背景音乐。
  *
  * @param id  音乐 ID。
  */
 - (void)pausePlayMusic:(int32_t)id;
 
 /**
- * 2.4 恢复播放背景音乐
+ * 2.4 恢复播放背景音乐。
  *
  * @param id  音乐 ID。
  */
 - (void)resumePlayMusic:(int32_t)id;
 
 /**
- * 2.5 设置所有背景音乐的本地音量和远端音量的大小
+ * 2.5 设置所有背景音乐的本地音量和远端音量的大小。
  *
  * 该接口可以设置所有背景音乐的本地音量和远端音量。
  * - 本地音量：即主播本地可以听到的背景音乐的音量大小。
  * - 远端音量：即观众端可以听到的背景音乐的音量大小。
- * @param volume 音量大小，取值范围为0 - 100，默认值：60。
+ * @param volume 音量大小，取值范围为 [0, 150]，默认值：60。
  * @note 如果将 volume 设置成 100 之后感觉音量还是太小，可以将 volume 最大设置成 150，但超过 100 的 volume 会有爆音的风险，请谨慎操作。
  */
 - (void)setAllMusicVolume:(NSInteger)volume;
 
 /**
- * 2.6 设置某一首背景音乐的远端音量的大小
+ * 2.6 设置某一首背景音乐的远端音量的大小。
  *
  * 该接口可以细粒度地控制每一首背景音乐的远端音量，也就是观众端可听到的背景音乐的音量大小。
  * @param id     音乐 ID。
- * @param volume 音量大小，取值范围为0 - 100；默认值：60。
+ * @param volume 音量大小，取值范围为 [0, 150]；默认值：60。
  * @note 如果将 volume 设置成 100 之后感觉音量还是太小，可以将 volume 最大设置成 150，但超过 100 的 volume 会有爆音的风险，请谨慎操作。
  */
 - (void)setMusicPublishVolume:(int32_t)id volume:(NSInteger)volume;
 
 /**
- * 2.7 设置某一首背景音乐的本地音量的大小
+ * 2.7 设置某一首背景音乐的本地音量的大小。
  *
  * 该接口可以细粒度地控制每一首背景音乐的本地音量，也就是主播本地可以听到的背景音乐的音量大小。
  * @param id     音乐 ID。
- * @param volume 音量大小，取值范围为0 - 100，默认值：60。
+ * @param volume 音量大小，取值范围为 [0, 150]，默认值：60。
  * @note 如果将 volume 设置成 100 之后感觉音量还是太小，可以将 volume 最大设置成 150，但超过 100 的 volume 会有爆音的风险，请谨慎操作。
  */
 - (void)setMusicPlayoutVolume:(int32_t)id volume:(NSInteger)volume;
 
 /**
- * 2.8 调整背景音乐的音调高低
+ * 2.8 调整背景音乐的音调高低。
  *
  * @param id    音乐 ID。
- * @param pitch 音调，默认值是0.0f，范围是：[-1 ~ 1] 之间的浮点数。
+ * @param pitch 音调，取值范围为 [-1.0f, 1.0f] 之间的浮点数，默认值：0.0f。
  */
 - (void)setMusicPitch:(int32_t)id pitch:(double)pitch;
 
 /**
- * 2.9 调整背景音乐的变速效果
+ * 2.9 调整背景音乐的变速效果。
  *
  * @param id    音乐 ID。
- * @param speedRate 速度，默认值是1.0f，范围是：[0.5 ~ 2] 之间的浮点数。
+ * @param speedRate 速度，取值范围为 [0.5f, 2.0f] 之间的浮点数，默认值：1.0f。
  */
 - (void)setMusicSpeedRate:(int32_t)id speedRate:(double)speedRate;
 
 /**
- * 2.10 获取背景音乐的播放进度（单位：毫秒）
+ * 2.10 获取背景音乐的播放进度（单位：毫秒）。
  *
  * @param id    音乐 ID。
  * @return 成功返回当前播放时间，单位：毫秒，失败返回 -1。
@@ -364,7 +370,7 @@ LITEAV_EXPORT @interface TXAudioEffectManager : NSObject
 - (NSInteger)getMusicCurrentPosInMS:(int32_t)id;
 
 /**
- * 2.11 获取背景音乐的总时长（单位：毫秒）
+ * 2.11 获取背景音乐的总时长（单位：毫秒）。
  *
  * @param path 音乐文件路径。
  * @return 成功返回时长，失败返回 -1。
@@ -372,7 +378,7 @@ LITEAV_EXPORT @interface TXAudioEffectManager : NSObject
 - (NSInteger)getMusicDurationInMS:(NSString *)path;
 
 /**
- * 2.12 设置背景音乐的播放进度（单位：毫秒）
+ * 2.12 设置背景音乐的播放进度（单位：毫秒）。
  *
  * @param id  音乐 ID。
  * @param pts 单位: 毫秒。
@@ -383,35 +389,35 @@ LITEAV_EXPORT @interface TXAudioEffectManager : NSObject
 - (void)seekMusicToPosInMS:(int32_t)id pts:(NSInteger)pts;
 
 /**
- * 2.13 调整搓碟的变速效果
+ * 2.13 调整搓碟的变速效果。
  *
  * @param id    音乐 ID。
- * @param scratchSpeedRate 搓碟速度，默认值是1.0f，范围是：[-12.0 ~ 12.0] 之间的浮点数, 速度值正/负表示方向正/反，绝对值大小表示速度快慢。
+ * @param scratchSpeedRate 搓碟速度，取值范围为 [-12.0, 12.0] 之间的浮点数，默认值是 1.0f，速度值正/负表示方向正/反，绝对值大小表示速度快慢。
  * @note 前置条件 preloadMusic 成功。
  */
 - (void)setMusicScratchSpeedRate:(int32_t)id speedRate:(double)scratchSpeedRate;
 
 /**
- * 2.15 预加载背景音乐
+ * 2.15 预加载背景音乐。
  *
  * 每个音乐都需要您指定具体的 ID，您可以通过该 ID 对音乐的开始、停止、音量等进行设置。
  * @param preloadParam 预加载音乐参数。
  * @note
- * 1. 预先加载最多同时支持2个不同 ID 的预加载，且预加载时长不超过10分钟，使用完需 stopPlayMusic，否则内存不释放。
- * 2. 若该ID对应的音乐正在播放中，预加载会失败，需先调用 stopPlayMusic。
- * 3. 当 musicParam 和传入 startPlayMusic 的 musicParam 完全相同时，预加载有效。
+ * 1. 预先加载最多同时支持2个不同 ID 的预加载，且预加载时长不超过10分钟，使用完需调用 {@link stopPlayMusic}，否则内存不释放。
+ * 2. 若该ID对应的音乐正在播放中，预加载会失败，需先调用 {@link stopPlayMusic}。
+ * 3. 当 `musicParam` 和传入 {@link startPlayMusic} 的 `musicParam` 完全相同时，预加载有效。
  */
 - (void)preloadMusic:(TXAudioMusicParam *)preloadParam onProgress:(TXMusicPreloadProgressBlock _Nullable)progressBlock onError:(TXMusicPreloadErrorBlock _Nullable)errorBlock;
 
 /**
- * 2.16 获取背景音乐的音轨数量
+ * 2.16 获取背景音乐的音轨数量。
  *
  * @param id 音乐 ID。
  */
 - (NSInteger)getMusicTrackCount:(int32_t)id;
 
 /**
- * 2.17 指定背景音乐的播放音轨
+ * 2.17 指定背景音乐的播放音轨。
  *
  * @param id    音乐 ID。
  * @param index 默认播放第一个音轨。取值范围[0, 音轨总数)。

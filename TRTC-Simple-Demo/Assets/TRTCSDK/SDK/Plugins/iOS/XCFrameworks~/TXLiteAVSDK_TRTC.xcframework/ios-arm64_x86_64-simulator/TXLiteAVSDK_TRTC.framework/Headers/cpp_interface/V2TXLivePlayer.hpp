@@ -106,6 +106,16 @@ class V2TXLivePlayer {
     virtual int32_t setRenderFillMode(V2TXLiveFillMode mode) = 0;
 
     /**
+     * 设置播放器画面的镜像模式
+     *
+     * 开启镜像模式后，视频画面将左右翻转，您可以根据需要随时切换观看效果。
+     * @param enable 是否开启播放端镜像模式。【默认值】：false。
+     * @return 返回值 {@link V2TXLiveCode}
+     *         - V2TXLIVE_OK: 成功
+     */
+    virtual int32_t setRenderMirrorMode(bool enable) = 0;
+
+    /**
      * 开始播放音视频流
      *
      * @param url 音视频流的播放地址，支持 RTMP, HTTP-FLV, TRTC。
@@ -244,6 +254,16 @@ class V2TXLivePlayer {
      *         - V2TXLIVE_OK: 成功。
      */
     virtual int32_t enableReceiveSeiMessage(bool enable, int payloadType) = 0;
+
+    /**
+     * 开启画中画功能，仅支持直播和快直播播放
+     *
+     * @param enable      true: 开启画中画功能; false: 关闭画中画功能。【默认值】: false。
+     * @return 返回值 {@link V2TXLiveCode}。
+     *         - V2TXLIVE_OK: 成功。
+     * @note 本接口仅适用于 iOS 平台。
+     */
+    virtual int32_t enablePictureInPicture(bool enable) = 0;
 
     /**
      * 是否显示播放器状态信息的调试浮层

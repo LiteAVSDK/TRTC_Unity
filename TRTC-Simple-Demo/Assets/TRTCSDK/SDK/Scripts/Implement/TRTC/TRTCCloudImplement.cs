@@ -24,7 +24,8 @@ namespace trtc {
     private readonly TXAudioEffectManagerImplement _audioEffectManager;
     private TRTCLog _logParam;
     private static List<TRTCCloudImplement> _subCloudList = new List<TRTCCloudImplement>();
-    private TRTCCloudImplement() : this(false) {}
+    private const int _sourceNameLen = 512;
+    private TRTCCloudImplement() : this(false) { }
 
     private TRTCCloudImplement(bool subCloud) {
 #if UNITY_ANDROID && !UNITY_EDITOR
@@ -73,6 +74,7 @@ namespace trtc {
     }
 
     ~TRTCCloudImplement() {
+      TRTCLogger.Info("destructor", "~TRTCCloudImplement");
       Destroy();
     }
 
@@ -91,12 +93,14 @@ namespace trtc {
 #endif
 
     private void Destroy() {
+      TRTCLogger.Info();
       if (_nativeObj == IntPtr.Zero) {
+        TRTCLogger.Info("_nativeObj is IntPtr.Zero");
         return;
       }
 
       if (_nativeObj == _shareNativeObj && !CloudManager.IsEmpty()) {
-        Debug.LogError("Watch! Destroy main TRTC, but exist sub clouds still not destroyed!");
+        TRTCLogger.Warning("Watch! Destroy main TRTC, but exist sub clouds still not destroyed!");
       }
 
       CloudManager.RemoveCloudImplement(_nativeObj);
@@ -155,13 +159,13 @@ namespace trtc {
 
     // 1.3
     public override void addCallback(ITRTCCloudCallback callback) {
-      TRTCLogger.Info("addCallback");
+      TRTCLogger.Info();
       _wrapperCallback?.AddAppCloudCallback(callback);
     }
 
     // 1.4
     public override void removeCallback(ITRTCCloudCallback callback) {
-      TRTCLogger.Info("removeCallback");
+      TRTCLogger.Info();
       _wrapperCallback?.RemoveAppCloudCallback(callback);
     }
 
@@ -341,8 +345,13 @@ namespace trtc {
                                                   ref TRTCStreamEncoderParam param,
                                                   ref TRTCStreamMixingConfig config) {
       PublishTarget inner_target = new PublishTarget();
-      inner_target.cdnUrlList = Marshal.AllocHGlobal(Marshal.SizeOf(target.cdnUrlList));
-      Marshal.StructureToPtr(target.cdnUrlList, inner_target.cdnUrlList, false);
+      inner_target.cdnUrlList = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(TRTCPublishCdnUrl)) *
+                                                     (int)target.cdnUrlListSize);
+      for (int i = 0; i < target.cdnUrlListSize; i++) {
+        Marshal.StructureToPtr(
+            target.cdnUrlList[i],
+            inner_target.cdnUrlList + Marshal.SizeOf(typeof(TRTCPublishCdnUrl)) * i, false);
+      }
       inner_target.cdnUrlListSize = target.cdnUrlListSize;
       inner_target.mode = target.mode;
       inner_target.mixStreamIdentity =
@@ -411,6 +420,17 @@ namespace trtc {
       TRTCVideoRenderViewManager.getInstance().removeAllRemoteVideoRenderView();
     }
 
+    // 4.11
+    public override void muteRemoteVideoStream(string userId, TRTCVideoStreamType streamType, bool mute) {
+      TRTCCloudNative.trtc_cloud_mute_remote_video_stream(_nativeObj, userId, streamType, mute);
+    }
+
+    // 4.12
+    public override void muteAllRemoteVideoStreams(bool mute) {
+      TRTCCloudNative.trtc_cloud_mute_all_remote_video_streams(_nativeObj, mute);
+    }
+
+
     // 4.13
     public override void setVideoEncoderParam(ref TRTCVideoEncParam param) {
       TRTCCloudNative.trtc_cloud_set_video_encoder_param(_nativeObj, param);
@@ -453,6 +473,11 @@ namespace trtc {
     // 4.21
     public override void setRemoteVideoStreamType(string userId, TRTCVideoStreamType type) {
       TRTCCloudNative.trtc_cloud_set_remote_video_stream_type(_nativeObj, userId, type);
+    }
+
+    // 4.25
+    public override void setGravitySensorAdaptiveMode(TRTCGravitySensorAdaptiveMode mode) {
+      TRTCCloudNative.trtc_cloud_set_gravity_sensor_adaptive_mode(_nativeObj, mode);
     }
 
     // 5.1
@@ -594,6 +619,56 @@ namespace trtc {
     // 9.4
     public override void resumeScreenCapture() {
       TRTCCloudNative.trtc_cloud_resume_screen_capture(_nativeObj);
+    }
+
+    public override TRTCScreenCaptureSourceInfo[] getScreenCaptureSources(SIZE thumbnailSize, SIZE iconSize) {
+      if (thumbnailSize.width <= 0 || thumbnailSize.height <= 0 || 
+        iconSize.width <= 0 || iconSize.height <= 0) {
+        return null;
+      }
+      TRTCSize thumbnailTrtcSize = new TRTCSize();
+      TRTCSize iconTrtcSize = new TRTCSize();
+      thumbnailTrtcSize.width = thumbnailSize.width;
+      thumbnailTrtcSize.height = thumbnailSize.height;
+      iconTrtcSize.width = iconSize.width;
+      iconTrtcSize.height = iconSize.height;
+      var sourceInfoLists = Array.Empty<TRTCScreenCaptureSourceInfo>();
+      int count = 0;
+      IntPtr sourceListPtr = IntPtr.Zero;
+      var ret = TRTCCloudNative.trtc_cloud_get_screen_capture_source_list(
+          _nativeObj, thumbnailTrtcSize, iconTrtcSize, ref sourceListPtr, ref count);
+      if (ret != 0 || count == 0) {
+        return sourceInfoLists;
+      }
+
+      sourceInfoLists = new TRTCScreenCaptureSourceInfo[count];
+      for (var i = 0; i < count; i++) {
+        ScreenCaptureSourceInfo captureSourceInfo = new ScreenCaptureSourceInfo();
+        captureSourceInfo.sourceName = new string(' ', _sourceNameLen);
+        captureSourceInfo.thumbBGRA.buffer =
+            Marshal.AllocHGlobal((int)thumbnailTrtcSize.width * (int)thumbnailTrtcSize.height * 4);
+        captureSourceInfo.iconBGRA.buffer =
+            Marshal.AllocHGlobal((int)iconTrtcSize.width * (int)iconTrtcSize.height * 4);
+
+        if (0 == TRTCCloudNative.trtc_cloud_get_screen_capture_sources_info(sourceListPtr, i,
+                                                                         ref captureSourceInfo)) {
+          sourceInfoLists[i].sourceId = captureSourceInfo.sourceId;
+          sourceInfoLists[i].type = captureSourceInfo.type;
+          sourceInfoLists[i].sourceName = captureSourceInfo.sourceName;
+          sourceInfoLists[i].isMainScreen = captureSourceInfo.isMainScreen;
+          sourceInfoLists[i].thumbBGRA.buffer = new byte[captureSourceInfo.thumbBGRA.length];
+          Marshal.Copy(captureSourceInfo.thumbBGRA.buffer, sourceInfoLists[i].thumbBGRA.buffer, 0,
+                       captureSourceInfo.thumbBGRA.length);
+          sourceInfoLists[i].thumbBGRA.width = captureSourceInfo.thumbBGRA.width;
+          sourceInfoLists[i].thumbBGRA.height = captureSourceInfo.thumbBGRA.height;
+          sourceInfoLists[i].thumbBGRA.length = captureSourceInfo.thumbBGRA.length;
+        }
+        Marshal.FreeHGlobal(captureSourceInfo.thumbBGRA.buffer);
+        Marshal.FreeHGlobal(captureSourceInfo.iconBGRA.buffer);
+      }
+
+      TRTCCloudNative.trtc_cloud_release_screen_capture_sources_list(sourceListPtr);
+      return sourceInfoLists;
     }
 
     // 9.5
@@ -777,6 +852,15 @@ namespace trtc {
       return TRTCCloudNative.trtc_cloud_set_local_video_render_callback(
           _nativeObj, pixelFormat, bufferType, _wrapperCallback.GetNativeVideoRenderCallback(key));
     }
+    
+     public override int setLocalVideoRenderCallback(TRTCVideoPixelFormat pixelFormat,
+                                                    TRTCVideoBufferType bufferType,
+                                                    ITRTCVideoRenderCallback callback) {
+      var key = new RenderKey("");
+      _wrapperCallback.SetAppVideoRenderCallback(key, callback);
+      return TRTCCloudNative.trtc_cloud_set_local_video_render_callback(
+          _nativeObj, pixelFormat, bufferType, _wrapperCallback.GetNativeVideoRenderCallback(key));
+    }
 
     // 10.11
     public override int setRemoteVideoRenderCallback(string userId,
@@ -785,6 +869,17 @@ namespace trtc {
                                                      TRTCVideoBufferType bufferType,
                                                      ITRTCVideoRenderCallback callback) {
       var key = new RenderKey(userId, streamType);
+      _wrapperCallback.SetAppVideoRenderCallback(key, callback);
+      return TRTCCloudNative.trtc_cloud_set_remote_video_render_callback(
+          _nativeObj, userId, pixelFormat, bufferType,
+          _wrapperCallback.GetNativeVideoRenderCallback(key));
+    }
+
+    public override int setRemoteVideoRenderCallback(string userId,
+                                                    TRTCVideoPixelFormat pixelFormat,
+                                                    TRTCVideoBufferType bufferType,
+                                                    ITRTCVideoRenderCallback callback) {
+      var key = new RenderKey(userId);
       _wrapperCallback.SetAppVideoRenderCallback(key, callback);
       return TRTCCloudNative.trtc_cloud_set_remote_video_render_callback(
           _nativeObj, userId, pixelFormat, bufferType,

@@ -3,19 +3,29 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using AOT;
 
 namespace trtc {
   public class TXAudioEffectManagerImplement : ITXAudioEffectManager {
 #region callbaks
+    private readonly ConcurrentDictionary<int, ITXMusicPlayObserver> _playObserverDic =
+        new ConcurrentDictionary<int, ITXMusicPlayObserver>();
+    private static readonly ConcurrentDictionary<IntPtr, TXAudioEffectManagerImplement> _audioEffectManagerDic =
+        new ConcurrentDictionary<IntPtr, TXAudioEffectManagerImplement>();
 
-    private static readonly Dictionary<int, ITXMusicPlayObserver> PlayObserver =
-        new Dictionary<int, ITXMusicPlayObserver>();
+    public static TXAudioEffectManagerImplement getAudioEffectManagerInstance(IntPtr nativeObj) {
+      if (_audioEffectManagerDic.TryGetValue(nativeObj, out var audioEffectManagerInstance)) {
+        return audioEffectManagerInstance;
+      }
+      return null;
+    }
 
     [MonoPInvokeCallback(typeof(TXAudioEffectManagerNative.TRTCUnityAEMMusicPlayOnStart))]
     public static void TRTCUnityAEMMusicPlayOnStart(IntPtr instance, int musicId, int errCode) {
       ITXMusicPlayObserver observer;
-      if (PlayObserver.TryGetValue(musicId, out observer) && null != observer) {
+      var effectManagerInstance = getAudioEffectManagerInstance(instance);
+      if (effectManagerInstance != null && effectManagerInstance._playObserverDic.TryGetValue(musicId, out observer) && null != observer) {
         observer.onStart(musicId, errCode);
       }
     }
@@ -26,7 +36,8 @@ namespace trtc {
                                                            long curPtsMS,
                                                            long durationMS) {
       ITXMusicPlayObserver observer;
-      if (PlayObserver.TryGetValue(musicId, out observer) && null != observer) {
+      var effectManagerInstance = getAudioEffectManagerInstance(instance);
+      if (effectManagerInstance != null && effectManagerInstance._playObserverDic.TryGetValue(musicId, out observer) && null != observer) {
         observer.onPlayProgress(musicId, Convert.ToInt64(curPtsMS), Convert.ToInt64(durationMS));
       }
     }
@@ -34,31 +45,27 @@ namespace trtc {
     [MonoPInvokeCallback(typeof(TXAudioEffectManagerNative.TRTCUnityAEMMusicPlayOnComplete))]
     public static void TRTCUnityAEMMusicPlayOnComplete(IntPtr instance, int musicId, int errCode) {
       ITXMusicPlayObserver observer;
-      if (PlayObserver.TryGetValue(musicId, out observer) && null != observer) {
+      var effectManagerInstance = getAudioEffectManagerInstance(instance);
+      if (effectManagerInstance != null && effectManagerInstance._playObserverDic.TryGetValue(musicId, out observer) && null != observer) {
         observer.onComplete(musicId, errCode);
       }
     }
 
-    private static ITXMusicPreloadObserver _preloadObserver;
+    private ITXMusicPreloadObserver _preloadObserver;
 
     [MonoPInvokeCallback(typeof(TXAudioEffectManagerNative.TRTCUnityAEMMusicPreloadOnLoadProgress))]
     public static void TRTCUnityAEMMusicPreloadOnLoadProgress(IntPtr instance,
                                                               int musicId,
                                                               int progress) {
-      if (null != _preloadObserver) {
-        _preloadObserver.onLoadProgress(musicId, progress);
-      }
+      getAudioEffectManagerInstance(instance)?._preloadObserver?.onLoadProgress(musicId, progress);
     }
 
     [MonoPInvokeCallback(typeof(TXAudioEffectManagerNative.TRTCUnityAEMMusicPreloadOnLoadError))]
     public static void TRTCUnityAEMMusicPreloadOnLoadError(IntPtr instance,
                                                            int musicId,
                                                            int errCode) {
-      if (null != _preloadObserver) {
-        _preloadObserver.onLoadError(musicId, errCode);
-      }
+      getAudioEffectManagerInstance(instance)?._preloadObserver?.onLoadError(musicId, errCode);
     }
-
 #endregion
 
     private IntPtr _nativeObj;
@@ -66,6 +73,7 @@ namespace trtc {
     private IntPtr _globalPreloadObserver;
 
     public TXAudioEffectManagerImplement(IntPtr nativeObj) {
+      TRTCLogger.Info("TXAudioEffectManagerImplement");
       _nativeObj = nativeObj;
       _globalMusicObserver =
           TXAudioEffectManagerNative.tx_audio_effect_manager_create_music_play_observer(
@@ -78,22 +86,23 @@ namespace trtc {
               TRTCUnityAEMMusicPreloadOnLoadError);
       TXAudioEffectManagerNative.tx_audio_effect_manager_set_preload_observer(
           nativeObj, _globalPreloadObserver);
+
+      _audioEffectManagerDic.TryAdd(nativeObj, this);
     }
 
     ~TXAudioEffectManagerImplement() {
       TXAudioEffectManagerNative.tx_audio_effect_manager_destroy_music_play_observer(
           _globalMusicObserver);
       _globalMusicObserver = IntPtr.Zero;
-
-      PlayObserver.Clear();
       TXAudioEffectManagerNative.tx_audio_effect_manager_destroy_music_preload_observer(
           _globalPreloadObserver);
       _globalPreloadObserver = IntPtr.Zero;
-
-      _nativeObj = IntPtr.Zero;
     }
 
     public void DestroyNativeObj() {
+      TRTCLogger.Info("DestroyNativeObj");
+      _playObserverDic.Clear();
+      _audioEffectManagerDic.TryRemove(_nativeObj, out _);
       _nativeObj = IntPtr.Zero;
     }
 
@@ -135,11 +144,14 @@ namespace trtc {
     // 2.0
     public override void setMusicObserver(int musicId, ITXMusicPlayObserver observer) {
       if (observer == null) {
-        PlayObserver.Remove(musicId);
+        _playObserverDic.TryRemove(musicId, out _);
         TXAudioEffectManagerNative.tx_audio_effect_manager_set_music_observer(_nativeObj, musicId,
                                                                               IntPtr.Zero);
       } else {
-        PlayObserver[musicId] = observer;
+        if (_playObserverDic.ContainsKey(musicId)) {
+          _playObserverDic.TryRemove(musicId, out _);
+        }
+        _playObserverDic.TryAdd(musicId, observer);
         TXAudioEffectManagerNative.tx_audio_effect_manager_set_music_observer(_nativeObj, musicId,
                                                                               _globalMusicObserver);
       }

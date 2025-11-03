@@ -67,11 +67,20 @@
 - (V2TXLiveCode)setRenderFillMode:(V2TXLiveFillMode)mode;
 
 /**
+ * 设置播放器画面的镜像模式
+ *
+ * 开启镜像模式后，视频画面将左右翻转，您可以根据需要随时切换观看效果。
+ * @param enable 是否开启播放端镜像模式。【默认值】：NO。
+ * @return 返回值 {@link V2TXLiveCode}
+ *         - V2TXLIVE_OK: 成功
+ */
+- (V2TXLiveCode)setRenderMirrorMode:(bool)enable;
+
+/**
  * 开始播放音视频流
  *
  * @note 10.7 版本开始，需要通过 {@link setLicence} 或者 {@link setLicence} 设置 Licence 后方可成功播放，否则将播放失败（黑屏），全局仅设置一次即可。直播 Licence、短视频 Licence 和视频播放 Licence 均可使用，若您暂未获取上述
- * Licence，可[快速免费申请测试版 Licence](https://cloud.tencent.com/act/event/License) 以正常播放，正式版 Licence
- * 需[购买](https://cloud.tencent.com/document/product/881/74588#.E8.B4.AD.E4.B9.B0.E5.B9.B6.E6.96.B0.E5.BB.BA.E6.AD.A3.E5.BC.8F.E7.89.88-license)。
+ * Licence，可[购买](https://cloud.tencent.com/document/product/881/74588#.E8.B4.AD.E4.B9.B0.E5.B9.B6.E6.96.B0.E5.BB.BA.E6.AD.A3.E5.BC.8F.E7.89.88-license)正式版 Licence。
  * @param url 音视频流的播放地址，支持 RTMP，HTTP-FLV，TRTC。
  * @return 返回值 {@link V2TXLiveCode}。
  *         - V2TXLIVE_OK: 操作成功，开始连接并播放。
@@ -221,6 +230,7 @@
  * @param enable      YES: 开启画中画功能; NO: 关闭画中画功能。【默认值】: NO。
  * @return 返回值 {@link V2TXLiveCode}。
  *         - V2TXLIVE_OK: 成功。
+ * @note 本接口仅适用于 iOS 平台。
  */
 - (V2TXLiveCode)enablePictureInPicture:(BOOL)enable;
 
@@ -249,7 +259,7 @@
  * @param  请参考 V2TXLiveDef.java 中关于 {@link V2TXLiveLocalRecordingParams}的介绍。
  * @return 返回值 {@link V2TXLiveCode}。
  *          - `V2TXLIVE_OK`: 成功。
- *          - `V2TXLIVE_ERROR_INVALID_PARAMETER` : 参数不合法，比如filePath 为空。
+ *          - `V2TXLIVE_ERROR_INVALID_PARAMETER` : 参数不合法，例如 filePath 为空。
  *          - `V2TXLIVE_ERROR_REFUSED`: API被拒绝，拉流尚未开始。
  * @note   拉流开启后才能开始录制，非拉流状态下开启录制无效。
  *        - 录制过程中不要动态切换软/硬解，生成的视频极有可能出现异常。

@@ -12,7 +12,7 @@
 /////////////////////////////////////////////////////////////////////////////////
 
 /**
- * 本地的音视频统计指标
+ * 本地的音视频统计指标。
  */
 LITEAV_EXPORT @interface TRTCLocalStatistics : NSObject
 
@@ -50,7 +50,7 @@ LITEAV_EXPORT @interface TRTCLocalStatistics : NSObject
 /////////////////////////////////////////////////////////////////////////////////
 
 /**
- * 远端的音视频统计指标
+ * 远端的音视频统计指标。
  */
 LITEAV_EXPORT @interface TRTCRemoteStatistics : NSObject
 
@@ -58,15 +58,15 @@ LITEAV_EXPORT @interface TRTCRemoteStatistics : NSObject
 @property(nonatomic, retain) NSString* userId;
 
 /// 【字段含义】音频流的总丢包率（％）。
-/// audioPacketLoss 代表音频流历经`主播>云端>观众`这样一条完整的传输链路后，最终在观众端统计到的丢包率。
+/// audioPacketLoss 代表音频流历经“主播>云端>观众”这样一条完整的传输链路后，最终在观众端统计到的丢包率。
 /// audioPacketLoss 越小越好，丢包率为0即表示该路音频流的所有数据均已经完整地到达了观众端。
 /// 如果出现了 downLoss == 0 但 audioPacketLoss != 0 的情况，说明该路音频流在“云端=>观众”这一段链路上没有出现丢包，但是在`主播>云端`这一段链路上出现了不可恢复的丢包。
 @property(nonatomic, assign) uint32_t audioPacketLoss;
 
 /// 【字段含义】该路视频流的总丢包率（％）。
-/// videoPacketLoss 代表该路视频流历经`主播>云端>观众`这样一条完整的传输链路后，最终在观众端统计到的丢包率。
+/// videoPacketLoss 代表该路视频流历经“主播>云端>观众”这样一条完整的传输链路后，最终在观众端统计到的丢包率。
 /// videoPacketLoss 越小越好，丢包率为0即表示该路视频流的所有数据均已经完整地到达了观众端。
-/// 如果出现了 downLoss == 0 但 videoPacketLoss != 0 的情况，说明该路视频流在`云端>观众`这一段链路上没有出现丢包，但是在`主播>云端`这一段链路上出现了不可恢复的丢包。
+/// 如果出现了 downLoss == 0 但 videoPacketLoss != 0 的情况，说明该路视频流在“云端>观众”这一段链路上没有出现丢包，但是在“主播>云端”这一段链路上出现了不可恢复的丢包。
 @property(nonatomic, assign) uint32_t videoPacketLoss;
 
 /// 【字段含义】远端视频的宽度，单位 px。
@@ -135,7 +135,7 @@ LITEAV_EXPORT @interface TRTCRemoteStatistics : NSObject
 /////////////////////////////////////////////////////////////////////////////////
 
 /**
- * 网络和性能的汇总统计指标
+ * 网络和性能的汇总统计指标。
  */
 LITEAV_EXPORT @interface TRTCStatistics : NSObject
 

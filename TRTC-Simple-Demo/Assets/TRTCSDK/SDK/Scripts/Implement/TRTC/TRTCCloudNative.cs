@@ -131,6 +131,17 @@ namespace trtc {
     [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
     public static extern void trtc_cloud_stop_all_remote_view(IntPtr instance);
 
+    // 4.11
+    [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void trtc_cloud_mute_remote_video_stream(IntPtr instance,
+        [MarshalAs(UnmanagedType.LPStr)] string userId,
+        TRTCVideoStreamType streamType,
+        bool mute);
+
+    // 4.12
+    [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void trtc_cloud_mute_all_remote_video_streams(IntPtr instance, bool mute);
+
     // 4.13
     [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
     public static extern void trtc_cloud_set_video_encoder_param(IntPtr instance,
@@ -240,6 +251,11 @@ namespace trtc {
     // 5.16
     [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
     public static extern void trtc_cloud_stop_local_recording(IntPtr instance);
+
+    // 5.17
+    [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void trtc_cloud_set_gravity_sensor_adaptive_mode(IntPtr instance,
+                                                               TRTCGravitySensorAdaptiveMode mode);
 
     // 6.1
     [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]

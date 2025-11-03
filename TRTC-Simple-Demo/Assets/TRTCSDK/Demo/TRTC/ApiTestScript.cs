@@ -161,6 +161,11 @@ namespace TRTCCUnityDemo {
       AppLogToCallback($"onMicDidReady");
     }
 
+    public void onAudioRouteChanged(TRTCAudioRoute newRoute, TRTCAudioRoute oldRoute) {
+       AppLogToCallback($"onAudioRouteChanged newRoute: " + newRoute + ", oldRoute: " + oldRoute);
+    }
+
+
     public void onUserVoiceVolume(TRTCVolumeInfo[] userVolumes,
                                   UInt32 userVolumesCount,
                                   UInt32 totalVolume) {
@@ -912,37 +917,155 @@ namespace TRTCCUnityDemo {
       AppLogToBtnClick($"switchRoom 1907");
     }
 
-    public void startPublishingClick() {
-      string streamId = inputParam.text;
-      getTRTCCloudInstance()?.startPublishing(streamId, TRTCVideoStreamType.TRTCVideoStreamTypeBig);
-      AppLogToBtnClick($"startPublishing streamId = {streamId}");
-    }
-
-    public void stopPublishingClick() {
-      getTRTCCloudInstance()?.stopPublishing();
-      AppLogToBtnClick($"stopPublishing");
-    }
-
-    public void startPublishMediaStreamClick() {
+    public void TRTCPublishBigStreamToCdnClick() {
       var mTarget =
           new TRTCPublishTarget { cdnUrlListSize = 1, cdnUrlList = new TRTCPublishCdnUrl[1] };
       mTarget.cdnUrlList[0].rtmpUrl = inputParam.text;
       mTarget.cdnUrlList[0].isInternalLine = true;
       mTarget.mode = TRTCPublishMode.TRTCPublishBigStreamToCdn;
       mTarget.mixStreamIdentity.strRoomId = DataManager.GetInstance().GetRoomID();
-      mTarget.mixStreamIdentity.userId = DataManager.GetInstance().GetUserID();
+      mTarget.mixStreamIdentity.userId = "3243";
 
-      var mStreamEncoderParam =
-          new TRTCStreamEncoderParam { videoEncodedWidth = 360,        videoEncodedHeight = 640,
-                                       videoEncodedFps = 15,           videoEncodedGop = 3,
-                                       videoEncodedKbps = 800,         audioEncodedChannelNum = 2,
-                                       audioEncodedSampleRate = 48000, audioEncodedKbps = 50 };
+      var mStreamEncoderParam = new TRTCStreamEncoderParam {
+        videoEncodedWidth = 1280,
+        videoEncodedHeight = 720,
+        videoEncodedFps = 20,
+        videoEncodedGop = 3,
+        videoEncodedKbps = 0,
+        audioEncodedChannelNum = 2,
+        audioEncodedSampleRate = 48000,
+        audioEncodedKbps = 50
+      };
 
       var mStreamMixingConfig = new TRTCStreamMixingConfig();
       getTRTCCloudInstance()?.startPublishMediaStream(ref mTarget, ref mStreamEncoderParam,
                                                       ref mStreamMixingConfig);
-      AppLogToBtnClick($"startPublishCDNStream");
+      
+      AppLogToBtnClick($"TRTCPublishBigStreamToCdnClick");
     }
+    
+    public void TRTCPublishMixStreamToRoomClick() {
+      var mTarget =
+           new TRTCPublishTarget { cdnUrlListSize = 1, cdnUrlList = new TRTCPublishCdnUrl[1] };
+      mTarget.mode = TRTCPublishMode.TRTCPublishMixStreamToRoom;
+      mTarget.mixStreamIdentity.strRoomId = "";
+      mTarget.mixStreamIdentity.userId = "600000";
+      mTarget.mixStreamIdentity.intRoomId = 678;
+
+      var mStreamEncoderParam = new TRTCStreamEncoderParam {
+        videoEncodedWidth = 640,
+        videoEncodedHeight = 640,
+        videoEncodedFps = 20,
+        videoEncodedGop = 3,
+        videoEncodedKbps = 0,
+        audioEncodedChannelNum = 2,
+        audioEncodedSampleRate = 48000,
+        audioEncodedKbps = 50
+      };
+
+      var mStreamMixingConfig = new TRTCStreamMixingConfig();
+      int videoLayoutListSize = 2;
+      mStreamMixingConfig.watermarkList = new TRTCWaterMark[1];
+      mStreamMixingConfig.videoLayoutList = new TRTCVideoLayout[videoLayoutListSize];
+      for (int i = 0; i < videoLayoutListSize; i++) {
+        mStreamMixingConfig.videoLayoutList[i].fillMode = TRTCVideoFillMode.TRTCVideoFillMode_Fill;
+        mStreamMixingConfig.videoLayoutList[i].zOrder = i + 1;
+        mStreamMixingConfig.videoLayoutList[i].backgroundColor = 0xFFFFFF;
+      }
+
+
+      mStreamMixingConfig.videoLayoutList[0].rect.left = 0;
+      mStreamMixingConfig.videoLayoutList[0].rect.top = 0;
+      mStreamMixingConfig.videoLayoutList[0].rect.right = 640;
+      mStreamMixingConfig.videoLayoutList[0].rect.bottom = 300;
+
+      mStreamMixingConfig.videoLayoutList[1].rect.left = 0;
+      mStreamMixingConfig.videoLayoutList[1].rect.top = 301;
+      mStreamMixingConfig.videoLayoutList[1].rect.right = 640;
+      mStreamMixingConfig.videoLayoutList[1].rect.bottom = 640;
+
+      mStreamMixingConfig.videoLayoutList[0].fixedVideoUser = new TRTCUserParam {
+        userId = DataManager.GetInstance().GetUserID(),
+        intRoomId = (uint)int.Parse(DataManager.GetInstance().GetRoomID()),
+        strRoomId = "0"
+      };
+      mStreamMixingConfig.videoLayoutList[1].fixedVideoUser = new TRTCUserParam {
+        userId = "345",
+        intRoomId = (uint)int.Parse(DataManager.GetInstance().GetRoomID()),
+        strRoomId = "0"
+      };
+      mStreamMixingConfig.videoLayoutList[0].fixedVideoStreamType = TRTCVideoStreamType.TRTCVideoStreamTypeBig;
+      mStreamMixingConfig.videoLayoutList[1].fixedVideoStreamType = TRTCVideoStreamType.TRTCVideoStreamTypeBig;
+
+      mStreamMixingConfig.watermarkList[0].watermarkUrl = "https://liteav.sdk.qcloud.com/app/res/picture/tools_app/trtc_mix_stream_bg_1.jpg";
+      mStreamMixingConfig.watermarkList[0].rect.left = 10;
+      mStreamMixingConfig.watermarkList[0].rect.top = 10;
+      mStreamMixingConfig.watermarkList[0].rect.right = 200;
+      mStreamMixingConfig.watermarkList[0].rect.bottom = 300;
+
+      getTRTCCloudInstance()?.startPublishMediaStream(ref mTarget, ref mStreamEncoderParam,
+                                                      ref mStreamMixingConfig);
+      AppLogToBtnClick($"TRTCPublishMixStreamToRoomClick");
+    }
+
+    public void updatePublishMediaStreamClick() {
+      if (mTaskId == "") {
+        AppLogToBtnClick($"updatePublishMediaStreamClick fail,mTaskId is empty");
+        return;
+      }
+     var mTarget = new TRTCPublishTarget { cdnUrlListSize = 1, cdnUrlList = new TRTCPublishCdnUrl[1] };
+      mTarget.mode = TRTCPublishMode.TRTCPublishMixStreamToRoom;
+      mTarget.mixStreamIdentity.strRoomId = "";
+      mTarget.mixStreamIdentity.userId = "600000";
+      mTarget.mixStreamIdentity.intRoomId = 678;
+
+      var mStreamEncoderParam = new TRTCStreamEncoderParam {
+        videoEncodedWidth = 640,
+        videoEncodedHeight = 640,
+        videoEncodedFps = 20,
+        videoEncodedGop = 3,
+        videoEncodedKbps = 0,
+        audioEncodedChannelNum = 2,
+        audioEncodedSampleRate = 48000,
+        audioEncodedKbps = 50
+      };
+
+      var mStreamMixingConfig = new TRTCStreamMixingConfig();
+      int videoLayoutListSize = 2;
+      mStreamMixingConfig.watermarkList = new TRTCWaterMark[1];
+      mStreamMixingConfig.videoLayoutList = new TRTCVideoLayout[videoLayoutListSize];
+      for (int i = 0; i < videoLayoutListSize; i++) {
+        mStreamMixingConfig.videoLayoutList[i].fillMode = TRTCVideoFillMode.TRTCVideoFillMode_Fill;
+        mStreamMixingConfig.videoLayoutList[i].zOrder = i + 1;
+        mStreamMixingConfig.videoLayoutList[i].backgroundColor = 0xFFFFFF;
+      }
+
+
+      mStreamMixingConfig.videoLayoutList[0].rect.left = 0;
+      mStreamMixingConfig.videoLayoutList[0].rect.top = 0;
+      mStreamMixingConfig.videoLayoutList[0].rect.right = 640;
+      mStreamMixingConfig.videoLayoutList[0].rect.bottom = 500;
+      mStreamMixingConfig.videoLayoutList[0].fixedVideoUser = new TRTCUserParam {
+        userId = DataManager.GetInstance().GetUserID(),
+        intRoomId = (uint)int.Parse(DataManager.GetInstance().GetRoomID()),
+        strRoomId = "0"
+      };
+      mStreamMixingConfig.videoLayoutList[0].fixedVideoStreamType = TRTCVideoStreamType.TRTCVideoStreamTypeBig;
+
+      mStreamMixingConfig.watermarkList[0].watermarkUrl = "https://liteav.sdk.qcloud.com/app/res/picture/tools_app/trtc_mix_stream_bg_1.jpg";
+      mStreamMixingConfig.watermarkList[0].rect.left = 10;
+      mStreamMixingConfig.watermarkList[0].rect.top = 10;
+      mStreamMixingConfig.watermarkList[0].rect.right = 300;
+      mStreamMixingConfig.watermarkList[0].rect.bottom = 200;
+
+      getTRTCCloudInstance()?.updatePublishMediaStream(mTaskId, ref mTarget, ref mStreamEncoderParam,
+                                                      ref mStreamMixingConfig);
+      AppLogToBtnClick($"updatePublishMediaStreamClick");
+      
+    }
+
+
+
 
     public void stopPublishMediaStreamClick() {
       getTRTCCloudInstance()?.stopPublishMediaStream(mTaskId);

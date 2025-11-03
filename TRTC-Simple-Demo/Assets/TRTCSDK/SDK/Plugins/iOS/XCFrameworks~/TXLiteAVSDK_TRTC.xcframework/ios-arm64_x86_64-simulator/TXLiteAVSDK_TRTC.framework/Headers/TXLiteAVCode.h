@@ -7,7 +7,7 @@
 #define __TXLITEAVCODE_H__
 
 /**
- * 错误码
+ * 错误码。
  */
 enum TXLiteAVError {
 
@@ -252,7 +252,7 @@ enum TXLiteAVError {
 };
 
 /**
- * 警告码
+ * 警告码。
  */
 enum TXLiteAVWarning {
 
@@ -382,6 +382,9 @@ enum TXLiteAVWarning {
 
     /// 音视频发送时间戳异常，可能引起音画不同步问题
     WARNING_UPSTREAM_AUDIO_AND_VIDEO_OUT_OF_SYNC = 6006,
+
+    ///  服务器状态异常，正在进行重连
+    WARNING_RECONNECT_ON_SERVER_STATUS_ABNORMAL = 6007,
 
 };
 

@@ -18,7 +18,7 @@ typedef NSImage TXImage;
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * 美颜（磨皮）算法
+ * 美颜（磨皮）算法。
  *
  * TRTC 内置多种不同的磨皮算法，您可以选择最适合您产品定位的方案。
  */
@@ -43,7 +43,7 @@ typedef NS_ENUM(NSInteger, TXBeautyStyle) {
 LITEAV_EXPORT @interface TXBeautyManager : NSObject
 
 /**
- * 设置美颜（磨皮）算法
+ * 设置美颜（磨皮）算法。
  *
  * TRTC 内置多种不同的磨皮算法，您可以选择最适合您产品定位的方案：
  * @param beautyStyle 美颜风格，TXBeautyStyleSmooth：光滑；TXBeautyStyleNature：自然；TXBeautyStylePitu：优图。
@@ -51,51 +51,51 @@ LITEAV_EXPORT @interface TXBeautyManager : NSObject
 - (void)setBeautyStyle:(TXBeautyStyle)beautyStyle;
 
 /**
- * 设置美颜级别
+ * 设置美颜级别。
  *
- * @param beautyLevel 美颜级别，取值范围 0 - 9； 0 表示关闭，9 表示效果最明显。
+ * @param beautyLevel 美颜级别，取值范围 [0, 9]； 0 表示关闭，9 表示效果最明显。
  */
 - (void)setBeautyLevel:(float)beautyLevel;
 
 /**
- * 设置美白级别
+ * 设置美白级别。
  *
- * @param whitenessLevel 美白级别，取值范围 0 - 9；0 表示关闭，9 表示效果最明显。
+ * @param whitenessLevel 美白级别，取值范围 [0, 9]；0 表示关闭，9 表示效果最明显。
  */
 - (void)setWhitenessLevel:(float)whitenessLevel;
 
 /**
- * 开启清晰度增强
+ * 开启清晰度增强。
  */
 - (void)enableSharpnessEnhancement:(BOOL)enable;
 
 /**
- * 设置红润级别
+ * 设置红润级别。
  *
- * @param ruddyLevel 红润级别，取值范围0 - 9；0 表示关闭，9 表示效果最明显。
+ * @param ruddyLevel 红润级别，取值范围 [0, 9]；0 表示关闭，9 表示效果最明显。
  */
 - (void)setRuddyLevel:(float)ruddyLevel;
 
 /**
- * 设置色彩滤镜效果
+ * 设置色彩滤镜效果。
  *
- * 色彩滤镜，是一副包含色彩映射关系的颜色查找表图片，您可以在我们提供的官方 Demo 中找到预先准备好的几张滤镜图片。
+ * 色彩滤镜，是一张包含色彩映射关系的颜色查找表图片，您可以在我们提供的官方 Demo 中找到预先准备好的几张滤镜图片。
  * SDK 会根据该查找表中的映射关系，对摄像头采集出的原始视频画面进行二次处理，以达到预期的滤镜效果。
  * @param image 包含色彩映射关系的颜色查找表图片，必须是 png 格式。
  */
 - (void)setFilter:(nullable TXImage *)image;
 
 /**
- * 设置色彩滤镜的强度
+ * 设置色彩滤镜的强度。
  *
  * 该数值越高，色彩滤镜的作用强度越明显，经过滤镜处理后的视频画面跟原画面的颜色差异越大。
  * 我默认的滤镜浓度是 0.5，如果您觉得默认的滤镜效果不明显，可以设置为 0.5 以上的数字，最大值为 1。
- * @param strength 从 0 到 1，数值越大滤镜效果越明显，默认值为 0.5。
+ * @param strength 取值范围 [0, 1]，数值越大滤镜效果越明显，默认值为 0.5。
  */
 - (void)setFilterStrength:(float)strength;
 
 /**
- * 设置绿幕背景视频
+ * 设置绿幕背景视频。
  *
  * 该接口仅在 企业版
  * SDK（旧版已下线，新版本SDK如需使用高级美颜功能请参见[腾讯美颜特效SDK](https://cloud.tencent.com/document/product/647/68504)）中生效。此接口所开启的绿幕功能不具备智能去除背景的能力，需要被拍摄者的背后有一块绿色的幕布来辅助产生特效。
@@ -105,10 +105,10 @@ LITEAV_EXPORT @interface TXBeautyManager : NSObject
 - (int)setGreenScreenFile:(nullable NSString *)path;
 
 /**
- * 设置大眼级别
+ * 设置大眼级别。
  *
  * 该接口仅在 企业版 SDK（旧版已下线，新版本SDK如需使用高级美颜功能请参见[腾讯美颜特效SDK](https://cloud.tencent.com/document/product/647/68504)）中生效。
- * @param eyeScaleLevel 大眼级别，取值范围 0 - 9；0 表示关闭，9 表示效果最明显。
+ * @param eyeScaleLevel 大眼级别，取值范围 [0, 9]；0 表示关闭，9 表示效果最明显。
  * @return 0：成功；-5：当前 License 对应 feature 不支持。
  */
 #if TARGET_OS_IPHONE
@@ -116,10 +116,10 @@ LITEAV_EXPORT @interface TXBeautyManager : NSObject
 #endif
 
 /**
- * 设置瘦脸级别
+ * 设置瘦脸级别。
  *
  * 该接口仅在 企业版 SDK（旧版已下线，新版本SDK如需使用高级美颜功能请参见[腾讯美颜特效SDK](https://cloud.tencent.com/document/product/647/68504)）中生效。
- * @param faceSlimLevel 瘦脸级别，取值范围0 - 9；0 表示关闭，9 表示效果最明显。
+ * @param faceSlimLevel 瘦脸级别，取值范围 [0, 9]；0 表示关闭，9 表示效果最明显。
  * @return 0：成功；-5：当前 License 对应 feature 不支持。
  */
 #if TARGET_OS_IPHONE
@@ -127,10 +127,10 @@ LITEAV_EXPORT @interface TXBeautyManager : NSObject
 #endif
 
 /**
- * 设置 V 脸级别
+ * 设置 V 脸级别。
  *
  * 该接口仅在 企业版 SDK（旧版已下线，新版本SDK如需使用高级美颜功能请参见[腾讯美颜特效SDK](https://cloud.tencent.com/document/product/647/68504)）中生效。
- * @param faceVLevel V 脸级别，取值范围 0 - 9；0 表示关闭，9 表示效果最明显。
+ * @param faceVLevel V 脸级别，取值范围 [0, 9]；0 表示关闭，9 表示效果最明显。
  * @return 0：成功；-5：当前 License 对应 feature 不支持。
  */
 #if TARGET_OS_IPHONE
@@ -138,10 +138,10 @@ LITEAV_EXPORT @interface TXBeautyManager : NSObject
 #endif
 
 /**
- * 设置下巴拉伸或收缩
+ * 设置下巴拉伸或收缩。
  *
  * 该接口仅在 企业版 SDK（旧版已下线，新版本SDK如需使用高级美颜功能请参见[腾讯美颜特效SDK](https://cloud.tencent.com/document/product/647/68504)）中生效。
- * @param chinLevel 下巴拉伸或收缩级别，取值范围 -9 - 9；0 表示关闭，小于 0 表示收缩，大于 0 表示拉伸。
+ * @param chinLevel 下巴拉伸或收缩级别，取值范围 [-9, 9]；0 表示关闭，小于 0 表示收缩，大于 0 表示拉伸。
  * @return 0：成功；-5：当前 License 对应 feature 不支持。
  */
 #if TARGET_OS_IPHONE
@@ -149,10 +149,10 @@ LITEAV_EXPORT @interface TXBeautyManager : NSObject
 #endif
 
 /**
- * 设置短脸级别
+ * 设置短脸级别。
  *
  * 该接口仅在 企业版 SDK（旧版已下线，新版本SDK如需使用高级美颜功能请参见[腾讯美颜特效SDK](https://cloud.tencent.com/document/product/647/68504)）中生效。
- * @param faceShortLevel 短脸级别，取值范围 0 - 9；0 表示关闭，9 表示效果最明显。
+ * @param faceShortLevel 短脸级别，取值范围 [0, 9]；0 表示关闭，9 表示效果最明显。
  * @return 0：成功；-5：当前 License 对应 feature 不支持。
  */
 #if TARGET_OS_IPHONE
@@ -160,10 +160,10 @@ LITEAV_EXPORT @interface TXBeautyManager : NSObject
 #endif
 
 /**
- * 设置窄脸级别
+ * 设置窄脸级别。
  *
  * 该接口仅在 企业版 SDK（旧版已下线，新版本SDK如需使用高级美颜功能请参见[腾讯美颜特效SDK](https://cloud.tencent.com/document/product/647/68504)）中生效。
- * @param level 窄脸级别，取值范围 0 - 9；0 表示关闭，9 表示效果最明显。
+ * @param level 窄脸级别，取值范围 [0, 9]；0 表示关闭，9 表示效果最明显。
  * @return 0：成功；-5：当前 License 对应 feature 不支持。
  */
 #if TARGET_OS_IPHONE
@@ -171,10 +171,10 @@ LITEAV_EXPORT @interface TXBeautyManager : NSObject
 #endif
 
 /**
- * 设置瘦鼻级别
+ * 设置瘦鼻级别。
  *
  * 该接口仅在 企业版 SDK（旧版已下线，新版本SDK如需使用高级美颜功能请参见[腾讯美颜特效SDK](https://cloud.tencent.com/document/product/647/68504)）中生效。
- * @param noseSlimLevel 瘦鼻级别，取值范围0 - 9；0 表示关闭，9 表示效果最明显。
+ * @param noseSlimLevel 瘦鼻级别，取值范围 [0, 9]；0 表示关闭，9 表示效果最明显。
  * @return 0：成功；-5：当前 License 对应 feature 不支持。
  */
 #if TARGET_OS_IPHONE
@@ -182,10 +182,10 @@ LITEAV_EXPORT @interface TXBeautyManager : NSObject
 #endif
 
 /**
- * 设置亮眼级别
+ * 设置亮眼级别。
  *
  * 该接口仅在 企业版 SDK（旧版已下线，新版本SDK如需使用高级美颜功能请参见[腾讯美颜特效SDK](https://cloud.tencent.com/document/product/647/68504)）中生效。
- * @param eyeLightenLevel 亮眼级别，取值范围 0 - 9；0 表示关闭，9 表示效果最明显。
+ * @param eyeLightenLevel 亮眼级别，取值范围 [0, 9]；0 表示关闭，9 表示效果最明显。
  * @return 0：成功；-5：当前 License 对应 feature 不支持。
  */
 #if TARGET_OS_IPHONE
@@ -193,10 +193,10 @@ LITEAV_EXPORT @interface TXBeautyManager : NSObject
 #endif
 
 /**
- * 设置牙齿美白级别
+ * 设置牙齿美白级别。
  *
  * 该接口仅在 企业版 SDK（旧版已下线，新版本SDK如需使用高级美颜功能请参见[腾讯美颜特效SDK](https://cloud.tencent.com/document/product/647/68504)）中生效。
- * @param toothWhitenLevel 白牙级别，取值范围 0 - 9；0表示关闭，9 表示效果最明显。
+ * @param toothWhitenLevel 白牙级别，取值范围 [0, 9]；0表示关闭，9 表示效果最明显。
  * @return 0：成功；-5：当前 License 对应 feature 不支持。
  */
 #if TARGET_OS_IPHONE
@@ -204,10 +204,10 @@ LITEAV_EXPORT @interface TXBeautyManager : NSObject
 #endif
 
 /**
- * 设置祛皱级别
+ * 设置祛皱级别。
  *
  * 该接口仅在 企业版 SDK（旧版已下线，新版本SDK如需使用高级美颜功能请参见[腾讯美颜特效SDK](https://cloud.tencent.com/document/product/647/68504)）中生效。
- * @param wrinkleRemoveLevel 祛皱级别，取值范围0 - 9；0 表示关闭，9 表示效果最明显。
+ * @param wrinkleRemoveLevel 祛皱级别，取值范围 [0, 9]；0 表示关闭，9 表示效果最明显。
  * @return 0：成功；-5：当前 License 对应 feature 不支持。
  */
 #if TARGET_OS_IPHONE
@@ -215,10 +215,10 @@ LITEAV_EXPORT @interface TXBeautyManager : NSObject
 #endif
 
 /**
- * 设置祛眼袋级别
+ * 设置祛眼袋级别。
  *
  * 该接口仅在 企业版 SDK（旧版已下线，新版本SDK如需使用高级美颜功能请参见[腾讯美颜特效SDK](https://cloud.tencent.com/document/product/647/68504)）中生效。
- * @param pounchRemoveLevel 祛眼袋级别，取值范围 0 - 9；0 表示关闭，9 表示效果最明显。
+ * @param pounchRemoveLevel 祛眼袋级别，取值范围 [0, 9]；0 表示关闭，9 表示效果最明显。
  * @return 0：成功；-5：当前 License 对应 feature 不支持。
  */
 #if TARGET_OS_IPHONE
@@ -226,10 +226,10 @@ LITEAV_EXPORT @interface TXBeautyManager : NSObject
 #endif
 
 /**
- * 设置法令纹去除级别
+ * 设置法令纹去除级别。
  *
  * 该接口仅在 企业版 SDK（旧版已下线，新版本SDK如需使用高级美颜功能请参见[腾讯美颜特效SDK](https://cloud.tencent.com/document/product/647/68504)）中生效。
- * @param smileLinesRemoveLevel 法令纹级别，取值范围 0 - 9；0表示关闭，9 表示效果最明显。
+ * @param smileLinesRemoveLevel 法令纹级别，取值范围 [0, 9]；0表示关闭，9 表示效果最明显。
  * @return 0：成功；-5：当前 License 对应 feature 不支持。
  */
 #if TARGET_OS_IPHONE
@@ -237,10 +237,10 @@ LITEAV_EXPORT @interface TXBeautyManager : NSObject
 #endif
 
 /**
- * 设置发际线调整级别
+ * 设置发际线调整级别。
  *
  * 该接口仅在 企业版 SDK（旧版已下线，新版本SDK如需使用高级美颜功能请参见[腾讯美颜特效SDK](https://cloud.tencent.com/document/product/647/68504)）中生效。
- * @param foreheadLevel 发际线级别，取值范围-9 - 9；0表示关闭，9表示效果最明显。
+ * @param foreheadLevel 发际线级别，取值范围 [-9, 9]；0表示关闭，9表示效果最明显。
  * @return 0：成功；-5：当前 License 对应 feature 不支持。
  */
 #if TARGET_OS_IPHONE
@@ -248,7 +248,7 @@ LITEAV_EXPORT @interface TXBeautyManager : NSObject
 #endif
 
 /**
- * 设置眼距
+ * 设置眼距。
  *
  * 该接口仅在 企业版 SDK（旧版已下线，新版本SDK如需使用高级美颜功能请参见[腾讯美颜特效SDK](https://cloud.tencent.com/document/product/647/68504)）中生效。
  * @param eyeDistanceLevel 眼距级别，取值范围 -9 - 9；0 表示关闭，小于 0 表示拉伸，大于 0 表示收缩。
@@ -259,10 +259,10 @@ LITEAV_EXPORT @interface TXBeautyManager : NSObject
 #endif
 
 /**
- * 设置眼角调整级别
+ * 设置眼角调整级别。
  *
  * 该接口仅在 企业版 SDK（旧版已下线，新版本SDK如需使用高级美颜功能请参见[腾讯美颜特效SDK](https://cloud.tencent.com/document/product/647/68504)）中生效。
- * @param eyeAngleLevel 眼角调整级别，取值范围-9 - 9；0表示关闭，9表示效果最明显。
+ * @param eyeAngleLevel 眼角调整级别，取值范围 [-9, 9]；0表示关闭，9表示效果最明显。
  * @return 0：成功；-5：当前 License 对应 feature 不支持。
  */
 #if TARGET_OS_IPHONE
@@ -270,10 +270,10 @@ LITEAV_EXPORT @interface TXBeautyManager : NSObject
 #endif
 
 /**
- * 设置嘴型调整级别
+ * 设置嘴型调整级别。
  *
  * 该接口仅在 企业版 SDK（旧版已下线，新版本SDK如需使用高级美颜功能请参见[腾讯美颜特效SDK](https://cloud.tencent.com/document/product/647/68504)）中生效。
- * @param mouthShapeLevel 嘴型级别，取值范围 -9 - 9；0 表示关闭，小于 0 表示拉伸，大于 0 表示收缩。
+ * @param mouthShapeLevel 嘴型级别，取值范围 [-9, 9]；0 表示关闭，小于 0 表示拉伸，大于 0 表示收缩。
  * @return 0：成功；-5：当前 License 对应 feature 不支持。
  */
 #if TARGET_OS_IPHONE
@@ -281,10 +281,10 @@ LITEAV_EXPORT @interface TXBeautyManager : NSObject
 #endif
 
 /**
- * 设置鼻翼调整级别
+ * 设置鼻翼调整级别。
  *
  * 该接口仅在 企业版 SDK（旧版已下线，新版本SDK如需使用高级美颜功能请参见[腾讯美颜特效SDK](https://cloud.tencent.com/document/product/647/68504)）中生效。
- * @param noseWingLevel 鼻翼调整级别，取值范围 -9 - 9；0 表示关闭，小于 0 表示拉伸，大于 0 表示收缩。
+ * @param noseWingLevel 鼻翼调整级别，取值范围 [-9, 9]；0 表示关闭，小于 0 表示拉伸，大于 0 表示收缩。
  * @return 0：成功；-5：当前 License 对应 feature 不支持。
  */
 #if TARGET_OS_IPHONE
@@ -292,10 +292,10 @@ LITEAV_EXPORT @interface TXBeautyManager : NSObject
 #endif
 
 /**
- * 设置鼻子位置
+ * 设置鼻子位置。
  *
  * 该接口仅在 企业版 SDK（旧版已下线，新版本SDK如需使用高级美颜功能请参见[腾讯美颜特效SDK](https://cloud.tencent.com/document/product/647/68504)）中生效。
- * @param nosePositionLevel 鼻子位置级别，取值范围 -9 - 9；0 表示关闭，小于 0 表示抬高，大于 0 表示降低。
+ * @param nosePositionLevel 鼻子位置级别，取值范围 [-9, 9]；0 表示关闭，小于 0 表示抬高，大于 0 表示降低。
  * @return 0：成功；-5：当前 License 对应 feature 不支持。
  */
 #if TARGET_OS_IPHONE
@@ -303,10 +303,10 @@ LITEAV_EXPORT @interface TXBeautyManager : NSObject
 #endif
 
 /**
- * 设置嘴唇厚度
+ * 设置嘴唇厚度。
  *
  * 该接口仅在 企业版 SDK（旧版已下线，新版本SDK如需使用高级美颜功能请参见[腾讯美颜特效SDK](https://cloud.tencent.com/document/product/647/68504)）中生效。
- * @param lipsThicknessLevel 嘴唇厚度级别，取值范围 -9 - 9；0 表示关闭，小于 0 表示拉伸，大于 0 表示收缩。
+ * @param lipsThicknessLevel 嘴唇厚度级别，取值范围 [-9, 9]；0 表示关闭，小于 0 表示拉伸，大于 0 表示收缩。
  * @return 0：成功；-5：当前 License 对应 feature 不支持。
  */
 #if TARGET_OS_IPHONE
@@ -314,10 +314,10 @@ LITEAV_EXPORT @interface TXBeautyManager : NSObject
 #endif
 
 /**
- * 设置脸型
+ * 设置脸型。
  *
  * 该接口仅在 企业版 SDK（旧版已下线，新版本SDK如需使用高级美颜功能请参见[腾讯美颜特效SDK](https://cloud.tencent.com/document/product/647/68504)）中生效。
- * @param   faceBeautyLevel 美型级别，取值范围 0 - 9；0 表示关闭，1 - 9 值越大，效果越明显。
+ * @param   faceBeautyLevel 美型级别，取值范围 [0, 9]；0 表示关闭，1 - 9 值越大，效果越明显。
  * @return 0：成功；-5：当前 License 对应 feature 不支持。
  */
 #if TARGET_OS_IPHONE
@@ -325,7 +325,7 @@ LITEAV_EXPORT @interface TXBeautyManager : NSObject
 #endif
 
 /**
- * 选择 AI 动效挂件
+ * 选择 AI 动效挂件。
  *
  * 该接口仅在 企业版 SDK（旧版已下线，新版本SDK如需使用高级美颜功能请参见[腾讯美颜特效SDK](https://cloud.tencent.com/document/product/647/68504)）中生效。
  * @param tmplName 动效挂件名称。
@@ -336,7 +336,7 @@ LITEAV_EXPORT @interface TXBeautyManager : NSObject
 #endif
 
 /**
- * 是否在动效素材播放时静音
+ * 是否在动效素材播放时静音。
  *
  * 该接口仅在 企业版 SDK（旧版已下线，新版本SDK如需使用高级美颜功能请参见[腾讯美颜特效SDK](https://cloud.tencent.com/document/product/647/68504)）中生效。
  * 有些挂件本身会有声音特效，通过此 API 可以关闭这些特效播放时所带的声音效果。

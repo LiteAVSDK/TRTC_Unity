@@ -68,26 +68,78 @@ namespace trtc {
       StreamMixingConfig innerMixingConfig = new StreamMixingConfig();
       innerMixingConfig.backgroundColor = config.backgroundColor;
       innerMixingConfig.backgroundImage = config.backgroundImage;
-      innerMixingConfig.videoLayoutListSize = config.videoLayoutListSize;
-      innerMixingConfig.videoLayoutList =
-          Marshal.AllocHGlobal(Marshal.SizeOf(config.videoLayoutList));
-      Marshal.StructureToPtr(config.videoLayoutList, innerMixingConfig.videoLayoutList, false);
+      innerMixingConfig.videoLayoutListSize = 0;
+      innerMixingConfig.audioMixUserListSize = 0;
+      innerMixingConfig.watermarkListSize = 0;
 
-      innerMixingConfig.audioMixUserListSize = config.audioMixUserListSize;
-      innerMixingConfig.audioMixUserList =
-          Marshal.AllocHGlobal(Marshal.SizeOf(config.audioMixUserList));
-      Marshal.StructureToPtr(config.audioMixUserList, innerMixingConfig.audioMixUserList, false);
+      if (config.videoLayoutList != null && config.videoLayoutList.Length > 0) {
+        VideoLayout[] videoLayoutList = new VideoLayout[config.videoLayoutList.Length];
+        for (int i = 0; i < config.videoLayoutList.Length; i++) {
+          videoLayoutList[i].rect = config.videoLayoutList[i].rect;
+          videoLayoutList[i].zOrder = config.videoLayoutList[i].zOrder;
+          videoLayoutList[i].fillMode = config.videoLayoutList[i].fillMode;
+          videoLayoutList[i].backgroundColor = config.videoLayoutList[i].backgroundColor;
+          videoLayoutList[i].placeHolderImage = config.videoLayoutList[i].placeHolderImage;
+          videoLayoutList[i].fixedVideoStreamType = config.videoLayoutList[i].fixedVideoStreamType;
+          videoLayoutList[i].fixedVideoUser = Marshal.AllocHGlobal(Marshal.SizeOf(config.videoLayoutList[i].fixedVideoUser));
+          Marshal.StructureToPtr(config.videoLayoutList[i].fixedVideoUser, videoLayoutList[i].fixedVideoUser, false);
+        }
 
-      innerMixingConfig.watermarkListSize = config.watermarkListSize;
-      innerMixingConfig.watermarkList = Marshal.AllocHGlobal(Marshal.SizeOf(config.watermarkList));
-      Marshal.StructureToPtr(config.watermarkList, innerMixingConfig.watermarkList, false);
+        innerMixingConfig.videoLayoutListSize = (UInt32)config.videoLayoutList.Length;
+        innerMixingConfig.videoLayoutList = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(VideoLayout)) * (int)innerMixingConfig.videoLayoutListSize);
+        for (int i = 0; i < innerMixingConfig.videoLayoutListSize; i++) {
+          IntPtr ptr = new IntPtr(innerMixingConfig.videoLayoutList.ToInt64() + i * Marshal.SizeOf(typeof(VideoLayout)));
+          Marshal.StructureToPtr(videoLayoutList[i], ptr, false);
+        }
+      }
+      else {
+        innerMixingConfig.videoLayoutList = IntPtr.Zero;
+      }
+
+      if (config.audioMixUserList != null && config.audioMixUserList.Length > 0) {
+        innerMixingConfig.audioMixUserListSize = (UInt32)config.audioMixUserList.Length;
+        innerMixingConfig.audioMixUserList = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(TRTCMixUser)) * (int)innerMixingConfig.audioMixUserListSize);
+        for (int i = 0; i < innerMixingConfig.audioMixUserListSize; i++) {
+          IntPtr ptr = new IntPtr(innerMixingConfig.audioMixUserList.ToInt64() + i * Marshal.SizeOf(typeof(TRTCMixUser)));
+          Marshal.StructureToPtr(config.audioMixUserList[i], ptr, false);
+        }
+      } else {
+        innerMixingConfig.audioMixUserList = IntPtr.Zero;
+      }
+
+      if (config.watermarkList != null && config.watermarkList.Length > 0) {
+        innerMixingConfig.watermarkListSize = (UInt32)config.watermarkList.Length;
+        innerMixingConfig.watermarkList = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(TRTCWaterMark)) * (int)innerMixingConfig.watermarkListSize);
+        for (int i = 0; i < innerMixingConfig.watermarkListSize; i++) {
+          IntPtr ptr = new IntPtr(innerMixingConfig.watermarkList.ToInt64() + i * Marshal.SizeOf(typeof(TRTCWaterMark)));
+          Marshal.StructureToPtr(config.watermarkList[i], ptr, false);
+        }
+      } else {
+        innerMixingConfig.watermarkList = IntPtr.Zero;
+      }
 
       return innerMixingConfig;
     }
 
     public static void ReleaseStreamMixingConfig(StreamMixingConfig config) {
+      for (int i = 0; i < config.videoLayoutListSize; i++) {
+        IntPtr ptr = new IntPtr(config.videoLayoutList.ToInt64() + i * Marshal.SizeOf(typeof(VideoLayout)));
+        VideoLayout layout = (VideoLayout)Marshal.PtrToStructure(ptr, typeof(VideoLayout));
+        Marshal.FreeHGlobal(layout.fixedVideoUser);
+        Marshal.DestroyStructure(ptr, typeof(VideoLayout));
+      }
       Marshal.FreeHGlobal(config.videoLayoutList);
+
+      for (int i = 0; i < config.audioMixUserListSize; i++) {
+        IntPtr ptr = new IntPtr(config.audioMixUserList.ToInt64() + i * Marshal.SizeOf(typeof(TRTCMixUser)));
+        Marshal.DestroyStructure(ptr, typeof(TRTCMixUser));
+      }
       Marshal.FreeHGlobal(config.audioMixUserList);
+
+      for (int i = 0; i < config.watermarkListSize; i++) {
+        IntPtr ptr = new IntPtr(config.watermarkList.ToInt64() + i * Marshal.SizeOf(typeof(TRTCWaterMark)));
+        Marshal.DestroyStructure(ptr, typeof(TRTCWaterMark));
+      }
       Marshal.FreeHGlobal(config.watermarkList);
     }
 

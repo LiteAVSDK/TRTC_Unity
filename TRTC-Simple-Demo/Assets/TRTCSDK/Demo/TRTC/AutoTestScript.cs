@@ -25,11 +25,13 @@ namespace TRTCCUnityDemo {
     private Button mStartTestBtn;
     private Button mStopTestBtn;
     private Button mExitBtn;
+    private Toggle mToggleEnableAudioCallback;
 
     private DateTime mEnterRoomTime = DateTime.MinValue;
     private bool mIsEnterRoom = false;
     private DateTime mExitRoomTime = DateTime.MinValue;
     private bool mIsTest = false;
+    private bool mIsRegisterAudioCallback = true;
 
     private ITRTCCloud mTRTCCloud;
     private ITXAudioEffectManager mTXAudioEffectManager;
@@ -47,7 +49,7 @@ namespace TRTCCUnityDemo {
         return;
       }
 
-      if(mIsEnterRoom && ((Int64)(DateTime.UtcNow - mEnterRoomTime).TotalSeconds) >= 6) {
+      if(mIsEnterRoom && ((Int64)(DateTime.UtcNow - mEnterRoomTime).TotalSeconds) >= 20) {
         StopTest();
       }
 
@@ -58,32 +60,35 @@ namespace TRTCCUnityDemo {
 
     private void init() {
       mRoomInputFieId = transform.Find("roomManage/roomPanel/inputRoomID").GetComponent<InputField>();
-      if(mRoomInputFieId != null) {
+      if (mRoomInputFieId != null) {
         mRoomInputFieId.text = DataManager.GetInstance().GetRoomID();
       }
 
-       mUserIdInputFieId = transform.Find("roomManage/roomPanel/InputUserId").GetComponent<InputField>();
-      if(mUserIdInputFieId != null) {
+      mUserIdInputFieId = transform.Find("roomManage/roomPanel/InputUserId").GetComponent<InputField>();
+      if (mUserIdInputFieId != null) {
         mUserIdInputFieId.text = DataManager.GetInstance().GetUserID();
       }
 
       mStartTestBtn = transform.Find("roomManage/roomPanel/btnStartTest").gameObject.GetComponent<Button>();
-      if(mStartTestBtn) {
+      if (mStartTestBtn) {
         mStartTestBtn.onClick.AddListener(this.OnStartTestClick);
       }
 
-      mStopTestBtn= transform.Find("roomManage/roomPanel/btnStopTest").gameObject.GetComponent<Button>();
-      if(mStopTestBtn) {
+      mStopTestBtn = transform.Find("roomManage/roomPanel/btnStopTest").gameObject.GetComponent<Button>();
+      if (mStopTestBtn) {
         mStopTestBtn.onClick.AddListener(this.OnStopTestClick);
       }
 
       mExitBtn = transform.Find("roomManage/roomPanel/btnExit").gameObject.GetComponent<Button>();
       mExitBtn.onClick.AddListener(
           () => { SceneManager.LoadScene("HomeScene", LoadSceneMode.Single); });
+
+      mToggleEnableAudioCallback = transform.Find("roomManage/roomPanel/ToggleEnableAudioCallback").gameObject.GetComponent<Toggle>();
+      mToggleEnableAudioCallback.onValueChanged.AddListener(this.OnToggleEnableAudioCallback);
     }
 
     private void initTrtc() {
-      PrintfTestApiLog($"getTRTCShareInstance test");
+      PrintfTestApiLog($"start getTRTCShareInstance test");
       mTRTCCloud = ITRTCCloud.getTRTCShareInstance();
       mTXAudioEffectManager = mTRTCCloud?.getAudioEffectManager();
       mTXDeviceManager = mTRTCCloud?.getDeviceManager();
@@ -91,17 +96,25 @@ namespace TRTCCUnityDemo {
 
     private void RegisterTestCallback() {
       mTRTCCloud?.addCallback(this);
-      PrintfTestApiLog($"enableAudioVolumeEvaluation 100 ms test");
-      mTRTCCloud?.enableAudioVolumeEvaluation(100);
-      PrintfTestApiLog($"setAudioFrameCallback test");
-      mTRTCCloud?.setAudioFrameCallback(this);
+      if (mIsRegisterAudioCallback) {
+        PrintfTestApiLog($"enableAudioVolumeEvaluation 100 ms test");
+        mTRTCCloud?.enableAudioVolumeEvaluation(100);
+        PrintfTestApiLog($"setAudioFrameCallback test");
+        mTRTCCloud?.setAudioFrameCallback(this);
+      } else {
+        PrintfTestApiLog($"disenableAudioVolumeEvaluation");
+        mTRTCCloud?.enableAudioVolumeEvaluation(0);
+        PrintfTestApiLog($"setAudioFrameCallback test");
+        mTRTCCloud?.setAudioFrameCallback(null);
+      }
+      
     }
 
     private void StartTest() {
       initTrtc();
       RegisterTestCallback();
       enterRoomTest();
-      startPlayMusicTest(true);
+      startPlayMusicTest();
       mExitRoomTime = DateTime.MinValue;
     }
 
@@ -114,10 +127,12 @@ namespace TRTCCUnityDemo {
     }
 
     private void StopTest() {
-      PrintfTestApiLog($"destroyTRTCShareInstance test");
+      PrintfTestApiLog($"start destroyTRTCShareInstance test");
       ITRTCCloud.destroyTRTCShareInstance();
-      startPlayMusicTest(false);
+      startPlayMusicTest();
       mTRTCCloud = null;
+      mTXAudioEffectManager = null;
+      mTXDeviceManager = null;
       mIsEnterRoom = false;
       mExitRoomTime = DateTime.UtcNow;
     }
@@ -125,6 +140,10 @@ namespace TRTCCUnityDemo {
     private void OnStopTestClick() {
       mIsTest = false;
       StopTest();
+    }
+
+    private void OnToggleEnableAudioCallback(bool isEnable) {
+     mIsRegisterAudioCallback = isEnable;
     }
     
     private void CopyResources() {
@@ -270,6 +289,10 @@ namespace TRTCCUnityDemo {
 
     public void onMicDidReady() {
       PrintfTestCallbackLog($"onMicDidReady");
+    }
+
+     public void onAudioRouteChanged(TRTCAudioRoute newRoute, TRTCAudioRoute oldRoute) {
+       PrintfTestCallbackLog($"onAudioRouteChanged newRoute: " + newRoute + ", oldRoute: " + oldRoute);
     }
 
     public void onUserVoiceVolume(TRTCVolumeInfo[] userVolumes,
@@ -500,7 +523,7 @@ namespace TRTCCUnityDemo {
         return;
       }
 
-      if (logCountForCallback > 300) {
+      if (logCountForCallback > 100) {
         logCountForCallback = 0;
         logStringForCallback = "";
       }
@@ -581,13 +604,8 @@ namespace TRTCCUnityDemo {
       PrintfTestApiLog($"stopLocalAudio test");
     }
 
-    public void startPlayMusicTest(bool isRegisterCallback) {
-      if(isRegisterCallback) {
-        PrintfTestApiLog($"startPlayMusic test");
-        mTXAudioEffectManager ?.setMusicObserver(13, new MusicPlayObserver(this, mainSyncContext));
-      } else {
-        PrintfTestApiLog($"startPlayMusic fror mTXAudioEffectManager cache test");
-      }
+    public void startPlayMusicTest() {
+      mTXAudioEffectManager ?.setMusicObserver(13, new MusicPlayObserver(this, mainSyncContext));
 
       var musicParam = new AudioMusicParam {
         id = 13,

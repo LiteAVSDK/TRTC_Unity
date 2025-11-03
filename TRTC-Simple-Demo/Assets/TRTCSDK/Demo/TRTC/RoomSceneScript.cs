@@ -27,6 +27,8 @@ namespace TRTCCUnityDemo {
     private Toggle captureVideoToggle;
     private Toggle captureAudioToggle;
     private Toggle muteLocalVideoToggle;
+    private Toggle muteAllRemoteVideoToggle;
+    private Toggle muteRemoteVideoToggle;
     private Toggle muteLocalAudioToggle;
 
     private ITRTCCloud mTRTCCloud;
@@ -49,6 +51,14 @@ namespace TRTCCUnityDemo {
       muteLocalVideoToggle = transform.Find("PanelOperate/Viewport/Content/ToggleMuteLocalVideo")
                                  .gameObject.GetComponent<Toggle>();
       muteLocalVideoToggle.onValueChanged.AddListener(this.OnToggleMuteLocalVideo);
+
+      muteAllRemoteVideoToggle = transform.Find("PanelOperate/Viewport/Content/ToggleMuteAllRemoteVideo")
+                                 .gameObject.GetComponent<Toggle>();
+      muteAllRemoteVideoToggle.onValueChanged.AddListener(this.OnToggleMuteAllRemoteVideo);
+
+      muteRemoteVideoToggle = transform.Find("PanelOperate/Viewport/Content/ToggleMuteRemoteVideo")
+                                 .gameObject.GetComponent<Toggle>();
+      muteRemoteVideoToggle.onValueChanged.AddListener(this.OnToggleMuteRemoteVideo);
 
       muteLocalAudioToggle = transform.Find("PanelOperate/Viewport/Content/ToggleMuteLocalAudio")
                                  .gameObject.GetComponent<Toggle>();
@@ -292,6 +302,16 @@ namespace TRTCCUnityDemo {
       DataManager.GetInstance().muteLocalVideo = value;
     }
 
+    void OnToggleMuteAllRemoteVideo(bool value) {
+      LogManager.Log("OnToggleMuteAllRemoteVideo: " + value);
+      mTRTCCloud.muteAllRemoteVideoStreams(value);
+    }
+
+    void OnToggleMuteRemoteVideo(bool value) {
+      LogManager.Log("OnToggleMuteRemoteVideo user 345: " + value);
+      mTRTCCloud.muteRemoteVideoStream("345", TRTCVideoStreamType.TRTCVideoStreamTypeBig, value);
+    }
+
     void OnToggleMuteLocalAudio(bool value) {
       LogManager.Log("OnToggleMuteLocalAudio: " + value);
       mTRTCCloud.muteLocalAudio(value);
@@ -312,9 +332,13 @@ namespace TRTCCUnityDemo {
           videoBitrate = 1600, minVideoBitrate = 1000
         };
 #if UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX
-        var thumbnailWidth = 100;
-        var thumbnailHeight = 60;
-        var sources = mTRTCCloud.getScreenCaptureSources(thumbnailWidth, thumbnailHeight);
+        SIZE thumbnail = new SIZE();
+        SIZE icon = new SIZE();
+        thumbnail.width = 100;
+        thumbnail.height = 60;
+        icon.width = 20;
+        icon.height = 20;
+        var sources = mTRTCCloud.getScreenCaptureSources(thumbnail, icon);
         Debug.LogFormat("sources id={0}", sources.Length);
         if (sources.Length > 0) {
           mTRTCCloud.selectScreenCaptureTarget(sources[0], new Rect(0, 0, 0, 0),
@@ -476,15 +500,11 @@ namespace TRTCCUnityDemo {
     }
 
     void OnToggleSetGSensorMode(bool value) {
-      var data = new JsonData { ["api"] = "setGSensorMode" };
-      var param = new JsonData {
-        ["StreamType"] = 0,               // 0:big, 1:small, 2:sub
-        ["gSensorMode"] = value ? 1 : 0,  // 0:Disable 1:UIAutoLayout, 2:UIFixLayout
-      };
-      data["params"] = param;
-      var api = data.ToJson();
-      LogManager.Log($"callExperimentalAPI: {api}");
-      mTRTCCloud.callExperimentalAPI(api);
+      if (value) {
+        mTRTCCloud.setGravitySensorAdaptiveMode(TRTCGravitySensorAdaptiveMode.TRTCGravitySensorAdaptiveMode_FillByCenterCrop);
+      } else {
+        mTRTCCloud.setGravitySensorAdaptiveMode(TRTCGravitySensorAdaptiveMode.TRTCGravitySensorAdaptiveMode_Disable);
+      }
     }
 
 #endregion
@@ -773,6 +793,10 @@ namespace TRTCCUnityDemo {
 
     public void onMicDidReady() {
       LogManager.Log("onMicDidReady");
+    }
+
+     public void onAudioRouteChanged(TRTCAudioRoute newRoute, TRTCAudioRoute oldRoute) {
+       LogManager.Log($"onAudioRouteChanged newRoute: " + newRoute + ", oldRoute: " + oldRoute);
     }
 
     public void onUserVoiceVolume(TRTCVolumeInfo[] userVolumes,

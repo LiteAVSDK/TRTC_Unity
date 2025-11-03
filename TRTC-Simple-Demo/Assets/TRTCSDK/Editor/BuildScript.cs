@@ -56,6 +56,12 @@ namespace TRTCSDK.Editor {
                                 BuildOptions.None);
     }
 
+    [MenuItem("TRTC Build Configuration Tool/WebGL", false, 50)]
+    public static void BuildWebGL() {
+      BuildPipeline.BuildPlayer(GetBuildScenes(), "Builds\\WebGL\\" + projectName,
+                                BuildTarget.WebGL, BuildOptions.None);
+    }
+
     [MenuItem("TRTC Build Configuration Tool/All", false, 50)]
     public static void BuildAll() {
       BuildAndroid();

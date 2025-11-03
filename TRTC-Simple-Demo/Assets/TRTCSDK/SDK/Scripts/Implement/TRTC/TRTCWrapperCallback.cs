@@ -13,10 +13,16 @@ namespace trtc {
   public struct RenderKey {
     public string UserId;
     public TRTCVideoStreamType StreamType;
-
+    public bool UserDefaultStreamType;
     public RenderKey(string userId, TRTCVideoStreamType streamType) {
       UserId = userId;
       StreamType = streamType;
+      UserDefaultStreamType = false;
+    }
+    public RenderKey(string userId) {
+      UserId = userId;
+      StreamType = TRTCVideoStreamType.TRTCVideoStreamTypeBig;
+      UserDefaultStreamType = true;
     }
   }
   public class TRTCWrapperCallback {
@@ -195,7 +201,7 @@ namespace trtc {
 
     public TRTCWrapperCallback(IntPtr nativeObj) {
       _nativeObj = nativeObj;
-      TRTCLogger.Info("create trtc cloud callback");
+      TRTCLogger.Info("create trtc cloud callback", "TRTCWrapperCallback");
       _nativeCloudCallback = TRTCCloudCallbackNative.trtc_cloud_create_cloud_callback(_nativeObj);
       // main_handler
       TRTCCloudCallbackNative.trtc_cloud_set_on_error_handler(
@@ -271,6 +277,8 @@ namespace trtc {
           _nativeObj, CloudCallback.OnCameraDidReadyHandler, IntPtr.Zero);
       TRTCCloudCallbackNative.trtc_cloud_set_on_mic_did_ready_handler(
           _nativeObj, CloudCallback.OnMicDidReadyHandler, IntPtr.Zero);
+      TRTCCloudCallbackNative.trtc_cloud_set_on_audio_route_changed_handler(
+          _nativeObj, CloudCallback.OnAudioRouteChangedHandler, IntPtr.Zero);
       TRTCCloudCallbackNative.trtc_cloud_set_on_user_voice_volume_handler(
           _nativeObj, CloudCallback.OnUserVoiceVolumeHandler, IntPtr.Zero);
       TRTCCloudCallbackNative.trtc_cloud_set_on_device_change_handler(
@@ -336,7 +344,7 @@ namespace trtc {
     }
 
     ~TRTCWrapperCallback() {
-      TRTCLogger.Info("destory native callback");
+      TRTCLogger.Info("destory native callback", "~TRTCWrapperCallback");
       TRTCCloudCallbackNative.trtc_cloud_destroy_cloud_callback(_nativeCloudCallback);
       _nativeCloudCallback = IntPtr.Zero;
 
@@ -365,7 +373,7 @@ namespace trtc {
     }
 
     public void OnDestroy() {
-      TRTCLogger.Info("OnDestroy");
+      TRTCLogger.Info();
       ResetTrtcNativeCallback();
       ClearAppCloudCallback();
       ClearAppVideoFrameCallback();
@@ -633,20 +641,20 @@ namespace trtc {
                                                string strLocalQuality,
                                                string strRemoteQuality,
                                                IntPtr userData) {
-      TRTCQualityInfo localQuality;
-      TRTCWrapperCallback.QualityArrayInfo remoteQuality;
-      try {
-        localQuality = JsonUtility.FromJson<TRTCQualityInfo>(strLocalQuality);
-        remoteQuality =JsonUtility.FromJson<TRTCWrapperCallback.QualityArrayInfo>(strRemoteQuality);
-      }
-      catch (System.Exception ex) {
-        Debug.LogError("Exception caught while OnNetworkQualityHandler: " + ex.Message);
-        return;
-      }
-
       TRTCCallbackObj callbackObj = null;
       var callbacks = QueryCallbacks(instance, ref callbackObj);
       callbackObj?.GetActionQueue().Enqueue(() => {
+        TRTCQualityInfo localQuality;
+        TRTCWrapperCallback.QualityArrayInfo remoteQuality;
+        try {
+          localQuality = JsonUtility.FromJson<TRTCQualityInfo>(strLocalQuality);
+          remoteQuality =JsonUtility.FromJson<TRTCWrapperCallback.QualityArrayInfo>(strRemoteQuality);
+        }
+        catch (System.Exception ex) {
+          Debug.LogError("Exception caught while OnNetworkQualityHandler: " + ex.Message);
+          return;
+        }
+
         foreach (var callback in callbacks) {
           uint remoteQualityArrayLen = 0;
           if (remoteQuality.remoteQualityArray != null) {
@@ -661,18 +669,19 @@ namespace trtc {
 
     [MonoPInvokeCallback(typeof(TRTCCloudCallbackNative.OnStatisticsHandler))]
     public static void OnStatisticsHandler(IntPtr instance, string strStatistics, IntPtr userData) {
-      TRTCStatistics statistics;
-      try {
-        statistics = JsonUtility.FromJson<TRTCStatistics>(strStatistics);
-      }
-      catch (System.Exception ex) {
-        Debug.LogError("Exception caught while OnStatisticsHandler: " + ex.Message);
-        return;
-      }
+
 
       TRTCCallbackObj callbackObj = null;
       var callbacks = QueryCallbacks(instance, ref callbackObj);
       callbackObj?.GetActionQueue().Enqueue(() => {
+        TRTCStatistics statistics;
+        try {
+          statistics = JsonUtility.FromJson<TRTCStatistics>(strStatistics);
+        }
+        catch (System.Exception ex) {
+          Debug.LogError("Exception caught while OnStatisticsHandler: " + ex.Message);
+          return;
+        }
         foreach (var callback in callbacks) {
           callback.onStatistics(statistics);
         }
@@ -683,18 +692,17 @@ namespace trtc {
     public static void OnSpeedTestResultHandler(IntPtr instance,
                                                 string strTestResult,
                                                 IntPtr userData) {
-      TRTCSpeedTestResult testResult;
-      try {
-        testResult = JsonUtility.FromJson<TRTCSpeedTestResult>(strTestResult);
-      }
-      catch (System.Exception ex) {
-        Debug.LogError("Exception caught while OnSpeedTestResultHandler: " + ex.Message);
-        return;
-      }
-
       TRTCCallbackObj callbackObj = null;
       var callbacks = QueryCallbacks(instance, ref callbackObj);
       callbackObj?.GetActionQueue().Enqueue(() => {
+        TRTCSpeedTestResult testResult;
+        try {
+          testResult = JsonUtility.FromJson<TRTCSpeedTestResult>(strTestResult);
+        }
+        catch (System.Exception ex) {
+          Debug.LogError("Exception caught while OnSpeedTestResultHandler: " + ex.Message);
+          return;
+        }
         foreach (var callback in callbacks) {
           callback.onSpeedTestResult(testResult);
         }
@@ -758,25 +766,39 @@ namespace trtc {
       });
     }
 
+    [MonoPInvokeCallback(typeof(TRTCCloudCallbackNative.OnAudioRouteChangedHandler))]
+    public static void OnAudioRouteChangedHandler(IntPtr instance,
+                                                  TRTCAudioRoute newRoute,
+                                                  TRTCAudioRoute oldRoute,
+                                                  IntPtr userData) {
+      TRTCCallbackObj callbackObj = null;
+      var callbacks = QueryCallbacks(instance, ref callbackObj);
+      callbackObj?.GetActionQueue().Enqueue(() => {
+        foreach (var callback in callbacks) {
+          callback.onAudioRouteChanged(newRoute, oldRoute);
+        }
+      });
+    }
+
     [MonoPInvokeCallback(typeof(TRTCCloudCallbackNative.OnUserVoiceVolumeHandler))]
     public static void OnUserVoiceVolumeHandler(IntPtr instance,
                                                 string strUserVolumes,
                                                 uint totalVolume,
                                                 IntPtr userData) {
-      TRTCWrapperCallback.VolumeArrayInfo userVolumeArrayInfo;
-      try {
-        userVolumeArrayInfo = JsonUtility.FromJson<TRTCWrapperCallback.VolumeArrayInfo>(strUserVolumes);
-      } 
-      catch (System.Exception ex) {
-        Debug.LogError("Exception caught while OnUserVoiceVolumeHandler: " + ex.Message);
-        return;
-      }
-
-      var userVolumeInfo = userVolumeArrayInfo.userVolumesArray;
-      var userVolumesCount = userVolumeInfo?.Length ?? 0;
       TRTCCallbackObj callbackObj = null;
       var callbacks = QueryCallbacks(instance, ref callbackObj);
       callbackObj?.GetActionQueue().Enqueue(() => {
+        TRTCWrapperCallback.VolumeArrayInfo userVolumeArrayInfo;
+        try {
+          userVolumeArrayInfo = JsonUtility.FromJson<TRTCWrapperCallback.VolumeArrayInfo>(strUserVolumes);
+        } 
+        catch (System.Exception ex) {
+          Debug.LogError("Exception caught while OnUserVoiceVolumeHandler: " + ex.Message);
+          return;
+        }
+
+        var userVolumeInfo = userVolumeArrayInfo.userVolumesArray;
+        var userVolumesCount = userVolumeInfo?.Length ?? 0;
         foreach (var callback in callbacks) {
           callback.onUserVoiceVolume(userVolumeInfo, (uint)userVolumesCount, totalVolume);
         }
@@ -862,11 +884,11 @@ namespace trtc {
         return;
       }
 
+      var data = new byte[messageSize];
+      Marshal.Copy(message, data, 0, messageSize);
       TRTCCallbackObj callbackObj = null;
       var callbacks = QueryCallbacks(instance, ref callbackObj);
       callbackObj?.GetActionQueue().Enqueue(() => {
-        var data = new byte[messageSize];
-        Marshal.Copy(message, data, 0, messageSize);
         foreach (var callback in callbacks) {
           callback.onRecvCustomCmdMsg(userId, cmdID, seq, data, messageSize);
         }
@@ -900,11 +922,11 @@ namespace trtc {
         return;
       }
 
+      var data = new byte[messageSize];
+      Marshal.Copy(message, data, 0, (int)messageSize);
       TRTCCallbackObj callbackObj = null;
       var callbacks = QueryCallbacks(instance, ref callbackObj);
       callbackObj?.GetActionQueue().Enqueue(() => {
-        var data = new byte[messageSize];
-        Marshal.Copy(message, data, 0, (int)messageSize);
         foreach (var callback in callbacks) {
           callback.onRecvSEIMsg(userId, data, messageSize);
         }
@@ -1101,12 +1123,6 @@ namespace trtc {
         return;
       }
 
-      var key = new RenderKey(userID, streamType);
-      var callback = QueryCallbacks(instance, key);
-      if (callback == null) {
-        return;
-      }
-
       var videoFrame =
           new TRTCVideoFrame { videoFormat = frame.videoFormat, bufferType = frame.bufferType };
       videoFrame.data = frame.data;
@@ -1118,7 +1134,17 @@ namespace trtc {
       // videoFrame.textureId = textureId;
       videoFrame.rotation = frame.rotation;
 
-      callback.onRenderVideoFrame(userID, streamType, videoFrame);
+      var key = new RenderKey(userID, streamType);
+      var callback = QueryCallbacks(instance, key);
+      if (callback != null) {
+        callback.onRenderVideoFrame(userID, streamType, videoFrame);
+      }
+      
+      var keyWithUserID = new RenderKey(userID);
+      var newCallback = QueryCallbacks(instance, keyWithUserID);
+      if (newCallback != null) {
+        newCallback.onRenderVideoFrame(userID, streamType, videoFrame);
+      }
     }
   }
 

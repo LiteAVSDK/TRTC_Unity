@@ -7,6 +7,7 @@ import { LiteavAudioRoutingManager } from "./liteav_audio_routing_manager";
 import { LiteavAudioEventMonitor } from './liteav_audio_event_monitor';
 import { LiteavAudioPermissionRequester } from "./liteav_audio_permission_requester";
 import { LiteavAppRotationMonitor } from "./liteav_app_rotation_monitor";
+import { RawFileUtils } from "./liteav_app_raw_file_utils";
 import { Context } from '@ohos.abilityAccessCtrl';
 import LiteAVSDKNative from 'libliteavsdk.so';
 
@@ -18,6 +19,7 @@ registerExtraClass(LiteavAudioRoutingManager);
 registerExtraClass(LiteavAudioEventMonitor);
 registerExtraClass(LiteavAudioPermissionRequester);
 registerExtraClass(LiteavAppRotationMonitor);
+registerExtraClass(RawFileUtils);
 
 export function registerExtraClass(func: Function) {
   classes[func.name] = func;

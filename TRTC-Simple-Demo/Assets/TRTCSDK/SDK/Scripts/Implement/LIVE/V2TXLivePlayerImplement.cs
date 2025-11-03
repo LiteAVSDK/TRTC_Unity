@@ -92,7 +92,7 @@ namespace liteav {
       }
     }
 
-    public override int enableObserverVideoFrame(bool enable,
+    public override int enableObserveVideoFrame(bool enable,
                                                  V2TXLivePixelFormat pixelFormat,
                                                  V2TXLiveBufferType bufferType) {
       return V2TXLivePlayerNative.v2tx_live_player_enable_observer_video_frame(

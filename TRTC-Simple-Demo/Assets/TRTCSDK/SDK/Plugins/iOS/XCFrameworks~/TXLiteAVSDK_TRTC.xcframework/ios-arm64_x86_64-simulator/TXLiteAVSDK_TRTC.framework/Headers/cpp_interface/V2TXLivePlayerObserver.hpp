@@ -180,6 +180,17 @@ class V2TXLivePlayerObserver {
      */
     virtual void onStreamSwitched(V2TXLivePlayer* player, const char* url, int32_t code) {
     }
+
+    /**
+     * 画中画状态变更回调
+     *
+     * @note  调用 {@link V2TXLivePlayer} 中的 `enablePictureInPicture` 开启画中画之后，会收到这个回调通知。
+     * @param player    回调该通知的播放器对象。
+     * @param state     画中画的状态。
+     * @param extraInfo 扩展信息。
+     */
+    virtual void onPictureInPictureStateUpdate(V2TXLivePlayer* player, V2TXLivePictureInPictureState state, const char* message, void* extraInfo) {
+    }
 };
 
 }  // namespace liteav

@@ -128,6 +128,16 @@ PlayerSettings:
   switchNVNMaxPublicSamplerIDCount: 0
   switchNVNGraphicsFirmwareMemory: 32
   switchMaxWorkerMultiple: 8
+  openHarmonyStartInFullscreen: 1
+  openHarmonyRenderOutsideSafeArea: 1
+  openHarmonyResizableWindow: 0
+  openHarmonyEnableLowLatencyAudio: 0
+  openHarmonyFullscreenMode: 1
+  openHarmonyBlitType: 0
+  openHarmonyDefaultWindowWidth: 1920
+  openHarmonyDefaultWindowHeight: 1080
+  openHarmonyMinimumWindowWidth: 400
+  openHarmonyMinimumWindowHeight: 300
   stadiaPresentMode: 0
   stadiaTargetFramerate: 0
   vulkanNumSwapchainBuffers: 3
@@ -136,6 +146,8 @@ PlayerSettings:
   vulkanEnableLateAcquireNextImage: 0
   vulkanEnableCommandBufferRecycling: 1
   loadStoreDebugModeEnabled: 0
+  visionOSBundleVersion: 1.0
+  tvOSBundleVersion: 1.0
   bundleVersion: 1.0
   preloadedAssets: []
   metroInputSource: 0
@@ -159,6 +171,7 @@ PlayerSettings:
   androidMaxAspectRatio: 2.1
   applicationIdentifier:
     Android: com.tencent.trtc.sampledemo.unity
+    OpenHarmony: com.tencent.trtc.sampledemo.unity
     Standalone: com.tencent.trtc.sampledemo.unity
     iPhone: com.tencent.trtc.demo.unity
   buildNumber:
@@ -472,6 +485,98 @@ PlayerSettings:
       m_Height: 1024
       m_Kind: 4
       m_SubKind: App Store
+  - m_BuildTarget: OpenHarmony
+    m_Icons:
+    - m_Textures: []
+      m_Width: 432
+      m_Height: 432
+      m_Kind: 2
+      m_SubKind: 
+    - m_Textures: []
+      m_Width: 324
+      m_Height: 324
+      m_Kind: 2
+      m_SubKind: 
+    - m_Textures: []
+      m_Width: 216
+      m_Height: 216
+      m_Kind: 2
+      m_SubKind: 
+    - m_Textures: []
+      m_Width: 162
+      m_Height: 162
+      m_Kind: 2
+      m_SubKind: 
+    - m_Textures: []
+      m_Width: 108
+      m_Height: 108
+      m_Kind: 2
+      m_SubKind: 
+    - m_Textures: []
+      m_Width: 81
+      m_Height: 81
+      m_Kind: 2
+      m_SubKind: 
+    - m_Textures: []
+      m_Width: 192
+      m_Height: 192
+      m_Kind: 1
+      m_SubKind: 
+    - m_Textures: []
+      m_Width: 144
+      m_Height: 144
+      m_Kind: 1
+      m_SubKind: 
+    - m_Textures: []
+      m_Width: 96
+      m_Height: 96
+      m_Kind: 1
+      m_SubKind: 
+    - m_Textures: []
+      m_Width: 72
+      m_Height: 72
+      m_Kind: 1
+      m_SubKind: 
+    - m_Textures: []
+      m_Width: 48
+      m_Height: 48
+      m_Kind: 1
+      m_SubKind: 
+    - m_Textures: []
+      m_Width: 36
+      m_Height: 36
+      m_Kind: 1
+      m_SubKind: 
+    - m_Textures: []
+      m_Width: 192
+      m_Height: 192
+      m_Kind: 0
+      m_SubKind: 
+    - m_Textures: []
+      m_Width: 144
+      m_Height: 144
+      m_Kind: 0
+      m_SubKind: 
+    - m_Textures: []
+      m_Width: 96
+      m_Height: 96
+      m_Kind: 0
+      m_SubKind: 
+    - m_Textures: []
+      m_Width: 72
+      m_Height: 72
+      m_Kind: 0
+      m_SubKind: 
+    - m_Textures: []
+      m_Width: 48
+      m_Height: 48
+      m_Kind: 0
+      m_SubKind: 
+    - m_Textures: []
+      m_Width: 36
+      m_Height: 36
+      m_Kind: 0
+      m_SubKind: 
   m_BuildTargetBatching: []
   m_BuildTargetShaderSettings: []
   m_BuildTargetGraphicsJobs:
@@ -788,6 +893,7 @@ PlayerSettings:
   platformArchitecture: {}
   scriptingBackend:
     Android: 1
+    OpenHarmony: 1
     Standalone: 1
   il2cppCompilerConfiguration:
     Android: 1
@@ -893,6 +999,32 @@ PlayerSettings:
   embeddedLinuxEnableGamepadInput: 1
   hmiLogStartupTiming: 0
   hmiCpuConfiguration: 
+  openHarmonySplashScreen: {fileID: 0}
+  openHarmonySplashScreenScale: 0
+  OpenHarmonyTargetArchitectures: 2
+  openHarmonyClientID: 
+  openHarmonyAppID: 
+  openHarmonyDeviceTypes: 7
+  openHarmonySupportWindowModes: 1
+  OpenHarmonyBundleVersionCode: 1
+  forceOpenHarmonyInternetPermission: 0
+  forceOpenHarmonySDCardPermission: 0
+  openHarmonyUseLowAccuracyLocation: 0
+  openHarmonyPredefinedPermissions:
+  - ohos.permission.KEEP_BACKGROUND_RUNNING
+  - ohos.permission.INTERNET
+  - ohos.permission.USE_BLUETOOTH
+  - ohos.permission.GET_BUNDLE_INFO
+  - ohos.permission.GET_NETWORK_INFO
+  - ohos.permission.GET_WIFI_INFO
+  - ohos.permission.MODIFY_AUDIO_SETTINGS
+  - ohos.permission.MICROPHONE
+  - ohos.permission.CAMERA
+  OpenHarmonyKeystoreName: 
+  OpenHarmonyKeyaliasName: 
+  OpenHarmonyProfile: 
+  OpenHarmonyCertificate: 
+  OpenHarmonyUseCustomKeystore: 0
   apiCompatibilityLevel: 6
   activeInputHandler: 0
   windowsGamepadBackendHint: 0

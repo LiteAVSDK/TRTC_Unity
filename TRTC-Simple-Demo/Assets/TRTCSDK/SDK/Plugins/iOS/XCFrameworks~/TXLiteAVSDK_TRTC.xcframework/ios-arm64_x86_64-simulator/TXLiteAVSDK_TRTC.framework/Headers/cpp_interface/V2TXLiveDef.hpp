@@ -142,7 +142,7 @@ struct V2TXLiveVideoEncoderParam {
 
     /// 【字段含义】目标视频码率，SDK 会按照目标码率进行编码，只有在弱网络环境下才会主动降低视频码率。
     /// 【推荐取值】请参考 V2TXLiveVideoResolution 在各档位注释的最佳码率，也可以在此基础上适当调高。
-    ///           比如：V2TXLiveVideoResolution1280x720 对应 1200kbps 的目标码率，您也可以设置为 1500kbps 用来获得更好的观感清晰度。
+    ///           例如：V2TXLiveVideoResolution1280x720 对应 1200kbps 的目标码率，您也可以设置为 1500kbps 用来获得更好的观感清晰度。
     /// 【特别说明】您可以通过同时设置 videoBitrate 和 minVideoBitrate 两个参数，用于约束 SDK 对视频码率的调整范围：
     ///  - 如果您将 videoBitrate 和 minVideoBitrate 设置为同一个值，等价于关闭 SDK 对视频码率的自适应调节能力。
     uint32_t videoBitrate;
@@ -222,7 +222,10 @@ enum V2TXLivePixelFormat {
     V2TXLivePixelFormatBGRA32,
 
     ///  RGBA32
-    V2TXLivePixelFormatRGBA32
+    V2TXLivePixelFormatRGBA32,
+
+    /// OpenGL 2D 纹理。
+    V2TXLivePixelFormatTexture2D,
 
 };
 
@@ -238,7 +241,10 @@ enum V2TXLiveBufferType {
     V2TXLiveBufferTypeUnknown,
 
     ///  二进制Buffer类型。
-    V2TXLiveBufferTypeByteBuffer
+    V2TXLiveBufferTypeByteBuffer,
+
+    ///  直接操作纹理 ID，性能最好，画质损失最少。
+    V2TXLiveBufferTypeTexture
 
 };
 
@@ -286,8 +292,39 @@ struct V2TXLiveVideoFrame {
     ///  【字段含义】视频帧的顺时针旋转角度。
     V2TXLiveRotation rotation;
 
-    V2TXLiveVideoFrame() : pixelFormat(V2TXLivePixelFormatUnknown), bufferType(V2TXLiveBufferTypeUnknown), data(nullptr), length(0), width(0), height(0), rotation(V2TXLiveRotation0) {
+    ///  【字段含义】视频纹理ID。
+    int textureId;
+
+    V2TXLiveVideoFrame() : pixelFormat(V2TXLivePixelFormatUnknown), bufferType(V2TXLiveBufferTypeUnknown), data(nullptr), length(0), width(0), height(0), rotation(V2TXLiveRotation0), textureId(0) {
     }
+};
+
+/**
+ * 画中画的状态
+ */
+enum V2TXLivePictureInPictureState {
+
+    /// 未定义。
+    V2TXLivePictureInPictureStateUndefined,
+
+    /// 画中画发生错误。
+    V2TXLivePictureInPictureStateOccurError,
+
+    /// 画中画将要开始。
+    V2TXLivePictureInPictureStateWillStart,
+
+    /// 画中画已经开始。
+    V2TXLivePictureInPictureStateDidStart,
+
+    /// 画中画将要停止。
+    V2TXLivePictureInPictureStateWillStop,
+
+    /// 画中画已经停止。
+    V2TXLivePictureInPictureStateDidStop,
+
+    /// 画中画恢复用户界面。
+    V2TXLivePictureInPictureStateRestoreUI
+
 };
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -301,13 +338,13 @@ struct V2TXLiveVideoFrame {
  */
 enum V2TXLiveAudioQuality {
 
-    ///  语音音质：采样率：16k；单声道；音频码率：16kbps；适合语音通话为主的场景，比如在线会议，语音通话。
+    ///  语音音质：采样率：16k；单声道；音频码率：16kbps；适合语音通话为主的场景，例如在线会议，语音通话。
     V2TXLiveAudioQualitySpeech,
 
     ///  默认音质：采样率：48k；单声道；音频码率：50kbps；SDK 默认的音频质量，如无特殊需求推荐选择之。
     V2TXLiveAudioQualityDefault,
 
-    ///  音乐音质：采样率：48k；双声道 + 全频带；音频码率：128kbps；适合需要高保真传输音乐的场景，比如K歌、音乐直播等。
+    ///  音乐音质：采样率：48k；双声道 + 全频带；音频码率：128kbps；适合需要高保真传输音乐的场景，例如K歌、音乐直播等。
     V2TXLiveAudioQualityMusic
 
 };
@@ -492,6 +529,130 @@ enum V2TXLivePushStatus {
     ///  重连服务器中。
     V2TXLivePushStatusReconnecting
 
+};
+
+/**
+ * 混流输入类型配置
+ */
+enum V2TXLiveMixInputType {
+
+    ///  混入音视频。
+    V2TXLiveMixInputTypeAudioVideo,
+
+    ///  只混入视频。
+    V2TXLiveMixInputTypePureVideo,
+
+    ///  只混入音频。
+    V2TXLiveMixInputTypePureAudio,
+
+};
+
+/**
+ * 云端混流中每一路子画面的位置信息
+ */
+struct V2TXLiveMixStream {
+    ///  【字段含义】参与混流的 userId。
+    const char* userId;
+
+    ///  【字段含义】参与混流的 userId 所在对应的推流 streamId，nil 表示当前推流 streamId。
+    const char* streamId;
+
+    ///  【字段含义】图层位置 x 坐标（绝对像素值）。
+    uint32_t x;
+
+    ///  【字段含义】图层位置 y 坐标（绝对像素值）。
+    uint32_t y;
+
+    ///  【字段含义】图层位置宽度（绝对像素值）。
+    uint32_t width;
+
+    ///  【字段含义】图层位置高度（绝对像素值）。
+    uint32_t height;
+
+    ///  【字段含义】图层层次（1 - 15）不可重复。
+    uint32_t zOrder;
+
+    ///  【字段含义】该直播流的输入类型。
+    V2TXLiveMixInputType inputType;
+
+    V2TXLiveMixStream() : userId(""), streamId(""), x(0), y(0), width(0), height(0), zOrder(0), inputType(V2TXLiveMixInputTypeAudioVideo) {
+    }
+};
+
+/**
+ * 云端混流（转码）配置
+ */
+struct V2TXLiveTranscodingConfig {
+    ///  【字段含义】最终转码后的视频分辨率的宽度。
+    /// 【推荐取值】推荐值：360px，如果你是纯音频推流，请将 width × height 设为 0px × 0px，否则混流后会携带一条画布背景的视频流。
+    uint32_t videoWidth;
+
+    ///  【字段含义】最终转码后的视频分辨率的高度。
+    /// 【推荐取值】推荐值：640px，如果你是纯音频推流，请将 width × height 设为 0px × 0px，否则混流后会携带一条画布背景的视频流。
+    uint32_t videoHeight;
+
+    ///  【字段含义】最终转码后的视频分辨率的码率（kbps）。
+    /// 【推荐取值】如果填0，后台会根据 videoWidth 和 videoHeight 来估算码率，您也可以参考枚举定义 V2TXLiveVideoResolution 的注释。
+    uint32_t videoBitrate;
+
+    ///  【字段含义】最终转码后的视频分辨率的帧率（FPS）。
+    /// 【推荐取值】默认值：15fps，取值范围是 (0,30]。
+    uint32_t videoFramerate;
+
+    ///  【字段含义】最终转码后的视频分辨率的关键帧间隔（又称为 GOP）。
+    /// 【推荐取值】默认值：2，单位为秒，取值范围是 [1,8]。
+    uint32_t videoGOP;
+
+    ///  【字段含义】混合后画面的底色颜色，默认为黑色，格式为十六进制数字，例如：“0x61B9F1” 代表 RGB 分别为(97,158,241)。
+    /// 【推荐取值】默认值：0x000000，黑色。
+    uint32_t backgroundColor;
+
+    ///  【字段含义】混合后画面的背景图。
+    /// 【推荐取值】默认值：nil，即不设置背景图。
+    /// 【特别说明】背景图需要您事先在 “[控制台](https://console.cloud.tencent.com/trtc) => 应用管理 => 功能配置 => 素材管理” 中上传，
+    ///            上传成功后可以获得对应的“图片ID”，然后将“图片ID”转换成字符串类型并设置到 backgroundImage 里即可。
+    ///            例如：假设“图片ID” 为 63，可以设置 backgroundImage = "63"。
+    const char* backgroundImage;
+
+    ///  【字段含义】最终转码后的音频采样率。
+    /// 【推荐取值】默认值：48000Hz。支持12000HZ、16000HZ、22050HZ、24000HZ、32000HZ、44100HZ、48000HZ。
+    uint32_t audioSampleRate;
+
+    ///  【字段含义】最终转码后的音频码率。
+    /// 【推荐取值】默认值：64kbps，取值范围是 [32，192]，单位：kbps。
+    uint32_t audioBitrate;
+
+    ///  【字段含义】最终转码后的音频声道数。
+    /// 【推荐取值】默认值：1。取值范围为 [1,2] 中的整型。
+    uint32_t audioChannels;
+
+    ///  【字段含义】每一路子画面的位置信息。
+    V2TXLiveMixStream* mixStreams;
+
+    ///  【字段含义】数组 mixStreams 的元素个数。
+    uint32_t mixStreamSize;
+
+    ///  【字段含义】输出到 CDN 上的直播流 ID。
+    ///          如不设置该参数，SDK 会执行默认逻辑，即房间里的多路流会混合到该接口调用者的视频流上，也就是 A + B => A。
+    ///          如果设置该参数，SDK 会将房间里的多路流混合到您指定的直播流 ID 上，也就是 A + B => C。
+    /// 【推荐取值】默认值：nil，即房间里的多路流会混合到该接口调用者的视频流上。
+    const char* outputStreamId;
+
+    V2TXLiveTranscodingConfig()
+        : videoWidth(0),
+          videoHeight(0),
+          videoBitrate(0),
+          videoFramerate(15),
+          videoGOP(2),
+          backgroundColor(0x000000),
+          backgroundImage(""),
+          audioSampleRate(48000),
+          audioBitrate(64),
+          audioChannels(1),
+          mixStreams(nullptr),
+          mixStreamSize(0),
+          outputStreamId("") {
+    }
 };
 
 /**

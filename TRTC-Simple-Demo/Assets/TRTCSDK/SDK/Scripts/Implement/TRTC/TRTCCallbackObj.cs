@@ -6,14 +6,15 @@ using UnityEngine;
 namespace trtc {
   internal sealed class TRTCCallbackObj {
     private readonly string _gameObjName;
-    private readonly TRTCActionQueue _actionQueue;
+    private readonly TRTCActionQueue _actionQueue = new TRTCActionQueue();
 
     internal TRTCCallbackObj(string gameObjName) {
       _gameObjName = gameObjName;
       TryDestroy(_gameObjName);
 
       var callbackObj = new GameObject(_gameObjName) { hideFlags = HideFlags.HideInHierarchy };
-      _actionQueue = callbackObj.AddComponent<TRTCActionQueue>();
+      TRTCEventLooper eventLooper = callbackObj.AddComponent<TRTCEventLooper>();
+      eventLooper.SetActionQueue(_actionQueue);
       Object.DontDestroyOnLoad(callbackObj);
     }
 
@@ -24,10 +25,6 @@ namespace trtc {
         var obj = GameObject.Find(gameObjName);
         if (ReferenceEquals(obj, null)) {
           return;
-        }
-        var queue = obj.GetComponent<TRTCActionQueue>();
-        if (null != queue) {
-          queue.Destroy();
         }
         Object.Destroy(obj);
       } catch (System.Exception exception) {

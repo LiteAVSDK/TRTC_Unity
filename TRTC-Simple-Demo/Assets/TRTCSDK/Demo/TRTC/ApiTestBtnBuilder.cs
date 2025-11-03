@@ -52,11 +52,7 @@ namespace TRTCCUnityDemo {
 
         new ApiFuncObj("ConnectOtherRoom", "ConnectOtherRoomClick", "请求跨房通话-1908-345"),
         new ApiFuncObj("disconnectOtherRoom", "disconnectOtherRoomClick", "关闭跨房连麦"),
-        new ApiFuncObj("switchRoom", "switchRoomClick", "切换房间-1907"),
-        new ApiFuncObj("startPublishing", "startPublishingClick", "启动旁路推流到CDN"),
-        new ApiFuncObj("stopPublishing", "stopPublishingClick", "停止旁路推流到CDN"),
-        new ApiFuncObj("startPublishMediaStream", "startPublishMediaStreamClick", "启动发布媒体流"),
-        new ApiFuncObj("stopPublishMediaStream", "stopPublishMediaStreamClick", "停止发布媒体流"),
+        new ApiFuncObj("switchRoom", "switchRoomClick", "切换房间-1907"), 
         new ApiFuncObj("enableSmallVideoStream-true", "enableSmallVideoStreamClick",
                        "开启大小画面双路编码模式"),
         new ApiFuncObj("enableSmallVideoStream-false", "disEnableSmallVideoStreamClick",
@@ -65,6 +61,12 @@ namespace TRTCCUnityDemo {
                        "自动订阅远端音视频(进房前调)"),
         new ApiFuncObj("setDefaultStreamRecvMode-disAuto", "setDefaultStreamRecvModeDisAutoClick",
                        "手动订阅远端音视频(进房前调)")
+      });
+      apiList.Add("startPublishMediaStream相关接口", new[] {
+        new ApiFuncObj("BigStreamToCdn", "TRTCPublishBigStreamToCdnClick", "将主路流推到cdn"),
+        new ApiFuncObj("MixStreamToRoom", "TRTCPublishMixStreamToRoomClick", "将当前用户及用户345流推到房间678"),
+        new ApiFuncObj("updatePublishMediaStream", "updatePublishMediaStreamClick", "更新发布媒体流"),
+        new ApiFuncObj("stopPublishMediaStream", "stopPublishMediaStreamClick", "停止发布媒体流")
       });
       apiList.Add("音频相关接口函数", new[] {
         new ApiFuncObj("startLocalAudio", "startLocalAudioClick", "开启本地音频"),

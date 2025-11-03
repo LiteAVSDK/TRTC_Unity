@@ -25,13 +25,13 @@ public class LivePlayerSceneScript : MonoBehaviour {
 #if PLATFORM_ANDROID
     Debug.Log("PLATFORM_ANDROID");
     int res =
-        _mV2TXLive.enableObserverVideoFrame(true, V2TXLivePixelFormat.V2TXLivePixelFormatRGBA32,
+        _mV2TXLive.enableObserveVideoFrame(true, V2TXLivePixelFormat.V2TXLivePixelFormatRGBA32,
                                             V2TXLiveBufferType.V2TXLiveBufferTypeByteBuffer);
     Debug.Log("PLATFORM_ANDROID res :" + res.ToString());
 #else
     Debug.Log("PLATFORM_ALL");
     int res =
-        _mV2TXLive.enableObserverVideoFrame(true, V2TXLivePixelFormat.V2TXLivePixelFormatBGRA32,
+        _mV2TXLive.enableObserveVideoFrame(true, V2TXLivePixelFormat.V2TXLivePixelFormatBGRA32,
                                             V2TXLiveBufferType.V2TXLiveBufferTypeByteBuffer);
     Debug.Log("PLATFORM_ANDROID res :" + res.ToString());
 #endif

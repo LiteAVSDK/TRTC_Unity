@@ -126,7 +126,7 @@ LITEAV_EXPORT @interface V2TXLiveVideoEncoderParam : NSObject
 
 /// 【字段含义】目标视频码率，SDK 会按照目标码率进行编码，只有在弱网络环境下才会主动降低视频码率。
 /// 【推荐取值】请参考 V2TXLiveVideoResolution 在各档位注释的最佳码率，也可以在此基础上适当调高。
-///           比如：V2TXLiveVideoResolution1280x720 对应 1200kbps 的目标码率，您也可以设置为 1500kbps 用来获得更好的观感清晰度。
+///           例如：V2TXLiveVideoResolution1280x720 对应 1200kbps 的目标码率，您也可以设置为 1500kbps 用来获得更好的观感清晰度。
 /// 【特别说明】您可以通过同时设置 videoBitrate 和 minVideoBitrate 两个参数，用于约束 SDK 对视频码率的调整范围：
 ///  - 如果您将 videoBitrate 和 minVideoBitrate 设置为同一个值，等价于关闭 SDK 对视频码率的自适应调节能力。
 @property(nonatomic, assign) int videoBitrate;
@@ -312,13 +312,13 @@ typedef NS_ENUM(NSInteger, V2TXLivePictureInPictureState) {
  */
 typedef NS_ENUM(NSInteger, V2TXLiveAudioQuality) {
 
-    ///  语音音质：采样率：16k；单声道；音频码率：16kbps；适合语音通话为主的场景，比如在线会议，语音通话。
+    ///  语音音质：采样率：16k；单声道；音频码率：16kbps；适合语音通话为主的场景，例如在线会议，语音通话。
     V2TXLiveAudioQualitySpeech,
 
     ///  默认音质：采样率：48k；单声道；音频码率：50kbps；SDK 默认的音频质量，如无特殊需求推荐选择之。
     V2TXLiveAudioQualityDefault,
 
-    ///  音乐音质：采样率：48k；双声道 + 全频带；音频码率：128kbps；适合需要高保真传输音乐的场景，比如K歌、音乐直播等。
+    ///  音乐音质：采样率：48k；双声道 + 全频带；音频码率：128kbps；适合需要高保真传输音乐的场景，例如K歌、音乐直播等。
     V2TXLiveAudioQualityMusic
 
 };
@@ -591,7 +591,7 @@ LITEAV_EXPORT @interface V2TXLiveTranscodingConfig : NSObject
 /// 【推荐取值】默认值：2，单位为秒，取值范围是 [1,8]。
 @property(nonatomic, assign) NSUInteger videoGOP;
 
-///  【字段含义】混合后画面的底色颜色，默认为黑色，格式为十六进制数字，比如：“0x61B9F1” 代表 RGB 分别为(97,158,241)。
+///  【字段含义】混合后画面的底色颜色，默认为黑色，格式为十六进制数字，例如：“0x61B9F1” 代表 RGB 分别为(97,158,241)。
 /// 【推荐取值】默认值：0x000000，黑色。
 @property(nonatomic, assign) NSUInteger backgroundColor;
 

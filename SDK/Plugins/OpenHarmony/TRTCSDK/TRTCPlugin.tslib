@@ -1,0 +1,13 @@
+import * as LiteavBaseJS from './liteav_base/liteav_module_entry'
+
+export class LiteavBase {
+  public static initialize(){
+    LiteavBaseJS.initialize(globalThis.context);
+  }
+}
+
+export function RegisterTRTCPlugin() {
+  var register = {}
+  register["LiteavBase"] = LiteavBase;
+  return register;
+}

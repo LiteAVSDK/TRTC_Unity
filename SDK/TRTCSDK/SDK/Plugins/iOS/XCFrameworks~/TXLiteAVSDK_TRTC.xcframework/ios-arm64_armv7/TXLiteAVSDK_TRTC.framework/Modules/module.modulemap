@@ -1,0 +1,6 @@
+framework module TXLiteAVSDK_TRTC {
+  umbrella header "TXLiteAVSDK.h"
+
+  export *
+  module * { export * }
+}

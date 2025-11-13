@@ -137,12 +137,10 @@ namespace TRTCCUnityDemo {
       var version = mTRTCCloud.getSDKVersion();
       LogManager.Log("trtc sdk version is : " + version);
 
-      var trtcParams =
-          new TRTCParams {
-            sdkAppId = GenerateTestUserSig.SDKAPPID,
-            roomId = uint.Parse(DataManager.GetInstance().GetRoomID())
-          };
-      trtcParams.strRoomId = trtcParams.roomId.ToString();
+      var trtcParams = new TRTCParams();
+      trtcParams.sdkAppId = GenerateTestUserSig.SDKAPPID;
+      trtcParams.roomId = uint.Parse(DataManager.GetInstance().GetRoomID());  // If your business's roomid is a numeric type, please use this.
+      // trtcParams.strRoomId = DataManager.GetInstance().GetRoomID();   // If your business's roomid is a string type, please use this.
       trtcParams.userId = DataManager.GetInstance().GetUserID();
       trtcParams.userSig =
           GenerateTestUserSig.GetInstance().GenTestUserSig(DataManager.GetInstance().GetUserID());

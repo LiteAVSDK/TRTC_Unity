@@ -75,7 +75,6 @@ namespace TRTCCUnityDemo {
 
       if (GenerateTestUserSig.SDKAPPID != 0 &&
           !string.IsNullOrEmpty(GenerateTestUserSig.SECRETKEY)) {
-        this.ConfigEnv();
         SceneManager.LoadScene("RoomScene", LoadSceneMode.Single);
       } else {
         Debug.Assert(false, "Please fill in your sdkappid && secretkey first");

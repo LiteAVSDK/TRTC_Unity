@@ -2,8 +2,8 @@
 using System.IO;
 using System.Text;
 using System.Security.Cryptography;
-using System.IO.Compression;
 using LitJson;
+using ComponentAce.Compression.Libs.zlib;
 
 
 namespace tencentyun
@@ -21,25 +21,21 @@ namespace tencentyun
 
         private static byte[] CompressBytes(byte[] sourceByte)
         {
-            using (MemoryStream outputStream = new MemoryStream())
-            {
-                using (GZipStream compressionStream = new GZipStream(outputStream, CompressionMode.Compress))
-                {
-                    compressionStream.Write(sourceByte, 0, sourceByte.Length);
-                }
-                return outputStream.ToArray();
-            }
+            MemoryStream inputStream = new MemoryStream(sourceByte);
+            Stream outStream = CompressStream(inputStream);
+            byte[] outPutByteArray = new byte[outStream.Length];
+            outStream.Position = 0;
+            outStream.Read(outPutByteArray, 0, outPutByteArray.Length);
+            return outPutByteArray;
         }
 
         private static Stream CompressStream(Stream sourceStream)
         {
-            MemoryStream outputStream = new MemoryStream();
-            using (GZipStream compressionStream = new GZipStream(outputStream, CompressionMode.Compress, true))
-            {
-                sourceStream.CopyTo(compressionStream);
-            }
-            outputStream.Position = 0;
-            return outputStream;
+            MemoryStream streamOut = new MemoryStream();
+            ZOutputStream streamZOut = new ZOutputStream(streamOut, zlibConst.Z_DEFAULT_COMPRESSION);
+            CopyStream(sourceStream, streamZOut);
+            streamZOut.finish();
+            return streamOut;
         }
 
         public static void CopyStream(System.IO.Stream input, System.IO.Stream output)

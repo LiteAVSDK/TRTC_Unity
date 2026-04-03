@@ -2,7 +2,6 @@
 // Author: makbaktan
 
 using System;
-using System.Collections.Generic;
 using System.Collections.Concurrent;
 
 namespace liteav {
@@ -25,7 +24,7 @@ namespace liteav {
         return;
       }
       WeakReference livePlayer;
-      livePlayerDic.TryRemove(instance , out livePlayer);
+      livePlayerDic.TryRemove(instance, out livePlayer);
     }
 
     public static V2TXLivePlayerImplement GetLivePlayer(IntPtr instance) {
@@ -33,8 +32,10 @@ namespace liteav {
         return null;
       }
       WeakReference livePlayer;
-      livePlayerDic.TryGetValue(instance, out livePlayer);
-      return livePlayer.Target as V2TXLivePlayerImplement;
+      if (livePlayerDic.TryGetValue(instance, out livePlayer)) {
+        return livePlayer.Target as V2TXLivePlayerImplement;
+      }
+      return null;
     }
   }
 }

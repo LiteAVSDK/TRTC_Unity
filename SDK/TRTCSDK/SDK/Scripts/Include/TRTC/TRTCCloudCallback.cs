@@ -4,7 +4,6 @@
  * Function: 腾讯云实时音视频的事件回调接口
  */
 using System;
-using System.Runtime.InteropServices;
 namespace trtc {
 
     public interface ITRTCCloudCallback {
@@ -17,7 +16,7 @@ namespace trtc {
         /**
          * 1.1 错误事件回调。
          *
-         * 错误事件，表示 SDK 抛出的不可恢复的错误，比如进入房间失败或设备开启失败等。
+         * 错误事件，表示 SDK 抛出的不可恢复的错误，例如进入房间失败或设备开启失败等。
          * 参考文档：[错误码表](https://cloud.tencent.com/document/product/647/38308)
          * @param errCode 错误码
          * @param errMsg  错误信息
@@ -28,7 +27,7 @@ namespace trtc {
         /**
          * 1.2 警告事件回调。
          *
-         * 警告事件，表示 SDK 抛出的提示性问题，比如视频出现卡顿或 CPU 使用率太高等。
+         * 警告事件，表示 SDK 抛出的提示性问题，例如视频出现卡顿或 CPU 使用率太高等。
          * 参考文档：[错误码表](https://cloud.tencent.com/document/product/647/38308)
          * @param warningCode 警告码
          * @param warningMsg 警告信息
@@ -62,7 +61,7 @@ namespace trtc {
          * 调用 TRTCCloud 中的 {@link exitRoom} 接口会执行退出房间的相关逻辑，例如释放音视频设备资源和编解码器资源等。
          * 待 SDK 占用的所有资源释放完毕后，SDK 会抛出 `onExitRoom()` 回调通知到您。
          * 如果您要再次调用 {@link enterRoom} 或者切换到其他的音视频 SDK，请等待 `onExitRoom` 回调到来后再执行相关操作。否则可能会遇到例如摄像头、麦克风设备被强占等各种异常问题。
-         * @param reason 离开房间原因，0：主动调用 exitRoom 退出房间；1：被服务器踢出当前房间；2：当前房间整个被解散 3: 服务器状态异常。
+         * @param reason 离开房间原因，0：主动调用 exitRoom 退出房间；1：被服务器移出当前房间；2：当前房间整个被解散 3: 服务器状态异常。
          */
         void onExitRoom(int reason);
 
@@ -131,7 +130,7 @@ namespace trtc {
          * - 直播类场景（{@link TRTCAppSceneLIVE} 和 {@link TRTCAppSceneVoiceChatRoom}）：该场景下的用户区分主播和观众两种角色，只有主播离开房间时才会触发该通知，观众离开房间时不会触发该通知。
          * - 通话类场景（{@link TRTCAppSceneVideoCall} 和 {@link TRTCAppSceneAudioCall}）：该场景下的用户没有角色的区分（可认为都是主播），任何用户离开房间都会触发该通知。
          * @param userId 远端用户的用户标识。
-         * @param reason 离开原因，0表示用户主动退出房间，1表示用户超时退出，2表示被踢出房间，3表示主播因切换到观众退出房间。
+         * @param reason 离开原因，0表示用户主动退出房间，1表示用户超时退出，2表示被移出房间，3表示主播因切换到观众退出房间。
          */
         void onRemoteUserLeaveRoom(String userId, int reason);
 
@@ -256,7 +255,7 @@ namespace trtc {
         /**
          * 5.1 SDK 与云端的连接已经断开。
          *
-         * SDK 会在跟云端的连接断开时抛出此事件回调，导致断开的原因大多是网络不可用或者网络切换所致，比如用户在通话中走进电梯时就可能会遇到此事件。
+         * SDK 会在跟云端的连接断开时抛出此事件回调，导致断开的原因大多是网络不可用或者网络切换所致，例如用户在通话中走进电梯时就可能会遇到此事件。
          * 在抛出此事件之后，SDK 会努力跟云端重新建立连接，重连过程中会抛出 {@link onTryToReconnect}，连接恢复后会抛出 {@link onConnectionRecovery} 。
          * 所以，SDK 会在如下三个连接相关的事件中按如下规律切换：
          * ![](https://qcloudimg.tencent-cloud.cn/raw/fb3c40a4fca55b0010d385cf3b2472cd.png)
@@ -318,7 +317,7 @@ namespace trtc {
         /**
          * 6.4 音量大小的反馈回调。
          *
-         * SDK 可以评估每一路音频的音量大小，并每隔一段时间抛出该事件回调，您可以根据音量大小在 UI 上做出相应的提示，比如`波形图`或`音量槽`。
+         * SDK 可以评估每一路音频的音量大小，并每隔一段时间抛出该事件回调，您可以根据音量大小在 UI 上做出相应的提示，例如`波形图`或`音量槽`。
          * 要完成这个功能， 您需要先调用 {@link enableAudioVolumeEvaluation} 开启这个能力并设定事件抛出的时间间隔。
          * 需要补充说明的是，无论当前房间中是否有人说话，SDK 都会按照您设定的时间间隔定时抛出此事件回调。
          * @param userVolumes 是一个数组，用于承载所有正在说话的用户的音量大小，取值范围 [0, 100]。
@@ -462,6 +461,14 @@ namespace trtc {
          * @param code 回调结果，0 表示成功，其余值表示失败，详见[错误码](https://cloud.tencent.com/document/product/647/32257)。
          * @param message 具体回调信息。
          * @param extraInfo 扩展信息字段，个别错误码可能会带额外的信息帮助定位问题。
+         * 当 code 返回值为 ERR_SERVER_PROCESS_FAILED 时，意味着服务器无法处理您的请求，此时可使用“error_code” 作为 key 获取到服务器返回的错误码，具体的错误码以及建议处理措施说明如下：
+         * - 2000: 参数错误，建议检查请求参数
+         * - 2001: 未开通直播服务，建议去直播控制台开通直播服务
+         * - 2021: 未开通转推第三方服务，建议联系产品开通转推第三方服务
+         * - 3000: 服务器内部错误，建议重试
+         * - 4006: 同一个任务并发冲突，上一个 startPublishMediaStream 任务服务器还在处理中，建议延迟重试
+         * - 4007: 同一个任务已经通过 startPublishMediaStream 启动成功，建议使用返回的 taskId 调用 updatePublishMediaStream 接口更新任务
+         * - 5001: 资源受限，建议延迟重试
          */
         void onStartPublishMediaStream(string taskID, int code, string message, string extraInfo);
 
@@ -473,6 +480,14 @@ namespace trtc {
          * @param code 回调结果，0 表示成功，其余值表示失败，详见[错误码](https://cloud.tencent.com/document/product/647/32257)。
          * @param message 具体回调信息。
          * @param extraInfo 扩展信息字段，个别错误码可能会带额外的信息帮助定位问题。
+         * 当 code 返回值为 ERR_SERVER_PROCESS_FAILED 时，意味着服务器无法处理您的请求，此时可使用“error_code” 作为 key 获取到服务器返回的错误码，具体的错误码以及建议处理措施说明如下：
+         * - 2000: 参数错误，建议检查请求参数
+         * - 2001: 未开通直播服务，建议去直播控制台开通直播服务
+         * - 2002: 找不到任务，建议调用 startPublishMediaStream 接口重新启动任务
+         * - 2018: 并发请求乱序，建议使用最新混流参数重试
+         * - 2021: 未开通转推第三方服务，建议联系产品开通转推第三方服务
+         * - 3000: 服务器内部错误，建议重试
+         * - 4003: 任务正在退出中，建议先调用 stopPublishMediaStream 接口停止任务，再调用 startPublishMediaStream 接口启动任务
          */
         void onUpdatePublishMediaStream(string taskID, int code, string message, string extraInfo);
 
@@ -484,6 +499,11 @@ namespace trtc {
          * @param code 回调结果，0 表示成功，其余值表示失败，详见[错误码](https://cloud.tencent.com/document/product/647/32257)。
          * @param message 具体回调信息。
          * @param extraInfo 扩展信息字段，个别错误码可能会带额外的信息帮助定位问题。
+         * 当 code 返回值为 ERR_SERVER_PROCESS_FAILED 时，意味着服务器无法处理您的请求，此时可使用“error_code” 作为 key 获取到服务器返回的错误码，具体的错误码以及建议处理措施说明如下：
+         * - 2000: 参数错误，建议检查请求参数
+         * - 2002: 找不到任务，无需处理
+         * - 3000: 服务器内部错误，建议重试
+         * - 4003: 任务正在退出中，无需处理
          */
         void onStopPublishMediaStream(string taskID, int code, string message, string extraInfo);
 
@@ -498,7 +518,7 @@ namespace trtc {
          * - 1：正在连接 TRTC 服务器和 CDN 服务器。若无法立刻成功，TRTC 后台服务会多次重试尝试推流，并返回该状态（5s回调一次）。如成功进行推流，则进入状态 2；如服务器出错或 60 秒内未成功推流，则进入状态 4。
          * - 2：CDN 推流正在进行。在成功推流后，会返回该状态。
          * - 3：TRTC 服务器和 CDN 服务器推流中断，正在恢复。当 CDN 出现异常，或推流短暂中断时，TRTC 后台服务会自动尝试恢复推流，并返回该状态（5s回调一次）。如成功恢复推流，则进入状态 2；如服务器出错或 60 秒内未成功恢复，则进入状态 4。
-         * - 4：TRTC 服务器和 CDN 服务器推流中断，且恢复或连接超时。即此时推流失败，你可以再次调用 {@link updatePublishMediaStream} 尝试推流。
+         * - 4：TRTC 服务器和 CDN 服务器推流中断，且恢复或连接超时。即此时推流失败，您可以再次调用 {@link updatePublishMediaStream} 尝试推流。
          * - 5：正在断开 TRTC 服务器和 CDN 服务器。在您调用 {@link stopPublishMediaStream} 时，TRTC 后台服务会依次同步状态 5 和状态 0。
          * @param code 推流结果，0 表示成功，其余值表示出错，详见[错误码](https://cloud.tencent.com/document/product/647/32257)。
          * @param message 具体推流信息。
@@ -556,6 +576,27 @@ namespace trtc {
         /////////////////////////////////////////////////////////////////////////////////
         //
         //                    本地录制和本地截图的事件回调
+        //
+        /////////////////////////////////////////////////////////////////////////////////
+
+        /**
+         * 10.5 本地截图完成的事件回调。
+         *
+         * @param userId 用户标识，如果 userId 为空字符串，则代表截取的是本地画面。
+         * @param type   视频流类型。
+         * @param data   截图数据，为 nullptr 表示截图失败。
+         * @param length 截图数据长度，对于BGRA32而言，`length = width * height * 4`。
+         * @param width  截图画面的宽度。
+         * @param height 截图画面的高度。
+         * @param format 截图数据格式，目前只支持 {@link TRTCVideoPixelFormat_BGRA32}。
+         * @param bmp 截图结果，如果 bmp 为 null 代表本次截图操作失败。
+         * @note 全平台 C++ 接口和 Java 接口在参数上是不一样的，C++ 接口用 7 个参数描述一个截图画面，Java 接口只用一个 Bitmap 描述一个截图画面。
+         */
+        void onSnapshotComplete(string userId, TRTCVideoStreamType type, byte[] data, UInt32 length, UInt32 width, UInt32 height, TRTCVideoPixelFormat format);
+
+        /////////////////////////////////////////////////////////////////////////////////
+        //
+        //                    调试相关事件回调
         //
         /////////////////////////////////////////////////////////////////////////////////
 

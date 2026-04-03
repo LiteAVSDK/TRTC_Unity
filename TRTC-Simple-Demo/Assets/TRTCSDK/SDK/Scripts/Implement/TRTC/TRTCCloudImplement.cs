@@ -5,7 +5,11 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
+#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_ANDROID || UNITY_IOS || UNITY_OPENHARMONY || UNITY_WEBGL
 using UnityEngine;
+#else
+using System.Windows;
+#endif
 
 namespace trtc {
   public class TRTCCloudImplement : ITRTCCloud {
@@ -31,7 +35,7 @@ namespace trtc {
 #if UNITY_ANDROID && !UNITY_EDITOR
       var trtcCloudCls = new AndroidJavaClass("com.tencent.trtc.TRTCCloud");
       var javaSDKVersion = trtcCloudCls.CallStatic<string>("getSDKVersion");
-      Debug.LogFormat("TRTCCloud SDKVersion:{0}", javaSDKVersion);
+      TRTCLogger.Info("TRTCCloud SDKVersion: " + javaSDKVersion);
 
       var androidJavaClass = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
       var currentActivity = androidJavaClass.GetStatic<AndroidJavaObject>("currentActivity");
@@ -74,7 +78,7 @@ namespace trtc {
     }
 
     ~TRTCCloudImplement() {
-      TRTCLogger.Info("destructor", "~TRTCCloudImplement");
+      TRTCLogger.Info(" ~TRTCCloudImplement");
       Destroy();
     }
 
@@ -82,12 +86,14 @@ namespace trtc {
     private static void LoadTrtcPlugin() {
       try {
         TRTCCloudNative.load_TXFFmpeg();
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
       }
 
       try {
         TRTCCloudNative.load_TXSoundTouch();
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
       }
     }
 #endif
@@ -104,7 +110,7 @@ namespace trtc {
       }
 
       CloudManager.RemoveCloudImplement(_nativeObj);
-      
+
       if (_wrapperCallback != null) {
         _wrapperCallback.OnDestroy();
         _wrapperCallback = null;
@@ -112,7 +118,8 @@ namespace trtc {
 
       if (_nativeObj != IntPtr.Zero && _nativeObj != _shareNativeObj) {
         TRTCCloudNative.trtc_cloud_destroy_sub_cloud(_shareNativeObj, _nativeObj);
-      } else {
+      }
+      else {
         TRTCCloudNative.trtc_cloud_destroy_instance(_nativeObj);
       }
       _shareNativeObj = IntPtr.Zero;
@@ -171,6 +178,10 @@ namespace trtc {
 
     // 2.1
     public override void enterRoom(ref TRTCParams param, TRTCAppScene scene) {
+      if (param.role != TRTCRoleType.TRTCRoleAnchor && param.role != TRTCRoleType.TRTCRoleAudience) {
+        param.role = TRTCRoleType.TRTCRoleAudience;
+      }
+
       var stringBuilder = new StringBuilder();
       stringBuilder.Append("{");
       stringBuilder.Append("  \"api\": \"setFramework\",");
@@ -181,13 +192,16 @@ namespace trtc {
       stringBuilder.Append("}");
       callExperimentalAPI(stringBuilder.ToString());
 
-      TRTCCloudNative.trtc_cloud_enter_room(_nativeObj, param, scene);
+      TRTCParamsInner innerParam = TRTCTypeConverter.ConvertTRTCParamsToInner(param);
+      TRTCCloudNative.trtc_cloud_enter_room(_nativeObj, innerParam, scene);
+      TRTCTypeConverter.FreeTRTCParamsInner(innerParam);
     }
 
     private void exitRoomInternal(bool stopLocalVideo) {
       if (stopLocalVideo) {
         TRTCVideoRenderViewManager.getInstance().removeAllVideoRenderView();
-      } else {
+      }
+      else {
         TRTCVideoRenderViewManager.getInstance().removeAllRemoteVideoRenderView();
         TRTCVideoRenderViewManager.getInstance().removeVideoRenderView("",
           TRTCVideoStreamType.TRTCVideoStreamTypeSub);
@@ -280,7 +294,8 @@ namespace trtc {
     public override void setMixTranscodingConfig(TRTCTranscodingConfig? config) {
       if (config == null) {
         TRTCCloudNative.trtc_cloud_set_mix_transcoding_config(_nativeObj, IntPtr.Zero);
-      } else {
+      }
+      else {
         TranscodingConfig inner_transcodingConfig = new TranscodingConfig();
         var tmpConfig = (TRTCTranscodingConfig)config;
         inner_transcodingConfig = TRTCTypeConverter.ConvertTRTCTranscodingConfig(tmpConfig);
@@ -378,18 +393,32 @@ namespace trtc {
     }
 
     // 4.1 + 4.2
+#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_ANDROID || UNITY_IOS || UNITY_OPENHARMONY || UNITY_WEBGL
     public override void startLocalPreview(bool frontCamera, GameObject view) {
       TRTCCloudNative.trtc_cloud_start_local_preview(_nativeObj, frontCamera, IntPtr.Zero);
       if (view) {
-        TRTCVideoRenderViewManager.getInstance().addVideoRenderView(view, "", 
+        TRTCVideoRenderViewManager.getInstance().addVideoRenderView(view, "",
           TRTCVideoStreamType.TRTCVideoStreamTypeBig);
       }
     }
+#else
+    public override void startLocalPreview(bool frontCamera, System.Windows.Controls.Image view) {
+      TRTCCloudNative.trtc_cloud_start_local_preview(_nativeObj, frontCamera, IntPtr.Zero);
+      if (view != null) {
+        TRTCVideoRenderViewManager.getInstance().addVideoRenderView(view, "",
+            TRTCVideoStreamType.TRTCVideoStreamTypeBig);
+      }
+    }
+    
+    public override void startLocalPreview(bool frontCamera, IntPtr hwnd) {
+      TRTCCloudNative.trtc_cloud_start_local_preview(_nativeObj, frontCamera, hwnd);
+    }
+#endif
 
     // 4.4
     public override void stopLocalPreview() {
       TRTCCloudNative.trtc_cloud_stop_local_preview(_nativeObj);
-      TRTCVideoRenderViewManager.getInstance().removeVideoRenderView( "",
+      TRTCVideoRenderViewManager.getInstance().removeVideoRenderView("",
          TRTCVideoStreamType.TRTCVideoStreamTypeBig);
     }
 
@@ -399,6 +428,7 @@ namespace trtc {
     }
 
     // 4.7
+#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_ANDROID || UNITY_IOS || UNITY_OPENHARMONY || UNITY_WEBGL
     public override void startRemoteView(string userId,
                                          TRTCVideoStreamType streamType,
                                          GameObject view) {
@@ -407,7 +437,22 @@ namespace trtc {
         TRTCVideoRenderViewManager.getInstance().addVideoRenderView(view, userId, streamType);
       }
     }
-
+#else
+    public override void startRemoteView(string userId,
+                                 TRTCVideoStreamType streamType,
+                                 System.Windows.Controls.Image view) {
+      TRTCCloudNative.trtc_cloud_start_remote_view(_nativeObj, userId, streamType, IntPtr.Zero);
+      if (view != null) {
+        TRTCVideoRenderViewManager.getInstance().addVideoRenderView(view, userId,
+            streamType);
+      }
+    }
+    public override void startRemoteView(string userId,
+                                 TRTCVideoStreamType streamType,
+                                 IntPtr hwnd) {
+      TRTCCloudNative.trtc_cloud_start_remote_view(_nativeObj, userId, streamType, hwnd);
+    }
+#endif
     // 4.9
     public override void stopRemoteView(string userId, TRTCVideoStreamType streamType) {
       TRTCCloudNative.trtc_cloud_stop_remote_view(_nativeObj, userId, streamType);
@@ -443,7 +488,7 @@ namespace trtc {
 
     // 4.15
     public override void setLocalRenderParams(TRTCRenderParams renderParams) {
-      TRTCVideoRenderViewManager.getInstance().setVideoRenderParams("", 
+      TRTCVideoRenderViewManager.getInstance().setVideoRenderParams("",
         TRTCVideoStreamType.TRTCVideoStreamTypeBig, renderParams);
     }
 
@@ -473,6 +518,13 @@ namespace trtc {
     // 4.21
     public override void setRemoteVideoStreamType(string userId, TRTCVideoStreamType type) {
       TRTCCloudNative.trtc_cloud_set_remote_video_stream_type(_nativeObj, userId, type);
+    }
+
+    // 4.22
+    public override void snapshotVideo(string userId, TRTCVideoStreamType streamType, TRTCSnapshotSourceType sourceType) {
+      using (var userIdMarshaler = new Utf8StringMarshaler(userId)) {
+        TRTCCloudNative.trtc_cloud_snapshot_video(_nativeObj, userIdMarshaler.GetUtf8IntPtr(), streamType, sourceType);
+      }
     }
 
     // 4.25
@@ -535,7 +587,8 @@ namespace trtc {
                                                      TRTCAudioVolumeEvaluateParams evaluateParams) {
       if (enable) {
         TRTCCloudNative.trtc_cloud_enable_audio_volume_evaluation(_nativeObj, true, evaluateParams);
-      } else {
+      }
+      else {
         evaluateParams.interval = 0;
         evaluateParams.enableVadDetection = false;
         evaluateParams.enableSpectrumCalculation = false;
@@ -596,18 +649,31 @@ namespace trtc {
     }
 
     // 9.1
+#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_ANDROID || UNITY_IOS || UNITY_OPENHARMONY || UNITY_WEBGL
     public override void startScreenCapture(GameObject view, TRTCVideoStreamType type, ref TRTCVideoEncParam param) {
       TRTCCloudNative.trtc_cloud_start_screen_capture(_nativeObj, IntPtr.Zero, type, ref param);
       if (view != null) {
-        TRTCVideoRenderViewManager.getInstance().addVideoRenderView(view, "", 
+        TRTCVideoRenderViewManager.getInstance().addVideoRenderView(view, "",
           TRTCVideoStreamType.TRTCVideoStreamTypeSub);
       }
     }
+#else
+    public override void startScreenCapture(System.Windows.Controls.Image view, TRTCVideoStreamType type, ref TRTCVideoEncParam param) {
+      TRTCCloudNative.trtc_cloud_start_screen_capture(_nativeObj, IntPtr.Zero, type, ref param);
+      if (view != null) {
+        TRTCVideoRenderViewManager.getInstance().addVideoRenderView(view, "",
+            TRTCVideoStreamType.TRTCVideoStreamTypeSub);
+      }
+    }
+    public override void startScreenCapture(IntPtr hwnd, TRTCVideoStreamType type, ref TRTCVideoEncParam param) {
+      TRTCCloudNative.trtc_cloud_start_screen_capture(_nativeObj, hwnd, type, ref param);
+    }
+#endif
 
     // 9.2
     public override void stopScreenCapture() {
       TRTCCloudNative.trtc_cloud_stop_screen_capture(_nativeObj);
-      TRTCVideoRenderViewManager.getInstance().removeVideoRenderView("", 
+      TRTCVideoRenderViewManager.getInstance().removeVideoRenderView("",
         TRTCVideoStreamType.TRTCVideoStreamTypeSub);
     }
 
@@ -622,7 +688,7 @@ namespace trtc {
     }
 
     public override TRTCScreenCaptureSourceInfo[] getScreenCaptureSources(SIZE thumbnailSize, SIZE iconSize) {
-      if (thumbnailSize.width <= 0 || thumbnailSize.height <= 0 || 
+      if (thumbnailSize.width <= 0 || thumbnailSize.height <= 0 ||
         iconSize.width <= 0 || iconSize.height <= 0) {
         return null;
       }
@@ -644,7 +710,8 @@ namespace trtc {
       sourceInfoLists = new TRTCScreenCaptureSourceInfo[count];
       for (var i = 0; i < count; i++) {
         ScreenCaptureSourceInfo captureSourceInfo = new ScreenCaptureSourceInfo();
-        captureSourceInfo.sourceName = new string(' ', _sourceNameLen);
+        captureSourceInfo.sourceName = Marshal.AllocHGlobal(_sourceNameLen);
+
         captureSourceInfo.thumbBGRA.buffer =
             Marshal.AllocHGlobal((int)thumbnailTrtcSize.width * (int)thumbnailTrtcSize.height * 4);
         captureSourceInfo.iconBGRA.buffer =
@@ -654,7 +721,7 @@ namespace trtc {
                                                                          ref captureSourceInfo)) {
           sourceInfoLists[i].sourceId = captureSourceInfo.sourceId;
           sourceInfoLists[i].type = captureSourceInfo.type;
-          sourceInfoLists[i].sourceName = captureSourceInfo.sourceName;
+          sourceInfoLists[i].sourceName = TRTCTypeConverter.NativeUtf8PtrToString(captureSourceInfo.sourceName);
           sourceInfoLists[i].isMainScreen = captureSourceInfo.isMainScreen;
           sourceInfoLists[i].thumbBGRA.buffer = new byte[captureSourceInfo.thumbBGRA.length];
           Marshal.Copy(captureSourceInfo.thumbBGRA.buffer, sourceInfoLists[i].thumbBGRA.buffer, 0,
@@ -665,6 +732,7 @@ namespace trtc {
         }
         Marshal.FreeHGlobal(captureSourceInfo.thumbBGRA.buffer);
         Marshal.FreeHGlobal(captureSourceInfo.iconBGRA.buffer);
+        Marshal.FreeHGlobal(captureSourceInfo.sourceName);
       }
 
       TRTCCloudNative.trtc_cloud_release_screen_capture_sources_list(sourceListPtr);
@@ -695,8 +763,7 @@ namespace trtc {
       sourceInfoLists = new TRTCScreenCaptureSourceInfo[count];
       for (var i = 0; i < count; i++) {
         ScreenCaptureSourceInfo captureSourceInfo = new ScreenCaptureSourceInfo();
-        //  Used to store application names, a data length of 512 is sufficient
-        captureSourceInfo.sourceName = new string(' ', 512);
+        captureSourceInfo.sourceName = Marshal.AllocHGlobal(_sourceNameLen);
         captureSourceInfo.thumbBGRA.buffer =
             Marshal.AllocHGlobal(thumbnailWidth * thumbnailHeight * 4);
         captureSourceInfo.iconBGRA.buffer =
@@ -706,7 +773,7 @@ namespace trtc {
                                                                          ref captureSourceInfo);
         sourceInfoLists[i].sourceId = captureSourceInfo.sourceId;
         sourceInfoLists[i].type = captureSourceInfo.type;
-        sourceInfoLists[i].sourceName = captureSourceInfo.sourceName;
+        sourceInfoLists[i].sourceName = TRTCTypeConverter.NativeUtf8PtrToString(captureSourceInfo.sourceName);
         sourceInfoLists[i].isMainScreen = captureSourceInfo.isMainScreen;
         sourceInfoLists[i].thumbBGRA.buffer = new byte[captureSourceInfo.thumbBGRA.length];
         Marshal.Copy(captureSourceInfo.thumbBGRA.buffer, sourceInfoLists[i].thumbBGRA.buffer, 0,
@@ -717,6 +784,7 @@ namespace trtc {
 
         Marshal.FreeHGlobal(captureSourceInfo.thumbBGRA.buffer);
         Marshal.FreeHGlobal(captureSourceInfo.iconBGRA.buffer);
+        Marshal.FreeHGlobal(captureSourceInfo.sourceName);
       }
 
       TRTCCloudNative.trtc_cloud_release_screen_capture_sources_list(sourceListPtr);
@@ -730,7 +798,7 @@ namespace trtc {
       ScreenCaptureSourceInfo inner_source = new ScreenCaptureSourceInfo();
       inner_source.type = source.type;
       inner_source.sourceId = source.sourceId;
-      inner_source.sourceName = source.sourceName;
+      inner_source.sourceName = TRTCTypeConverter.StringToNativeUtf8Ptr(source.sourceName);
       inner_source.isMinimizeWindow = source.isMinimizeWindow;
       inner_source.isMainScreen = source.isMainScreen;
       inner_source.x = source.x;
@@ -739,10 +807,17 @@ namespace trtc {
       inner_source.height = source.height;
 
       RECT inner_capture_rect = new RECT();
+#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_ANDROID || UNITY_IOS || UNITY_OPENHARMONY || UNITY_WEBGL
       inner_capture_rect.left = (int)captureRect.xMin;
       inner_capture_rect.top = (int)captureRect.yMin;
       inner_capture_rect.right = (int)captureRect.xMax;
       inner_capture_rect.bottom = (int)captureRect.yMax;
+#else
+      inner_capture_rect.left = (int)captureRect.Left;
+      inner_capture_rect.top = (int)captureRect.Top;
+      inner_capture_rect.right = (int)captureRect.Right;
+      inner_capture_rect.bottom = (int)captureRect.Bottom;
+#endif
 
       // TRTCScreenCaptureProperty
       ScreenCaptureProperty inner_property = new ScreenCaptureProperty();
@@ -755,6 +830,7 @@ namespace trtc {
 
       TRTCCloudNative.trtc_cloud_select_screen_capture_target(_nativeObj, inner_source,
                                                               inner_capture_rect, inner_property);
+      TRTCTypeConverter.SafeFreeHGlobal(ref inner_source.sourceName);
     }
 
     // 9.7
@@ -762,6 +838,48 @@ namespace trtc {
       TRTCCloudNative.trtc_cloud_set_sub_stream_encoder_param(
           _nativeObj, param.videoResolution, param.resMode, param.videoFps, param.videoBitrate,
           param.minVideoBitrate, param.enableAdjustRes);
+    }
+
+    // 9.8
+    public override void setSubStreamMixVolume(uint volume)
+    {
+      TRTCCloudNative.trtc_cloud_set_sub_stream_mix_volume(_nativeObj, volume);
+    }
+
+    // 9.9
+    public override void addExcludedShareWindow(IntPtr windowID)
+    {
+      TRTCCloudNative.trtc_cloud_add_excluded_share_window(_nativeObj, windowID);
+    }
+
+    // 9.10
+    public override void removeExcludedShareWindow(IntPtr windowID)
+    {
+      TRTCCloudNative.trtc_cloud_remove_excluded_share_window(_nativeObj, windowID);
+    }
+
+    // 9.11
+    public override void removeAllExcludedShareWindows()
+    {
+      TRTCCloudNative.trtc_cloud_remove_all_excluded_share_windows(_nativeObj);
+    }
+
+    // 9.12
+    public override void addIncludedShareWindow(IntPtr windowID)
+    {
+      TRTCCloudNative.trtc_cloud_add_included_share_window(_nativeObj, windowID);
+    }
+
+    // 9.13
+    public override void removeIncludedShareWindow(IntPtr windowID)
+    {
+      TRTCCloudNative.trtc_cloud_remove_included_share_window(_nativeObj, windowID);
+    }
+
+    // 9.14
+    public override void removeAllIncludedShareWindows()
+    {
+      TRTCCloudNative.trtc_cloud_remove_all_included_share_windows(_nativeObj);
     }
 
     // 10.1
@@ -852,10 +970,10 @@ namespace trtc {
       return TRTCCloudNative.trtc_cloud_set_local_video_render_callback(
           _nativeObj, pixelFormat, bufferType, _wrapperCallback.GetNativeVideoRenderCallback(key));
     }
-    
-     public override int setLocalVideoRenderCallback(TRTCVideoPixelFormat pixelFormat,
-                                                    TRTCVideoBufferType bufferType,
-                                                    ITRTCVideoRenderCallback callback) {
+
+    public override int setLocalVideoRenderCallback(TRTCVideoPixelFormat pixelFormat,
+                                                   TRTCVideoBufferType bufferType,
+                                                   ITRTCVideoRenderCallback callback) {
       var key = new RenderKey("");
       _wrapperCallback.SetAppVideoRenderCallback(key, callback);
       return TRTCCloudNative.trtc_cloud_set_local_video_render_callback(
@@ -902,7 +1020,7 @@ namespace trtc {
     public override int setLocalProcessedAudioFrameCallbackFormat(TRTCAudioFrameCallbackFormat format) {
       return TRTCCloudNative.trtc_cloud_set_local_processed_audio_frame_callback_format(_nativeObj, format);
     }
-    
+
     // 10.15
     public override int setMixedPlayAudioFrameCallbackFormat(TRTCAudioFrameCallbackFormat format) {
       return TRTCCloudNative.trtc_cloud_set_mixed_play_audio_frame_callback_format(_nativeObj, format);
@@ -914,6 +1032,10 @@ namespace trtc {
                                           int dataSize,
                                           bool reliable,
                                           bool ordered) {
+      if (data == null || dataSize == 0) {
+        return false;
+      }
+
       int ret = TRTCCloudNative.trtc_cloud_send_sustom_cmd_msg(_nativeObj, cmdId, data, dataSize,
                                                                reliable, ordered);
       return ret != 0;
@@ -921,6 +1043,10 @@ namespace trtc {
 
     // 11.2
     public override bool sendSEIMsg(byte[] data, int dataSize, int repeatCount) {
+      if (data == null || dataSize == 0) {
+        return false;
+      }
+
       int ret = TRTCCloudNative.trtc_cloud_send_sei_msg(_nativeObj, data, dataSize, repeatCount);
       return ret != 0;
     }

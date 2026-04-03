@@ -221,7 +221,7 @@ namespace trtc {
         /// 未定义的传递方式。
         TRTCVideoBufferType_Unknown = 0,
 
-        /// 使用内存 Buffer 传递视频数据，iOS：PixelBuffer；Android：用于 JNI 层的 Direct Buffer；Win：内存数据块。
+        /// 使用内存 Buffer 传递视频数据，iOS：内存数据块；Android：用于 JNI 层的 Direct Buffer；Win：内存数据块。
         TRTCVideoBufferType_Buffer = 1,
 
         /// 使用 OpengGL 纹理传递视频数据。
@@ -442,13 +442,13 @@ namespace trtc {
      */
     public enum TRTCAudioQuality {
 
-        /// 人声模式：单声道；编码码率：18kbps；具备几个模式中最强的网络抗性，适合语音通话为主的场景，比如在线会议，语音通话等。
+        /// 人声模式：单声道；编码码率：18kbps；具备几个模式中最强的网络抗性，适合语音通话为主的场景，例如在线会议，语音通话等。
         TRTCAudioQualitySpeech = 1,
 
         /// 默认模式：单声道；编码码率：50kbps；介于 Speech 和 Music 之间的档位，SDK 默认档位，推荐选择。
         TRTCAudioQualityDefault = 2,
 
-        /// 音乐模式：全频带立体声；编码码率：128kbps；适合需要高保真传输音乐的场景，比如在线K歌、音乐直播等。
+        /// 音乐模式：全频带立体声；编码码率：128kbps；适合需要高保真传输音乐的场景，例如在线K歌、音乐直播等。
         TRTCAudioQualityMusic = 3,
 
     }
@@ -780,7 +780,7 @@ namespace trtc {
     /**
      * 4.15 设置重力感应的适配模式（仅适用于移动端）。
      *
-     * v11.7版本开始支持，只在sdk内部摄像头采集场景生效
+     * v11.7 版本开始支持，只在 SDK 内部摄像头采集场景生效
      */
     public enum TRTCGravitySensorAdaptiveMode {
 
@@ -806,7 +806,7 @@ namespace trtc {
      *
      * 作为 TRTC SDK 的进房参数，只有该参数填写正确，才能顺利进入 roomId 或者 strRoomId 所指定的音视频房间。
      * 由于历史原因，TRTC 支持数字和字符串两种类型的房间号，分别是 roomId 和 strRoomId。
-     * 请注意：不要混用 roomId 和 strRoomId，因为它们之间是不互通的，比如数字 123 和字符串 “123” 在 TRTC 看来是两个完全不同的房间。
+     * 请注意：不要混用 roomId 和 strRoomId，因为它们之间是不互通的，例如数字 123 和字符串 “123” 在 TRTC 看来是两个完全不同的房间。
      */
     public struct TRTCParams {
         /// 【字段含义】应用标识（必填），腾讯云基于 sdkAppId 完成计费统计。
@@ -824,7 +824,7 @@ namespace trtc {
         /// 【字段含义】数字房间号，在同一个房间里的用户（userId）可以彼此看到对方并进行音视频通话。
         /// 【推荐取值】取值范围：1 - 4294967294。
         /// 【特别说明】1. roomId 与 strRoomId 是互斥的，若您选用 strRoomId，则 roomId 需要填写为 0。若两者都填，SDK 将优先选用 roomId。
-        /// 2. 不要混用 roomId 和 strRoomId，因为它们之间是不互通的，比如数字 123 和字符串 `123` 在 TRTC 看来是两个完全不同的房间。
+        /// 2. 不要混用 roomId 和 strRoomId，因为它们之间是不互通的，例如数字 123 和字符串 `123` 在 TRTC 看来是两个完全不同的房间。
         public UInt32 roomId;
 
         /// 【字段含义】字符串房间号，在同一个房间里的用户（userId）可以彼此看到对方并进行音视频通话。
@@ -833,7 +833,7 @@ namespace trtc {
         /// - 数字（0-9）；
         /// - 空格、`!`、`#`、`$`、`%`、`&`、`(`、`)`、`+`、`-`、`:`、`;`、`<`、`=`、`.`、`>`、`?`、`@`、`[`、`]`、`^`、`_`、`{`、`}`、`|`、`~`、`,`。
         /// 【特别说明】1. roomId 与 strRoomId 是互斥的，若您选用 strRoomId，则 roomId 需要填写为0。若两者都填，SDK 将优先选用 roomId。
-        /// 2. 不要混用 roomId 和 strRoomId，因为它们之间是不互通的，比如数字 123 和字符串 `123` 在 TRTC 看来是两个完全不同的房间。
+        /// 2. 不要混用 roomId 和 strRoomId，因为它们之间是不互通的，例如数字 123 和字符串 `123` 在 TRTC 看来是两个完全不同的房间。
         public String strRoomId;
 
         /// 【字段含义】直播场景下的角色，仅适用于直播场景（{@link TRTCAppSceneLIVE} 和 {@link TRTCAppSceneVoiceChatRoom}），通话场景下指定该参数是无效的。
@@ -842,7 +842,7 @@ namespace trtc {
 
         /// 【字段含义】用于指定在腾讯云直播平台上的 streamId（选填），设置之后，您可以在腾讯云直播 CDN 上通过标准拉流方案（FLV 或 HLS）播放该用户的音视频流。
         /// 【推荐取值】限制长度为64字节，可以不填写，一种推荐的方案是使用 `sdkappid_roomid_userid_main` 作为 streamid，这种命名方式容易辨认且不会在您的多个应用中发生冲突。
-        /// 【特殊说明】要使用腾讯云直播 CDN，您需要先在 [控制台](https://console.cloud.tencent.com/trtc/) 中的功能配置页开启“启动自动旁路直播”开关。
+        /// 【特别说明】要使用腾讯云直播 CDN，您需要先在 [控制台](https://console.cloud.tencent.com/trtc/) 中的功能配置页开启“启动自动旁路直播”开关。
         /// 【参考文档】[发布音视频流到直播 CDN](https://cloud.tencent.com/document/product/647/84721)。
         public String streamId;
 
@@ -895,10 +895,10 @@ namespace trtc {
         public UInt32 videoFps;
 
         /// 【字段含义】目标视频码率，SDK 会按照目标码率进行编码，只有在弱网络环境下才会主动降低视频码率。
-        /// 【推荐取值】请参见本 TRTCVideoResolution 在各档位注释的最佳码率，也可以在此基础上适当调高。比如：TRTCVideoResolution_1280_720 对应 1200kbps 的目标码率，您也可以设置为 1500kbps 用来获得更好的观感清晰度。
+        /// 【推荐取值】请参见本 TRTCVideoResolution 在各档位注释的最佳码率，也可以在此基础上适当调高。例如：TRTCVideoResolution_1280_720 对应 1200kbps 的目标码率，您也可以设置为 1500kbps 用来获得更好的观感清晰度。
         /// 【特别说明】您可以通过同时设置 videoBitrate 和 minVideoBitrate 两个参数，用于约束 SDK 对视频码率的调整范围：
         ///  - 如果您追求“弱网络下允许卡顿但要保持清晰”的效果，可以设置 minVideoBitrate 为 videoBitrate 的 60%。
-        /// - 如果您追求“弱网络下允许模糊但要保持流畅”的效果，可以设置 minVideoBitrate 为一个较低的数值（比如 100kbps）。
+        /// - 如果您追求“弱网络下允许模糊但要保持流畅”的效果，可以设置 minVideoBitrate 为一个较低的数值（例如 100kbps）。
         /// - 如果您将 videoBitrate 和 minVideoBitrate 设置为同一个值，等价于关闭 SDK 对视频码率的自适应调节能力。
         public UInt32 videoBitrate;
 
@@ -906,7 +906,7 @@ namespace trtc {
         /// 【特别说明】 默认值：0，此时最低码率由 SDK 会根据您指定的分辨率，自动计算出合适的数值。
         /// 【推荐取值】您可以通过同时设置 videoBitrate 和 minVideoBitrate 两个参数，用于约束 SDK 对视频码率的调整范围：
         ///  - 如果您追求`弱网络下允许卡顿但要保持清晰`的效果，可以设置 minVideoBitrate 为 videoBitrate 的 60%。
-        /// - 如果您追求`弱网络下允许模糊但要保持流畅`的效果，可以设置 minVideoBitrate 为一个较低的数值（比如 100kbps）。
+        /// - 如果您追求`弱网络下允许模糊但要保持流畅`的效果，可以设置 minVideoBitrate 为一个较低的数值（例如 100kbps）。
         /// - 如果您将 videoBitrate 和 minVideoBitrate 设置为同一个值，等价于关闭 SDK 对视频码率的自适应调节能力。
         public UInt32 minVideoBitrate;
 
@@ -1056,10 +1056,10 @@ namespace trtc {
         /// 下行带宽（kbps，-1：无效值）。
         public int availableDownBandwidth;
 
-        /// 上行数据包抖动（ms)，指用户当前网络环境下数据通信的稳定性，该值越小越好，正常数值范围是 [0, 100]，-1 代表此次测速没有成功测得有效值，一般情况下 WiFi 网络的 Jitter 会比 4G/5G 环境稍大。
+        /// 上行数据包抖动（ms)，指用户当前网络环境下数据通信的稳定性，该值越小越好，正常数值范围是 [0, 100]，-1 代表此次测速没有成功测得有效值，一般情况下 Wi-Fi 网络的 Jitter 会比 4G/5G 环境稍大。
         public int upJitter;
 
-        /// 下行数据包抖动（ms)，指用户当前网络环境下数据通信的稳定性，该值越小越好，正常数值范围是 [0, 100]，-1 代表此次测速没有成功测得有效值，一般情况下 WiFi 网络的 Jitter 会比 4G/5G 环境稍大。
+        /// 下行数据包抖动（ms)，指用户当前网络环境下数据通信的稳定性，该值越小越好，正常数值范围是 [0, 100]，-1 代表此次测速没有成功测得有效值，一般情况下 Wi-Fi 网络的 Jitter 会比 4G/5G 环境稍大。
         public int downJitter;
     }
 
@@ -1078,7 +1078,9 @@ namespace trtc {
         /// 【字段含义】bufferType 为 {@link TRTCVideoBufferType_Texture} 时的视频数据，承载用于 OpenGL 渲染的纹理数据。
         public int textureId;
 
-        /// 【字段含义】bufferType 为 {@link TRTCVideoBufferType_Buffer} 时的视频数据，承载用于 C++ 层的内存数据块。
+        /// 【字段含义】视频数据。
+        ///  - 当 bufferType 为 {@link TRTCVideoBufferType_Buffer} 时的视频数据，承载用于 C++ 层的内存数据块。
+        /// - 当 bufferType 为 {@link TRTCVideoBufferType_PixelBuffer} 时，该参数携带 iOS 平台特有的 PixelBuffer 数据，供 C++ 层使用。
         public IntPtr data;
 
         /// 【字段含义】视频数据的长度，单位是字节。对于 i420 而言：length = width * height * 3 / 2；对于 BGRA32 而言：length = width * height * 4。
@@ -1178,7 +1180,7 @@ namespace trtc {
         /// 【推荐取值】默认值：空值，即不设置占位图或者水印图。
         /// 【特别说明】
         ///   - 您可以将 image 设置为控制台中的某一个素材 ID，这需要您事先在 “[控制台](https://console.cloud.tencent.com/trtc) => 应用管理 => 功能配置 => 素材管理” 中单击 [新增图片] 按钮进行上传。
-        ///   - 上传成功后可以获得对应的“图片ID”，然后将“图片ID”转换成字符串类型并设置给 image 字段即可（比如假设“图片ID” 为 63，可以设置 image = @"63"）。
+        ///   - 上传成功后可以获得对应的“图片ID”，然后将“图片ID”转换成字符串类型并设置给 image 字段即可（例如假设“图片ID” 为 63，可以设置 image = @"63"）。
         ///   - 您也可以将 image 设置为图片的 URL 地址，腾讯云的后台服务器会将该 URL 地址指定的图片混合到最终的画面中。
         ///   - URL 链接长度限制为 512 字节。图片大小限制不超过 2MB。
         ///   - 图片格式支持 png、jpg、jpeg、bmp 格式，推荐使用 png 格式的半透明图片作为水印。
@@ -1207,11 +1209,11 @@ namespace trtc {
         public UInt32 bizId;
 
         /// 【字段含义】指定云端转码的目标分辨率（宽度）。
-        /// 【推荐取值】单位：像素值，推荐值：360，如果你只混合音频流，请将 width 和 height 均设置为 0，否则混流转码后的直播流中会有黑色背景。
+        /// 【推荐取值】单位：像素值，推荐值：360，如果您只混合音频流，请将 width 和 height 均设置为 0，否则混流转码后的直播流中会有黑色背景。
         public UInt32 videoWidth;
 
         /// 【字段含义】指定云端转码的目标分辨率（高度）。
-        /// 【推荐取值】单位：像素值，推荐值：640，如果你只混合音频流，请将 width 和 height 均设置为 0，否则混流转码后的直播流中会有黑色背景。
+        /// 【推荐取值】单位：像素值，推荐值：640，如果您只混合音频流，请将 width 和 height 均设置为 0，否则混流转码后的直播流中会有黑色背景。
         public UInt32 videoHeight;
 
         /// 【字段含义】指定云端转码的目标视频码率（kbps）。
@@ -1227,14 +1229,14 @@ namespace trtc {
         public UInt32 videoGOP;
 
         /// 【字段含义】指定混合画面的底色颜色。
-        /// 【推荐取值】默认值：0x000000 代表黑色。格式为十六进制数字，比如：“0x61B9F1” 代表 RGB 分别为(97,158,241)。
+        /// 【推荐取值】默认值：0x000000 代表黑色。格式为十六进制数字，例如：“0x61B9F1” 代表 RGB 分别为(97,158,241)。
         public UInt32 backgroundColor;
 
         /// 【字段含义】指定混合画面的背景图片。
         /// 【推荐取值】默认值：空值，即不设置背景图片。
         /// 【特别说明】
         ///    - 您可以将 image 设置为控制台中的某一个素材 ID，这需要您事先在 “[控制台](https://console.cloud.tencent.com/trtc) => 应用管理 => 功能配置 => 素材管理” 中单击 [新增图片] 按钮进行上传。
-        ///   - 上传成功后可以获得对应的“图片ID”，然后将“图片ID”转换成字符串类型并设置给 image 字段即可（比如假设“图片ID” 为 63，可以设置 image = @"63"）。
+        ///   - 上传成功后可以获得对应的“图片ID”，然后将“图片ID”转换成字符串类型并设置给 image 字段即可（例如假设“图片ID” 为 63，可以设置 image = @"63"）。
         ///   - 您也可以将 image 设置为图片的 URL 地址，腾讯云的后台服务器会将该 URL 地址指定的图片混合到最终的画面中。
         ///   - URL 链接长度限制为 512 字节。图片大小限制不超过 2MB。
         ///   - 图片格式支持 png、jpg、jpeg、bmp 格式。
@@ -1471,7 +1473,7 @@ namespace trtc {
      * 5.23 屏幕分享的进阶控制参数。
      *
      * 该参数用于屏幕分享相关的接口{@link selectScreenCaptureTarget}，用于在指定分享目标时设定一系列进阶控制参数。
-     * 比如：是否采集鼠标、是否要采集子窗口、是否要在被分享目标周围绘制一个边框等。
+     * 例如：是否采集鼠标、是否要采集子窗口、是否要在被分享目标周围绘制一个边框等。
      */
     public class TRTCScreenCaptureProperty {
         /// 【字段含义】是否采集目标内容的同时采集鼠标，默认为 true。
@@ -1481,7 +1483,7 @@ namespace trtc {
         public bool enableHighLight = true;
 
         /// 【字段含义】是否开启高性能模式（只会在分享屏幕时会生效），默认为 true。
-        /// 【特殊说明】开启后屏幕采集性能最佳，但会丧失抗遮挡能力，如果您同时开启 enableHighLight + enableHighPerformance，远端用户可以看到高亮的边框。
+        /// 【特别说明】开启后屏幕采集性能最佳，但会丧失抗遮挡能力，如果您同时开启 enableHighLight + enableHighPerformance，远端用户可以看到高亮的边框。
         public bool enableHighPerformance = true;
 
         /// 【字段含义】指定高亮边框的颜色，RGB 格式，传入 0 时代表采用默认颜色，默认颜色为 #FFE640。
@@ -1583,7 +1585,7 @@ namespace trtc {
         public TRTCVideoFillMode fillMode;
 
         /// 【字段含义】指定混合画面的底色颜色。
-        /// 【推荐取值】默认值：0x000000 代表黑色。格式为十六进制数字，比如：“0x61B9F1” 代表 RGB 分别为 (97,158,241)。
+        /// 【推荐取值】默认值：0x000000 代表黑色。格式为十六进制数字，例如：“0x61B9F1” 代表 RGB 分别为 (97,158,241)。
         public UInt32 backgroundColor;
 
         /// 【字段含义】占位图 URL，即当指定用户暂时仅上行音频时，腾讯云的后台服务器会将该 URL 地址指定的图片混合到最终的画面中。
@@ -1630,11 +1632,11 @@ namespace trtc {
      */
     public struct TRTCStreamEncoderParam {
         /// 【字段含义】指定媒体发布流的目标分辨率（宽度）。
-        /// 【推荐取值】单位：像素值，推荐值：368，如果你只混合音频流，请将 width 和 height 均设置为 0，否则混流转码后的直播流中会有黑色背景。
+        /// 【推荐取值】单位：像素值，推荐值：368，如果您只混合音频流，请将 width 和 height 均设置为 0，否则混流转码后的直播流中会有黑色背景。
         public UInt32 videoEncodedWidth;
 
         /// 【字段含义】指定媒体发布流的目标分辨率（高度）。
-        /// 【推荐取值】单位：像素值，推荐值：640，如果你只混合音频流，请将 width 和 height 均设置为 0，否则混流转码后的直播流中会有黑色背景。
+        /// 【推荐取值】单位：像素值，推荐值：640，如果您只混合音频流，请将 width 和 height 均设置为 0，否则混流转码后的直播流中会有黑色背景。
         public UInt32 videoEncodedHeight;
 
         /// 【字段含义】指定媒体发布流的目标视频帧率（FPS）。
@@ -1699,7 +1701,7 @@ namespace trtc {
      */
     public struct TRTCStreamMixingConfig {
         /// 【字段含义】指定混合画面的底色颜色。
-        /// 【推荐取值】默认值：0x000000 代表黑色。格式为十六进制数字，比如：“0x61B9F1” 代表 RGB 分别为 （97、158、241）。
+        /// 【推荐取值】默认值：0x000000 代表黑色。格式为十六进制数字，例如：“0x61B9F1” 代表 RGB 分别为 （97、158、241）。
         public UInt32 backgroundColor;
 
         /// 【字段含义】指定混合画面的背景图 URL，腾讯云的后台服务器会将该 URL 地址指定的图片混合到最终的画面中。

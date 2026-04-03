@@ -5,12 +5,17 @@
  * Version: <:Version:>
  */
 using System;
+#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_ANDROID || UNITY_IOS || UNITY_OPENHARMONY || UNITY_WEBGL
 using UnityEngine;
+#else
+using System.Windows;
+using System.Windows.Controls;
+#endif
 
 namespace trtc {
 
     public abstract class ITRTCCloud : IDeprecatedTRTCCloud {
-        public static string PLUGIN_VERSION = "12.8.0.19666_359";
+        public static string PLUGIN_VERSION = "13.2.0.20652_397";
 
         /////////////////////////////////////////////////////////////////////////////////
         //
@@ -42,7 +47,7 @@ namespace trtc {
         /**
          * 1.3 添加 TRTC 事件回调。
          *
-         * 您可以通过 {@link TRTCCloudCallback} 获得来自 SDK 的各类事件通知（比如：错误码，警告码，音视频状态参数等）。
+         * 您可以通过 {@link TRTCCloudCallback} 获得来自 SDK 的各类事件通知（例如：错误码，警告码，音视频状态参数等）。
          */
         public abstract void addCallback(ITRTCCloudCallback callback);
 
@@ -136,7 +141,7 @@ namespace trtc {
          * **情况二：字符串房间号**
          * 如果您使用的是字符串房间号，务必请将 json 中的 “roomId” 替换成 “strRoomId”: `{"strRoomId": "102", "userId": "userB"}`
          * 示例代码如下：
-         * @param param 需要你传入 JSON 格式的字符串参数，`roomId` 代表数字格式的房间号，`strRoomId` 代表字符串格式的房间号，`userId` 代表目标主播的用户 ID。
+         * @param param 需要您传入 JSON 格式的字符串参数，`roomId` 代表数字格式的房间号，`strRoomId` 代表字符串格式的房间号，`userId` 代表目标主播的用户 ID。
          */
         public abstract void connectOtherRoom(string jsonParams);
 
@@ -237,25 +242,30 @@ namespace trtc {
          */
         public abstract void stopPublishMediaStream(string taskId);
 
-        /////////////////////////////////////////////////////////////////////////////////
-        //
-        //                    视频相关接口函数
-        //
-        /////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+//
+//                    视频相关接口函数
+//
+/////////////////////////////////////////////////////////////////////////////////
 
-        /**
-         * 4.1 开启本地摄像头的预览画面（移动端）。
-         *
-         * 在 {@link enterRoom} 之前调用此函数，SDK 只会开启摄像头，并一直等到您调用 {@link enterRoom} 之后才开始推流。
-         * 在 {@link enterRoom} 之后调用此函数，SDK 会开启摄像头并自动开始视频推流。
-         * 当开始渲染首帧摄像头画面时，您会收到 {@link TRTCCloudCallback} 中的 {@link onCameraDidReady} 回调通知。
-         * @param frontCamera true：前置摄像头；false：后置摄像头。
-         * @param view 承载视频画面的控件。
-         * @note 如果希望开播前预览摄像头画面并通过 BeautyManager 调节美颜参数，您可以：
-         * - 方案一：在调用 {@link enterRoom} 之前调用 `startLocalPreview`。
-         * - 方案二：在调用 {@link enterRoom} 之后调用 `startLocalPreview + muteLocalVideo(true)`。
-         */
+/**
+ * 4.1 开启本地摄像头的预览画面（移动端）。
+ *
+ * 在 {@link enterRoom} 之前调用此函数，SDK 只会开启摄像头，并一直等到您调用 {@link enterRoom} 之后才开始推流。
+ * 在 {@link enterRoom} 之后调用此函数，SDK 会开启摄像头并自动开始视频推流。
+ * 当开始渲染首帧摄像头画面时，您会收到 {@link TRTCCloudCallback} 中的 {@link onCameraDidReady} 回调通知。
+ * @param frontCamera true：前置摄像头；false：后置摄像头。
+ * @param view 承载视频画面的控件。
+ * @note 如果希望开播前预览摄像头画面并通过 BeautyManager 调节美颜参数，您可以：
+ * - 方案一：在调用 {@link enterRoom} 之前调用 `startLocalPreview`。
+ * - 方案二：在调用 {@link enterRoom} 之后调用 `startLocalPreview + muteLocalVideo(true)`。
+ */
+#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_ANDROID || UNITY_IOS || UNITY_OPENHARMONY || UNITY_WEBGL
         public abstract void startLocalPreview(bool frontCamera, GameObject view);
+#else
+        public abstract void startLocalPreview(bool frontCamera, Image view);
+        public abstract void startLocalPreview(bool frontCamera, IntPtr hwnd);
+#endif
 
         /**
          * 4.4 停止摄像头预览。
@@ -276,25 +286,30 @@ namespace trtc {
          */
         public abstract void muteLocalVideo(TRTCVideoStreamType streamType, bool mute);
 
-        /**
-         * 4.7 订阅远端用户的视频流，并绑定视频渲染控件。
-         *
-         * 调用该接口可以让 SDK 拉取指定 userId 的视频流，并渲染到参数 `view` 指定的渲染控件上。您可以通过 {@link setRemoteRenderParams} 设置画面的显示模式。
-         * - 如果您已经知道房间中有视频流的用户的 userId，可以直接调用 `startRemoteView` 订阅该用户的画面。
-         * - 如果您不知道房间中有哪些用户在发布视频，您可以在 {@link enterRoom} 之后等待来自 {@link onUserVideoAvailable} 的通知。
-         * 调用本接口只是启动视频流的拉取，此时画面还需要加载和缓冲，当缓冲完毕后您会收到来自 {@link onFirstVideoFrame} 的通知。
-         * @param userId 指定远端用户的 ID。
-         * @param streamType 指定要观看 userId 的视频流类型。
-         *    - 高清大画面：{@link TRTCVideoStreamTypeBig}。
-         *    - 低清小画面：{@link TRTCVideoStreamTypeSmall}（需要远端用户通过 {@link enableSmallVideoStream} 开启双路编码后才有效果）。
-         *    - 辅流画面（常用于屏幕分享）：{@link TRTCVideoStreamTypeSub}。
-         * @param view 用于承载视频画面的渲染控件。
-         * @note 注意几点规则需要您关注：
-         *  1. SDK 支持同时观看某 userId 的大画面和辅路画面，或者同时观看某 userId 的小画面和辅路画面，但不支持同时观看大画面和小画面。
-         *  2. 只有当指定的 userId 通过 {@link enableSmallVideoStream} 开启双路编码后，才能观看该用户的小画面。
-         *  3. 当指定的 userId 的小画面不存在时，SDK 默认切换到该用户的大画面。
-         */
+/**
+ * 4.7 订阅远端用户的视频流，并绑定视频渲染控件。
+ *
+ * 调用该接口可以让 SDK 拉取指定 userId 的视频流，并渲染到参数 `view` 指定的渲染控件上。您可以通过 {@link setRemoteRenderParams} 设置画面的显示模式。
+ * - 如果您已经知道房间中有视频流的用户的 userId，可以直接调用 `startRemoteView` 订阅该用户的画面。
+ * - 如果您不知道房间中有哪些用户在发布视频，您可以在 {@link enterRoom} 之后等待来自 {@link onUserVideoAvailable} 的通知。
+ * 调用本接口只是启动视频流的拉取，此时画面还需要加载和缓冲，当缓冲完毕后您会收到来自 {@link onFirstVideoFrame} 的通知。
+ * @param userId 指定远端用户的 ID。
+ * @param streamType 指定要观看 userId 的视频流类型。
+ *    - 高清大画面：{@link TRTCVideoStreamTypeBig}。
+ *    - 低清小画面：{@link TRTCVideoStreamTypeSmall}（需要远端用户通过 {@link enableSmallVideoStream} 开启双路编码后才有效果）。
+ *    - 辅流画面（常用于屏幕分享）：{@link TRTCVideoStreamTypeSub}。
+ * @param view 用于承载视频画面的渲染控件。
+ * @note 注意几点规则需要您关注：
+ *  1. SDK 支持同时观看某 userId 的大画面和辅路画面，或者同时观看某 userId 的小画面和辅路画面，但不支持同时观看大画面和小画面。
+ *  2. 只有当指定的 userId 通过 {@link enableSmallVideoStream} 开启双路编码后，才能观看该用户的小画面。
+ *  3. 当指定的 userId 的小画面不存在时，SDK 默认切换到该用户的大画面。
+ */
+#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_ANDROID || UNITY_IOS || UNITY_OPENHARMONY || UNITY_WEBGL
         public abstract void startRemoteView(string userId, TRTCVideoStreamType streamType, GameObject view);
+#else
+        public abstract void startRemoteView(string userId, TRTCVideoStreamType streamType, Image view);
+        public abstract void startRemoteView(string userId, TRTCVideoStreamType streamType, IntPtr hwnd);
+#endif
 
         /**
          * 4.9 停止订阅远端用户的视频流，并释放渲染控件。
@@ -400,6 +415,17 @@ namespace trtc {
         public abstract void setRemoteVideoStreamType(string userId, TRTCVideoStreamType type);
 
         /**
+         * 4.22 视频画面截图。
+         *
+         * 您可以通过本接口截取本地的视频画面，远端用户的主路画面以及远端用户的辅路（屏幕分享）画面。
+         * @param userId 用户 ID，如指定空置表示截取本地的视频画面。
+         * @param streamType 视频流类型，可选择截取主路画面（{@link TRTCVideoStreamTypeBig}，常用于摄像头）或辅路画面（{@link TRTCVideoStreamTypeSub}，常用于屏幕分享）。
+         * @param sourceType 画面来源，可选择截取视频流画面（{@link TRTCSnapshotSourceTypeStream}）、视频渲染画面（{@link TRTCSnapshotSourceTypeView}）或 采集画面（{@link TRTCSnapshotSourceTypeCapture}），采集画面截图更清晰。
+         * @note Windows 平台目前仅支持截取 {@link TRTCSnapshotSourceTypeStream} 来源的视频画面。
+         */
+        public abstract void snapshotVideo(string userId, TRTCVideoStreamType streamType, TRTCSnapshotSourceType sourceType);
+
+        /**
          * 4.25 设置重力感应的适配模式（11.7 及以上版本）。
          *
          * 开启重力感应后，如果采集端的设备发生旋转，采集端和观众端的画面都会进行相应地渲染以确保视野中的画面始终朝上。
@@ -423,9 +449,9 @@ namespace trtc {
          * SDK 默认不开启麦克风，当用户需要发布本地音频时，需要调用该接口开启麦克风采集，并将音频编码并发布到当前的房间中。
          * 开启本地音频的采集和发布后，房间中的其他用户会收到 {@link onUserAudioAvailable}(userId, true) 的通知。
          * @param quality 声音音质
-         * - {@link TRTCAudioQualitySpeech}，流畅：单声道；音频裸码率：18kbps；适合语音通话为主的场景，比如在线会议，语音通话。
+         * - {@link TRTCAudioQualitySpeech}，流畅：单声道；音频裸码率：18kbps；适合语音通话为主的场景，例如在线会议，语音通话。
          * - {@link TRTCAudioQualityDefault}，默认：单声道；音频裸码率：50kbps；SDK 默认的音频质量，如无特殊需求推荐选择之。
-         * - {@link TRTCAudioQualityMusic}，高音质：双声道 + 全频带；音频裸码率：128kbps；适合需要高保真传输音乐的场景，比如在线K歌、音乐直播等。
+         * - {@link TRTCAudioQualityMusic}，高音质：双声道 + 全频带；音频裸码率：128kbps；适合需要高保真传输音乐的场景，例如在线K歌、音乐直播等。
          * @note 该函数会检查麦克风的使用权限，如果当前 App 没有麦克风权限，SDK 会自动向用户申请麦克风使用权限。
          */
         public abstract void startLocalAudio(TRTCAudioQuality quality);
@@ -624,48 +650,59 @@ namespace trtc {
          */
         public abstract void stopSystemAudioLoopback();
 
-        /////////////////////////////////////////////////////////////////////////////////
-        //
-        //                    屏幕分享相关接口
-        //
-        /////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+//
+//                   实时转录翻译接口
+//
+/////////////////////////////////////////////////////////////////////////////////
 
-        /**
-         * 9.1 启动屏幕分享。
-         *
-         * 该接口可以抓取整个屏幕的内容，或抓取您指定的某个应用的窗口内容，并将其分享给同房间中的其他用户。
-         * @param view 渲染控件所在的父控件，可以设置为空值，表示不显示屏幕分享的预览效果。
-         * @param streamType 屏幕分享使用的线路，可以设置为主路（TRTCVideoStreamTypeBig）或者辅路（TRTCVideoStreamTypeSub），推荐使用辅路。
-         * @param encParam 屏幕分享的画面编码参数，SDK 会优先使用您通过此接口设置的编码参数：
-         *   - 如果您设置 `encParam` 为空值，且您已通过 {@link setSubStreamEncoderParam} 设置过辅路视频编码参数，SDK 将使用您设置过的辅路编码参数进行屏幕分享。
-         *   - 如果您设置 `encParam` 为空值，且您未通过 {@link setSubStreamEncoderParam} 设置过辅路视频编码参数，SDK 将自动选择一个最佳的编码参数进行屏幕分享。
-         * @note
-         * 1. 同一个用户同时最多只能发布一路主路（{@link TRTCVideoStreamTypeBig}）画面和一路辅路（{@link TRTCVideoStreamTypeSub}）画面。
-         * 2. 默认情况下，屏幕分享使用辅路画面。如果使用主路做屏幕分享，您需要提前停止摄像头采集（{@link stopLocalPreview}）以避免相互冲突。
-         * 3. 同一个房间中同时只能有一个用户使用辅路做屏幕分享，也就是说，同一个房间中同时只允许一个用户开启辅路。
-         * 4. 当房间中已经有其他用户在使用辅路分享屏幕时，此时调用该接口会收到来自 {@link TRTCCloudCallback} 的 `onError(ERR_SERVER_CENTER_ANOTHER_USER_PUSH_SUB_VIDEO)` 回调。
-         */
+/////////////////////////////////////////////////////////////////////////////////
+//
+//                    屏幕分享相关接口
+//
+/////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * 10.1 启动屏幕分享。
+ *
+ * 该接口可以抓取整个屏幕的内容，或抓取您指定的某个应用的窗口内容，并将其分享给同房间中的其他用户。
+ * @param view 渲染控件所在的父控件，可以设置为空值，表示不显示屏幕分享的预览效果。
+ * @param streamType 屏幕分享使用的线路，可以设置为主路（TRTCVideoStreamTypeBig）或者辅路（TRTCVideoStreamTypeSub），推荐使用辅路。
+ * @param encParam 屏幕分享的画面编码参数，SDK 会优先使用您通过此接口设置的编码参数：
+ *   - 如果您设置 `encParam` 为空值，且您已通过 {@link setSubStreamEncoderParam} 设置过辅路视频编码参数，SDK 将使用您设置过的辅路编码参数进行屏幕分享。
+ *   - 如果您设置 `encParam` 为空值，且您未通过 {@link setSubStreamEncoderParam} 设置过辅路视频编码参数，SDK 将自动选择一个最佳的编码参数进行屏幕分享。
+ * @note
+ * 1. 同一个用户同时最多只能发布一路主路（{@link TRTCVideoStreamTypeBig}）画面和一路辅路（{@link TRTCVideoStreamTypeSub}）画面。
+ * 2. 默认情况下，屏幕分享使用辅路画面。如果使用主路做屏幕分享，您需要提前停止摄像头采集（{@link stopLocalPreview}）以避免相互冲突。
+ * 3. 同一个房间中同时只能有一个用户使用辅路做屏幕分享，也就是说，同一个房间中同时只允许一个用户开启辅路。
+ * 4. 当房间中已经有其他用户在使用辅路分享屏幕时，此时调用该接口会收到来自 {@link TRTCCloudCallback} 的 `onError(ERR_SERVER_CENTER_ANOTHER_USER_PUSH_SUB_VIDEO)` 回调。
+ */
+#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_ANDROID || UNITY_IOS || UNITY_OPENHARMONY || UNITY_WEBGL
         public abstract void startScreenCapture(GameObject view, TRTCVideoStreamType type, ref TRTCVideoEncParam param);
+#else
+        public abstract void startScreenCapture(Image view, TRTCVideoStreamType type, ref TRTCVideoEncParam param);
+        public abstract void startScreenCapture(IntPtr hwnd, TRTCVideoStreamType type, ref TRTCVideoEncParam param);
+#endif
 
         /**
-         * 9.2 停止屏幕分享。
+         * 10.2 停止屏幕分享。
          */
         public abstract void stopScreenCapture();
 
         /**
-         * 9.3 暂停屏幕分享。
+         * 10.3 暂停屏幕分享。
          *
          * @note 从v11.5版本开始，暂停屏幕采集会使用最后一帧按照 1 fps 帧率输出。
          */
         public abstract void pauseScreenCapture();
 
         /**
-         * 9.4 恢复屏幕分享。
+         * 10.4 恢复屏幕分享。
          */
         public abstract void resumeScreenCapture();
 
         /**
-         * 9.5 枚举可分享的屏幕和窗口（该接口仅支持桌面系统）。
+         * 10.5 枚举可分享的屏幕和窗口（该接口仅支持桌面系统）。
          *
          * 当您在对接桌面端系统的屏幕分享功能时，一般都需要展示一个选择分享目标的界面，这样用户能够使用这个界面选择是分享整个屏幕还是某个窗口。
          * 通过本接口，您就可以查询到当前系统中可用于分享的窗口的 ID、名称以及缩略图。我们在 Demo 中提供了一份默认的界面实现供您参考。
@@ -679,7 +716,7 @@ namespace trtc {
         public abstract TRTCScreenCaptureSourceInfo[] getScreenCaptureSources(SIZE thumbnailSize, SIZE iconSize);
 
         /**
-         * 9.6 选取要分享的屏幕或窗口（该接口仅支持桌面系统）。
+         * 10.6 选取要分享的屏幕或窗口（该接口仅支持桌面系统）。
          *
          * 当您通过 {@link getScreenCaptureSources} 获取到可以分享的屏幕和窗口之后，您可以调用该接口选定期望分享的目标屏幕或目标窗口。
          * 在屏幕分享的过程中，您也可以随时调用该接口以切换分享目标。
@@ -696,7 +733,7 @@ namespace trtc {
         public abstract void selectScreenCaptureTarget(TRTCScreenCaptureSourceInfo source, Rect captureRect, TRTCScreenCaptureProperty property);
 
         /**
-         * 9.7 设置屏幕分享（即辅路）的视频编码参数（桌面系统和移动系统均已支持）。
+         * 10.7 设置屏幕分享（即辅路）的视频编码参数（桌面系统和移动系统均已支持）。
          *
          * 该接口可以设定远端用户所看到的屏幕分享（即辅路）的画面质量，同时也能决定云端录制出的视频文件中屏幕分享的画面质量。
          * 请注意如下两个接口的差异：
@@ -706,6 +743,66 @@ namespace trtc {
          */
         public abstract void setSubStreamEncoderParam(ref TRTCVideoEncParam param);
 
+        /**
+         * 10.8 设置屏幕分享时的混音音量大小（该接口仅支持桌面系统）。
+         *
+         * 这个数值越高，屏幕分享音量的占比就越高，麦克风音量占比就越小，所以不推荐设置得太大，否则会导致麦克风的声音被压制。
+         * @param volume 设置的混音音量大小，范围 [0, 150]。
+         */
+        public abstract void setSubStreamMixVolume(uint volume);
+
+        /**
+         * 10.9 将指定窗口加入屏幕分享的排除列表中（该接口仅支持桌面系统）。
+         *
+         * 加入排除列表中的窗口不会被分享出去，常见的用法是将某个应用的窗口加入到排除列表中以避免隐私问题。
+         * 支持启动屏幕分享前设置过滤窗口，也支持屏幕分享过程中动态添加过滤窗口。
+         * @param windowID 不希望分享出去的窗口
+         * @note
+         *  1. 该接口只有在 {@link TRTCScreenCaptureSourceInfo} 中的 type 指定为 {@link TRTCScreenCaptureSourceTypeScreen} 时生效，即只有在分享整个屏幕内容时，排除指定窗口的功能才生效。
+         *  2. 使用该接口添加到排除列表中的窗口会在退出房间后被 SDK 自动清除。
+         *  3. Mac 平台下请传入窗口 ID（即 CGWindowID），您可以通过 {@link TRTCScreenCaptureSourceInfo} 中的 `sourceId` 成员获得。
+         */
+        public abstract void addExcludedShareWindow(IntPtr windowID);
+
+        /**
+         * 10.10 将指定窗口从屏幕分享的排除列表中移除（该接口仅支持桌面系统）。
+         *
+         * @param windowID 要排除的窗口 id。
+         */
+        public abstract void removeExcludedShareWindow(IntPtr windowID);
+
+        /**
+         * 10.11 将所有窗口从屏幕分享的排除列表中移除（该接口仅支持桌面系统）。
+         */
+        public abstract void removeAllExcludedShareWindows();
+
+        /**
+         * 10.12 将指定窗口加入屏幕分享的包含列表中（该接口仅支持桌面系统）。
+         *
+         * 该接口只有在 {@link TRTCScreenCaptureSourceInfo} 中的 type 指定为 {@link TRTCScreenCaptureSourceTypeWindow} 时生效。即只有在分享窗口内容时，额外包含指定窗口的功能才生效。
+         * 您在 {@link startScreenCapture} 之前和之后调用均可。
+         * @param windowID 希望被分享出去的窗口（Windows 平台下为窗口句柄： HWND）
+         * @note 通过该方法添加到包含列表中的窗口，会在退出房间后被 SDK 自动清除。
+         */
+        public abstract void addIncludedShareWindow(IntPtr windowID);
+
+        /**
+         * 10.13 将指定窗口从屏幕分享的包含列表中移除（该接口仅支持桌面系统）。
+         *
+         * 该接口只有在 {@link TRTCScreenCaptureSourceInfo} 中的 type 指定为 {@link TRTCScreenCaptureSourceTypeWindow} 时生效。
+         * 即只有在分享窗口内容时，额外包含指定窗口的功能才生效。
+         * @param windowID 希望被分享出去的窗口（Mac 平台：窗口 ID；Windows 平台：HWND）
+         */
+        public abstract void removeIncludedShareWindow(IntPtr windowID);
+
+        /**
+         * 10.14 将全部窗口从屏幕分享的包含列表中移除（该接口仅支持桌面系统）。
+         *
+         * 该接口只有在 {@link TRTCScreenCaptureSourceInfo} 中的 type 指定为 {@link TRTCScreenCaptureSourceTypeWindow} 时生效。
+         * 即只有在分享窗口内容时，额外包含指定窗口的功能才生效。
+         */
+        public abstract void removeAllIncludedShareWindows();
+
         /////////////////////////////////////////////////////////////////////////////////
         //
         //                    自定义采集和自定义渲染
@@ -713,7 +810,7 @@ namespace trtc {
         /////////////////////////////////////////////////////////////////////////////////
 
         /**
-         * 10.1 启用/关闭视频自定义采集模式。
+         * 11.1 启用/关闭视频自定义采集模式。
          *
          * 开启该模式后，SDK 不再运行原有的视频采集流程，即不再继续从摄像头采集数据和美颜，而是只保留视频编码和发送能力。
          * 您需要通过 {@link sendCustomVideoData} 不断地向 SDK 塞入自己采集的视频画面。
@@ -723,12 +820,12 @@ namespace trtc {
         public abstract void enableCustomVideoCapture(TRTCVideoStreamType streamType, bool enable);
 
         /**
-         * 10.2 向 SDK 投送自己采集的视频帧。
+         * 11.2 向 SDK 投送自己采集的视频帧。
          *
          * 使用此接口可以向 SDK 投送自己采集的视频帧，SDK 会将视频帧进行编码并通过自身的网络模块传输出去。
          * 参数 {@link TRTCVideoFrame} 推荐下列填写方式（其他字段不需要填写）：
          * - pixelFormat：Windows 和 Android 平台仅支持 {@link TRTCVideoPixelFormat_I420}，iOS 和 Mac平台支持 {@link TRTCVideoPixelFormat_I420} 和 {@link TRTCVideoPixelFormat_BGRA32}。
-         * - bufferType：推荐选择 {@link TRTCVideoBufferType_PixelBuffer}。
+         * - bufferType：推荐选择 {@link TRTCVideoBufferType_Buffer}。
          * - data：用于承载视频帧数据的 buffer。
          * - length：视频帧数据长度，如果 pixelFormat 设定为 I420 格式，length 可以按照如下公式计算：`length = width × height × 3 / 2`。
          * - width：视频图像的宽度，如 640 px。
@@ -748,7 +845,7 @@ namespace trtc {
         public abstract void sendCustomVideoData(TRTCVideoStreamType streamType, TRTCVideoFrame frame);
 
         /**
-         * 10.3 启用音频自定义采集模式。
+         * 11.3 启用音频自定义采集模式。
          *
          * 开启该模式后，SDK 不再运行原有的音频采集流程，即不再继续从麦克风采集音频数据，而是只保留音频编码和发送能力。
          * 您需要通过 {@link sendCustomAudioData} 不断地向 SDK 塞入自己采集的音频数据。
@@ -758,7 +855,7 @@ namespace trtc {
         public abstract void enableCustomAudioCapture(bool enable);
 
         /**
-         * 10.4 向 SDK 投送自己采集的音频数据。
+         * 11.4 向 SDK 投送自己采集的音频数据。
          *
          * 参数 {@link TRTCAudioFrame} 推荐下列填写方式（其他字段不需要填写）：
          * - audioFormat：音频数据格式，仅支持 TRTCAudioFrameFormatPCM。
@@ -774,7 +871,7 @@ namespace trtc {
         public abstract void sendCustomAudioData(TRTCAudioFrame frame);
 
         /**
-         * 10.5 启用/关闭自定义音轨。
+         * 11.5 启用/关闭自定义音轨。
          *
          * 开启后，您可以通过本接口向 SDK 混入一条自定义的音轨。通过两个布尔型参数，您可以控制该音轨是否要在远端和本地播放。
          * @param enablePublish 控制混入的音轨是否要在远端播放，默认值：false。
@@ -784,7 +881,7 @@ namespace trtc {
         public abstract void enableMixExternalAudioFrame(bool enablePublish, bool enablePlayout);
 
         /**
-         * 10.9.1 开启视频第三方美颜。
+         * 11.9.1 开启视频第三方美颜。
          *
          * 开启后，您可以通过 {@link ITRTCVideoFrameCallback} 获取到指定像素格式和视频数据结构类型的图像帧。
          * @param enable      是否启用视频第三方美颜，默认为关闭状态。
@@ -795,7 +892,7 @@ namespace trtc {
         public abstract int enableLocalVideoCustomProcess(bool enable, TRTCVideoPixelFormat pixelFormat, TRTCVideoBufferType bufferType);
 
         /**
-         * 10.9.2 设置第三方美颜的视频数据回调。
+         * 11.9.2 设置第三方美颜的视频数据回调。
          *
          * 设置该回调之后，SDK 会把采集到的视频帧通过您设置的 callback 回调出来，用于第三方美颜组件进行二次处理，之后 SDK 会将处理后的视频帧进行编码和发送。
          * @param callback 自定义美颜回调，详见 {@link ITRTCVideoFrameCallback}。
@@ -803,7 +900,7 @@ namespace trtc {
         public abstract void setLocalVideoCustomProcessCallback(ITRTCVideoFrameCallback callback);
 
         /**
-         * 10.10 设置本地视频自定义渲染回调。
+         * 11.10 设置本地视频自定义渲染回调。
          *
          * 设置该回调之后，SDK 内部会跳过原来的渲染流程，并把采集到的数据回调出来，您需要自己完成画面渲染。
          * - 您可以通过调用 `setLocalVideoRenderCallback(TRTCVideoPixelFormat_Unknown, TRTCVideoBufferType_Unknown, nullptr)` 停止回调。
@@ -817,7 +914,7 @@ namespace trtc {
         public abstract int setLocalVideoRenderCallback(TRTCVideoPixelFormat pixelFormat, TRTCVideoBufferType bufferType, ITRTCVideoRenderCallback callback);
 
         /**
-         * 10.11 设置远端视频自定义渲染回调。
+         * 11.11 设置远端视频自定义渲染回调。
          *
          * 设置该回调之后，SDK 内部会跳过原来的渲染流程，并把采集到的数据回调出来，您需要自己完成画面渲染。
          * - 您可以通过调用 `setRemoteVideoRenderCallback(TRTCVideoPixelFormat_Unknown, TRTCVideoBufferType_Unknown, nullptr)` 停止回调。
@@ -834,7 +931,7 @@ namespace trtc {
         public abstract int setRemoteVideoRenderCallback(string userId, TRTCVideoPixelFormat pixelFormat, TRTCVideoBufferType bufferType, ITRTCVideoRenderCallback callback);
 
         /**
-         * 10.12 设置音频数据自定义回调。
+         * 11.12 设置音频数据自定义回调。
          *
          * 设置该回调之后，SDK 内部会把音频数据（PCM 格式）回调出来，包括：
          * - {@link onCapturedAudioFrame}：本地麦克风采集到的音频数据回调
@@ -847,7 +944,7 @@ namespace trtc {
         public abstract int setAudioFrameCallback(ITRTCAudioFrameCallback callback);
 
         /**
-         * 10.13 设置本地麦克风采集出的音频帧回调格式。
+         * 11.13 设置本地麦克风采集出的音频帧回调格式。
          *
          * 本接口用于设置 {@link onCapturedAudioFrame} 回调出来的 AudioFrame 的格式：
          * - sampleRate：采样率，支持：16000、32000、44100、48000。
@@ -863,7 +960,7 @@ namespace trtc {
         public abstract int setCapturedAudioFrameCallbackFormat(TRTCAudioFrameCallbackFormat format);
 
         /**
-         * 10.14 设置经过前处理后的本地音频帧回调格式。
+         * 11.14 设置经过前处理后的本地音频帧回调格式。
          *
          * 本接口用于设置 {@link onLocalProcessedAudioFrame} 回调出来的 AudioFrame 的格式：
          * - sampleRate：采样率，支持：16000、32000、44100、48000。
@@ -879,7 +976,7 @@ namespace trtc {
         public abstract int setLocalProcessedAudioFrameCallbackFormat(TRTCAudioFrameCallbackFormat format);
 
         /**
-         * 10.15 设置最终要由系统播放出的音频帧回调格式。
+         * 11.15 设置最终要由系统播放出的音频帧回调格式。
          *
          * 本接口用于设置 {@link onMixedPlayAudioFrame} 回调出来的 AudioFrame 的格式：
          * - sampleRate：采样率，支持：16000、32000、44100、48000。
@@ -901,7 +998,7 @@ namespace trtc {
         /////////////////////////////////////////////////////////////////////////////////
 
         /**
-         * 11.1 使用 UDP 通道发送自定义消息给房间内所有用户。
+         * 12.1 使用 UDP 通道发送自定义消息给房间内所有用户。
          *
          * 该接口可以让您借助 TRTC 的 UDP 通道，向当前房间里的其他用户广播自定义数据，以达到传输信令的目的。
          * 房间中的其他用户可以通过 {@link TRTCCloudCallback} 中的 onRecvCustomCmdMsg 回调接收消息。
@@ -921,13 +1018,13 @@ namespace trtc {
         public abstract bool sendCustomCmdMsg(int cmdId, byte[] data, int dataSize, bool reliable, bool ordered);
 
         /**
-         * 11.2 使用 SEI 通道发送自定义消息给房间内所有用户。
+         * 12.2 使用 SEI 通道发送自定义消息给房间内所有用户。
          *
          * 该接口可以让您借助 TRTC 的 SEI 通道，向当前房间里的其他用户广播自定义数据，已达到传输信令的目的。
          * 视频帧的头部有一个叫做 SEI 的头部数据块，该接口的原理就是利用这个被称为 SEI 的头部数据块，将您要发送的自定义信令嵌入其中，使其同视频帧一并发送出去。
          * 因此，与 {@link sendCustomCmdMsg} 相比，SEI 通道传输的信令具有更好的兼容性：信令可以伴随着视频帧一直传输到直播 CDN 上。
          * 不过，由于视频帧头部的数据块不能太大，建议您使用该接口时，尽量将信令控制在几个字节的大小。
-         * 最常见的用法是把自定义的时间戳（timestamp）用本接口嵌入视频帧中，实现消息和画面的完美对齐（比如：教育场景下的课件和视频信号的对齐）。
+         * 最常见的用法是把自定义的时间戳（timestamp）用本接口嵌入视频帧中，实现消息和画面的完美对齐（例如：教育场景下的课件和视频信号的对齐）。
          * 房间中的其他用户可以通过 {@link TRTCCloudCallback} 中的 {@link onRecvSEIMsg} 回调接收消息。
          * @param data 待发送的数据，最大支持 1KB（1000字节）的数据大小
          * @param repeatCount 发送数据次数
@@ -948,7 +1045,7 @@ namespace trtc {
         /////////////////////////////////////////////////////////////////////////////////
 
         /**
-         * 12.1 开始进行网速测试（进入房间前使用）。
+         * 13.1 开始进行网速测试（进入房间前使用）。
          *
          * @param params 测速选项
          * @return 接口调用结果，< 0：失败
@@ -960,7 +1057,7 @@ namespace trtc {
         public abstract void startSpeedTest(TRTCSpeedTestParams testParams);
 
         /**
-         * 12.2 停止网络测速。
+         * 13.2 停止网络测速。
          */
         public abstract void stopSpeedTest();
 
@@ -971,31 +1068,31 @@ namespace trtc {
         /////////////////////////////////////////////////////////////////////////////////
 
         /**
-         * 13.0 获取 unity SDK 版本信息。
+         * 14.0 获取 unity SDK 版本信息。
          */
         public abstract string getScriptVersion();
 
         /**
-         * 13.1 获取 SDK 版本信息。
+         * 14.1 获取 SDK 版本信息。
          */
         public abstract string getSDKVersion();
 
         /**
-         * 13.2 设置 Log 输出级别。
+         * 14.2 设置 Log 输出级别。
          *
          * @param level 参见 {@link TRTCLogLevel}，默认值：{@link TRTCLogLevelNone}
          */
         public abstract void setLogLevel(TRTCLogLevel level);
 
         /**
-         * 13.3 启用/禁用控制台日志打印。
+         * 14.3 启用/禁用控制台日志打印。
          *
          * @param enabled 指定是否启用，默认：禁止状态。
          */
         public abstract void setConsoleEnabled(bool enabled);
 
         /**
-         * 13.4 启用/禁用日志的本地压缩。
+         * 14.4 启用/禁用日志的本地压缩。
          *
          * 开启压缩后，Log 存储体积明显减小，但需要腾讯云提供的 Python 脚本解压后才能阅读。
          * 禁用压缩后，Log 采用明文存储，可以直接用记事本打开阅读，但占用空间较大。
@@ -1004,7 +1101,7 @@ namespace trtc {
         public abstract void setLogCompressEnabled(bool enabled);
 
         /**
-         * 13.5 设置本地日志的保存路径。
+         * 14.5 设置本地日志的保存路径。
          *
          * 通过该接口您可以更改 SDK 本地日志的默认存储路径，SDK 默认的本地日志的存储位置：
          * - Windows 平台：在 C:/Users/[系统用户名]/AppData/Roaming/liteav/log，即 %appdata%/liteav/log 下。
@@ -1017,12 +1114,12 @@ namespace trtc {
         public abstract void setLogDirPath(string path);
 
         /**
-         * 13.6 设置日志回调。
+         * 14.6 设置日志回调。
          */
         public abstract void setLogCallback(ITRTCLogCallback callback);
 
         /**
-         * 13.9 调用实验性接口。
+         * 14.9 调用实验性接口。
          */
         public abstract void callExperimentalAPI(string jsonStr);
 

@@ -2,7 +2,6 @@
 // Author: felixyyan
 
 using System;
-using System.Collections.Generic;
 using System.Collections.Concurrent;
 namespace trtc {
   internal static class CloudManager {

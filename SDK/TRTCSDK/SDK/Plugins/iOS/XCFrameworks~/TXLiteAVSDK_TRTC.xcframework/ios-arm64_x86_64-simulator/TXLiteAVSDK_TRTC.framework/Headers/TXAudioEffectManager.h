@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2021 Tencent. All rights reserved.
- * Module:   背景音乐、短音效和人声特效的管理类
- * Function: 用于对背景音乐、短音效和人声特效进行设置的管理类
+ * Module: management class for background music, short audio effects, and voice effects
+ * Description: sets background music, short audio effects, and voice effects
  */
 #import <Foundation/Foundation.h>
 #import "TXLiteAVSymbolExport.h"
@@ -9,199 +9,201 @@ NS_ASSUME_NONNULL_BEGIN
 
 /////////////////////////////////////////////////////////////////////////////////
 //
-//                    音效相关的枚举值定义
+//                    Definitions of enumerated values related to audio effects
 //
 /////////////////////////////////////////////////////////////////////////////////
 
 /**
- * 1.1 混响特效
+ * 1.1 Reverb effects.
  *
- * 混响特效可以作用于人声之上，通过声学算法对声音进行叠加处理，模拟出各种不同环境下的临场感受，目前支持如下几种混响效果：
- * 0：关闭；1：KTV；2：小房间；3：大会堂；4：低沉；5：洪亮；6：金属声；7：磁性；8：空灵；9：录音棚；10：悠扬 11：录音棚2。
+ * Reverb effects can be applied to human voice. Based on acoustic algorithms, they can mimic voice in different environments. The following effects are supported currently:
+ * 0: original; 1: karaoke; 2: room; 3: hall; 4: low and deep; 5: resonant; 6: metal; 7: husky; 8: ethereal; 9: studio; 10: melodious; 11: studio2;
  */
 typedef NS_ENUM(NSInteger, TXVoiceReverbType) {
 
-    /// 关闭特效
+    /// disable
     TXVoiceReverbType_0 = 0,
 
     /// KTV
     TXVoiceReverbType_1 = 1,
 
-    /// 小房间
+    /// small room
     TXVoiceReverbType_2 = 2,
 
-    /// 大会堂
+    /// great hall
     TXVoiceReverbType_3 = 3,
 
-    /// 低沉
+    /// deep voice
     TXVoiceReverbType_4 = 4,
 
-    /// 洪亮
+    /// loud voice
     TXVoiceReverbType_5 = 5,
 
-    /// 金属声
+    /// metallic sound
     TXVoiceReverbType_6 = 6,
 
-    /// 磁性
+    /// magnetic sound
     TXVoiceReverbType_7 = 7,
 
-    /// 空灵
+    /// ethereal
     TXVoiceReverbType_8 = 8,
 
-    /// 录音棚
+    /// studio
     TXVoiceReverbType_9 = 9,
 
-    /// 悠扬
+    /// melodious
     TXVoiceReverbType_10 = 10,
 
-    /// 录音棚2
+    /// studio2
     TXVoiceReverbType_11 = 11,
 
 };
 
 /**
- * 1.2 变声特效
+ * 1.2 Voice changing effects.
  *
- * 变声特效可以作用于人声之上，通过声学算法对人声进行二次处理，以获得与原始声音所不同的音色，目前支持如下几种变声特效：
- * 0：关闭；1：熊孩子；2：萝莉；3：大叔；4：重金属；5：感冒；6：外语腔；7：困兽；8：肥宅；9：强电流；10：重机械；11：空灵；12：猪八戒；13：绿巨人。
+ * Voice changing effects can be applied to human voice. Based on acoustic algorithms, they change the tone of voice. The following effects are supported currently:
+ * 0: original; 1: child; 2: little girl; 3: middle-aged man; 4: metal; 5: nasal; 6: foreign accent; 7: trapped beast; 8: otaku; 9: electric; 10: robot; 11: ethereal; 12: pig king; 13: hulk
  */
 typedef NS_ENUM(NSInteger, TXVoiceChangeType) {
 
-    /// 关闭
+    /// disable
     TXVoiceChangeType_0 = 0,
 
-    /// 熊孩子
+    /// naughty kid
     TXVoiceChangeType_1 = 1,
 
-    /// 萝莉
+    /// Lolita
     TXVoiceChangeType_2 = 2,
 
-    /// 大叔
+    /// uncle
     TXVoiceChangeType_3 = 3,
 
-    /// 重金属
+    /// heavy metal
     TXVoiceChangeType_4 = 4,
 
-    /// 感冒
+    /// catch cold
     TXVoiceChangeType_5 = 5,
 
-    /// 外语腔
+    /// foreign accent
     TXVoiceChangeType_6 = 6,
 
-    /// 困兽
+    /// caged animal trapped beast
     TXVoiceChangeType_7 = 7,
 
-    /// 肥宅
+    /// indoorsman
     TXVoiceChangeType_8 = 8,
 
-    /// 强电流
+    /// strong current
     TXVoiceChangeType_9 = 9,
 
-    /// 重机械
+    /// heavy machinery
     TXVoiceChangeType_10 = 10,
 
-    /// 空灵
+    /// intangible
     TXVoiceChangeType_11 = 11,
 
-    /// 猪八戒
+    /// pig king
     TXVoiceChangeType_12 = 12,
 
-    /// 绿巨人
+    /// hulk
     TXVoiceChangeType_13 = 13,
 
 };
 
 /////////////////////////////////////////////////////////////////////////////////
 //
-//                    背景音乐预加载事件回调
+//                    Background music preload event callback
 //
 /////////////////////////////////////////////////////////////////////////////////
 
 /**
- * 背景音乐预加载进度
+ * Background music preload progress.
  */
 typedef void (^TXMusicPreloadProgressBlock)(NSInteger progress);
 
 /**
- * 背景音乐预加载出错
- * @param errorCode -4001:打开文件失败，如音频数据无效，FFMPEG 协议未找到等；-4002:解码失败，如音频文件损坏，网络音频文件服务器无法访问等；-4003:预加载数量超上限，请先调用 stopPlayMusic
- * 释放无用的预加载；-4005:非法路径导致打开文件失败，请检查您传入的路径参数是否指向一个合法的音乐文件；-4006:非法URL导致打开文件失败，请用浏览器检查您传入的 URL
- * 地址是否可以下载到期望的音乐文件；-4007:无音频流导致打开文件失败，请确认您传入的文件是否是合法的音频文件，以及文件是否被损坏；-4008:格式不支持导致打开文件失败，请确认您传入的文件格式是否是支持的文件格式，移动端支持【mp3，aac，m4a，wav，ogg，mp4，mkv】，桌面端支持
- * 【mp3，aac，m4a，wav，mp4，mkv】。
+ * Background music preload error.
+ *
+ * @param errorCode -4001: Failed to open the file, such as invalid data found when processing input, ffmpeg protocol not found, etc; -4002: Decoding failure, such as audio file corruption, inaccessible network audio file server, etc; -4003: The
+ * number of preloads exceeded the limit，Please call stopPlayMusic first to release the useless preload；-4005: Invalid path, Please check whether the path you passed points to a legal music file；-4006: Invalid URL, Please use a browser to check
+ * whether the URL address you passed in can download the desired music file；-4007: No audio stream, Please confirm whether the file you passed is a legal audio file and whether the file is damaged；-4008: Unsupported format, Please confirm whether
+ * the file format you passed is a supported file format. The mobile version supports [mp3, aac, m4a, wav, ogg, mp4, mkv], and the desktop version supports [mp3, aac, m4a, wav, mp4, mkv].
  */
 typedef void (^TXMusicPreloadErrorBlock)(NSInteger errorCode);
 
 /////////////////////////////////////////////////////////////////////////////////
 //
-//                    背景音乐的播放事件回调
+//                    Callback of playing background music
 //
 /////////////////////////////////////////////////////////////////////////////////
 
 /**
- * 背景音乐开始播放
+ * Background music started.
  *
- * 在背景音乐开始播放成功或者失败时调用。
- * @param id 音乐 ID。
- * @param errCode 错误码。0: 开始播放成功；-4001:打开文件失败，如音频数据无效，FFMPEG 协议未找到等；-4005:非法路径导致打开文件失败，请检查您传入的路径参数是否指向一个合法的音乐文件；-4006:非法URL导致打开文件失败，请用浏览器检查您传入的 URL
- * 地址是否可以下载到期望的音乐文件，如果操作系统为 iOS 或 MacOS 请确保使用 https
- * 链接；-4007:无音频流导致打开文件失败，请确认您传入的文件是否是合法的音频文件，以及文件是否被损坏；-4008:格式不支持导致打开文件失败，请确认您传入的文件格式是否是支持的文件格式，移动端支持【mp3，aac，m4a，wav，ogg，mp4，mkv】，桌面端支持
- * 【mp3，aac，m4a，wav，mp4，mkv】；-4009:同时播放 bgm 数量超过限定值，如当前同时播放 bgm 数量超过 10 后提示该错误，请检查并发播放 bgm 数量。
+ * Called after the background music starts.
+ * @param id music ID.
+ * @param errCode 0: Start playing successfully; -4001: Failed to open the file, such as invalid data found when processing input, ffmpeg protocol not found, etc; -4005: Invalid path, Please check whether the path you passed points to a legal music
+ * file；-4006: Invalid URL, Please use a browser to check whether the URL address you passed in can download the desired music file. If the operating system is iOS or MacOS, please ensure the use of HTTPS links；-4007: No audio stream, Please
+ * confirm whether the file you passed is a legal audio file and whether the file is damaged；-4008: Unsupported format, Please confirm whether the file format you passed is a supported file format. The mobile version supports [mp3, aac, m4a, wav,
+ * ogg, mp4, mkv], and the desktop version supports [mp3, aac, m4a, wav, mp4, mkv]; -4009: The number of concurrent BGM playbacks has exceeded the limit. This error occurs when more than 10 BGMs are playing simultaneously. Please check the number of
+ * concurrent BGM playbacks.
  */
 typedef void (^TXAudioMusicStartBlock)(NSInteger errCode);
 
 /**
- * 背景音乐的播放进度
+ * Playback progress of background music.
  */
 typedef void (^TXAudioMusicProgressBlock)(NSInteger progressMs, NSInteger durationMs);
 
 /**
- * 背景音乐已经播放完毕
+ * Background music ended.
  *
- * 在背景音乐播放完毕或播放错误时调用。
- * @param id 音乐 ID。
- * @param errCode 错误码。0: 播放结束；-4002: 解码失败，如音频文件损坏，网络音频文件服务器无法访问等。
+ * Called when the background music playback ends or an error occurs.
+ * @param id music ID.
+ * @param errCode 0: End of play; -4002: Decoding failure, such as audio file corruption, inaccessible network audio file server, etc.
  */
 typedef void (^TXAudioMusicCompleteBlock)(NSInteger errCode);
 
 /////////////////////////////////////////////////////////////////////////////////
 //
-//                    背景音乐的播放控制信息
+//                    Background music playback information
 //
 /////////////////////////////////////////////////////////////////////////////////
 
 /**
- * 背景音乐的播放控制信息
+ * Background music playback information.
  *
- * 该信息用于在接口 {@link startPlayMusic} 中指定背景音乐的相关信息，包括播放 ID、文件路径和循环次数等：
- * 1. 如果要多次播放同一首背景音乐，请不要每次播放都分配一个新的 ID，我们推荐使用相同的 ID。
- * 2. 若您希望同时播放多首不同的音乐，请为不同的音乐分配不同的 ID 进行播放。
- * 3. 如果使用同一个 ID 播放不同音乐，SDK 会先停止播放旧的音乐，再播放新的音乐。
+ * The information, including playback ID, file path, and loop times, is passed in the {@link startPlayMusic} API.
+ * 1. If you play the same music track multiple times, please use the same ID instead of a separate ID for each playback.
+ * 2. If you want to play different music tracks at the same time, use different IDs for them.
+ * 3. If you use the same ID to play a music track different from the current one, the SDK will stop the current one before playing the new one.
  */
 LITEAV_EXPORT @interface TXAudioMusicParam : NSObject
 
-/// 【字段含义】音乐 ID。
-/// 【特殊说明】SDK 允许播放多路音乐，因此需要使用 ID 进行标记，用于控制音乐的开始、停止、音量等。
+/// `Field description:` music ID
+///@note the SDK supports playing multiple music tracks. IDs are used to distinguish different music tracks and control their start, end, volume, etc.
 @property(nonatomic) int32_t ID;
 
-/// 【字段含义】音效文件的完整路径或 URL 地址。支持的音频格式包括 MP3、AAC、M4A、WAV。
+/// `Field description:` absolute path of the music file or url.the mp3,aac,m4a,wav supported.
 @property(nonatomic, copy) NSString *path;
 
-/// 【字段含义】音乐循环播放的次数。
-/// 【推荐取值】取值范围为 [0, 任意正整数]，默认值：0。0 表示播放音乐一次；1 表示播放音乐两次；以此类推。
+/// `Field description:` number of times the music track is looped
+///`Valid values:`0 or any positive integer. 0 (default) indicates that the music is played once, 1 twice, and so on.
 @property(nonatomic) NSInteger loopCount;
 
-/// 【字段含义】是否将音乐传到远端。
-/// 【推荐取值】YES：音乐在本地播放的同时，远端用户也能听到该音乐；NO：主播只能在本地听到该音乐，远端观众听不到。默认值：NO。
+/// `Field description:` whether to send the music to remote users
+///`Valid values:``$YES$` (default): remote users can hear the music played locally; `$NO$`: only the local user can hear the music.
 @property(nonatomic) BOOL publish;
 
-/// 【字段含义】播放的是否为短音乐文件。
-/// 【推荐取值】YES：需要重复播放的短音乐文件；NO：正常的音乐文件。默认值：NO。
+/// `Field description:` whether the music played is a short music track
+///`Valid values:``$YES$`: short music track that needs to be looped; `$NO$` (default): normal-length music track
 @property(nonatomic) BOOL isShortFile;
 
-/// 【字段含义】音乐开始播放时间点，单位：毫秒。
+/// `Field description:` the point in time in milliseconds for starting music playback
 @property(nonatomic) NSInteger startTimeMS;
 
-/// 【字段含义】音乐结束播放时间点，单位毫秒，0表示播放至文件结尾。
+/// `Field description:` the point in time in milliseconds for ending music playback. 0 indicates that playback continues till the end of the music track.
 @property(nonatomic) NSInteger endTimeMS;
 
 @end
@@ -209,219 +211,222 @@ LITEAV_EXPORT @interface TXAudioMusicParam : NSObject
 LITEAV_EXPORT @interface TXAudioEffectManager : NSObject
 
 /**
- * TXAudioEffectManager 对象不可直接被创建，要通过 `TRTCCloud` 或 `TXLivePush` 中的 {@link getAudioEffectManager} 接口获取。
+ * You cannot create a `TXAudioEffectManager` object.
+ * You need to obtain the object using the {@link getAudioEffectManager} API of `TRTCCloud` or `TXLivePush`.
  */
 - (instancetype)init NS_UNAVAILABLE;
 
 /////////////////////////////////////////////////////////////////////////////////
 //
-//                    人声相关的特效接口
+//                    Voice effect APIs
 //
 /////////////////////////////////////////////////////////////////////////////////
 
 /**
- * 1.1 开启耳返。
+ * 1.1 Enabling in-ear monitoring.
  *
- * 主播开启耳返后，可以在耳机里听到麦克风采集到的自己发出的声音，该特效适用于主播唱歌的应用场景中。
- * 需要您注意的是，由于蓝牙耳机的硬件延迟非常高，所以在主播佩戴蓝牙耳机时无法开启此特效，请尽量在用户界面上提示主播佩戴有线耳机。
- * 同时也需要注意，并非所有的手机开启此特效后都能达到优秀的耳返效果，我们已经对部分耳返效果不佳的手机屏蔽了该特效。
- * @param enable YES：开启；NO：关闭。
- * @note 仅在主播佩戴耳机时才能开启此特效，同时请您提示主播佩戴有线耳机。
+ * After enabling in-ear monitoring, anchors can hear in earphones their own voice captured by the mic. This is designed for singing scenarios.
+ * In-ear monitoring cannot be enabled for Bluetooth earphones. This is because Bluetooth earphones have high latency. Please ask anchors to use wired earphones via a UI reminder.
+ * Given that not all phones deliver excellent in-ear monitoring effects, we have blocked this feature on some phones.
+ * @param enable `$YES$:` enable; `$NO$`: disable
+ * @note In-ear monitoring can be enabled only when earphones are used. Please remind anchors to use wired earphones.
  */
 - (void)enableVoiceEarMonitor:(BOOL)enable;
 
 /**
- * 1.2 设置耳返音量。
+ * 1.2 Setting in-ear monitoring volume.
  *
- * 通过该接口您可以设置耳返特效中声音的音量大小。
- * @param volume 音量大小，取值范围为 [0, 150]，默认值：100。
- * @note 如果将 volume 设置成 100 之后感觉音量还是太小，可以将 volume 最大设置成 150，但超过 100 的 volume 会有爆音的风险，请谨慎操作。
+ * This API is used to set the volume of in-ear monitoring.
+ * @param volume Volume. Value range: [0, 150]; default: 100
+ * @note The volume of the ear monitor is one of the most important factors affecting the user experience. Considering that different users have different sensitivities to volume, it is strongly recommended to provide a ear monitor volume adjustment
+ * slider on the UI interface. The recommended adjustment range is between 0 and 150. The gain effect of 100-150 is very helpful for some Android phones with low recording volume.
  */
 - (void)setVoiceEarMonitorVolume:(NSInteger)volume;
 
 /**
- * 1.3 设置人声的混响效果。
+ * 1.3 Setting voice reverb effects.
  *
- * 通过该接口您可以设置人声的混响效果，具体特效请参见枚举定义 {@link TXVoiceReverbType}。
- * @note 设置的效果在退出房间后会自动失效，如果下次进房还需要对应特效，需要调用此接口再次进行设置。
+ * This API is used to set reverb effects for human voice. For the effects supported, please see {@link TXVoiceReverbType}.
+ * @note Effects become invalid after room exit. If you want to use the same effect after you enter the room again, you need to set the effect again using this API.
  */
 - (void)setVoiceReverbType:(TXVoiceReverbType)reverbType;
 
 /**
- * 1.4 设置人声的变声特效。
+ * 1.4 Setting voice changing effects.
  *
- * 通过该接口您可以设置人声的变声特效，具体特效请参见枚举定义 {@link TXVoiceChangeType}。
- * @note 设置的效果在退出房间后会自动失效，如果下次进房还需要对应特效，需要调用此接口再次进行设置。
+ * This API is used to set voice changing effects. For the effects supported, please see {@link TXVoiceChangeType}.
+ * @note Effects become invalid after room exit. If you want to use the same effect after you enter the room again, you need to set the effect again using this API.
  */
 - (void)setVoiceChangerType:(TXVoiceChangeType)changerType;
 
 /**
- * 1.5 设置语音音量。
+ * 1.5 Setting speech volume.
  *
- * 该接口可以设置语音音量的大小，一般配合音乐音量的设置接口 {@link setAllMusicVolume} 协同使用，用于调谐语音和音乐在混音前各自的音量占比。
- * @param volume 音量大小，取值范围为 [0 - 150]，默认值：100。
- * @note 如果将 volume 设置成 100 之后感觉音量还是太小，可以将 volume 最大设置成 150，但超过 100 的 volume 会有爆音的风险，请谨慎操作。
+ * This API is used to set the volume of speech. It is often used together with the music volume setting API {@link setAllMusicVolume} to balance between the volume of music and speech.
+ * @param volume Volume. Value range: [0, 150]; default: 100
+ * @note If 100 is still not loud enough for you, you can set the volume to up to 150, but there may be side effects.
  */
 - (void)setVoiceVolume:(NSInteger)volume;
 
 /**
- * 1.6 设置语音音调。
+ * 1.6 Setting speech pitch.
  *
- * 该接口可以设置语音音调，用于实现变调不变速的目的。
- * @param pitch 音调，取值范围[-1.0f, 1.0f]，默认值：0.0f。
+ * This API is used to set the pitch of speech.
+ * @param pitch Ptich，Value range: [-1.0f, 1.0f]; default: 0.0f。
  */
 - (void)setVoicePitch:(double)pitch;
 
 /////////////////////////////////////////////////////////////////////////////////
 //
-//                    背景音乐的相关接口
+//                    Background music APIs
 //
 /////////////////////////////////////////////////////////////////////////////////
 
 /**
- * 2.1 开始播放背景音乐。
+ * 2.1 Starting background music.
  *
- * 每个音乐都需要您指定具体的 ID，您可以通过该 ID 对音乐的开始、停止、音量等进行设置。
- * @param musicParam 音乐参数。
- * @param startBlock 播放开始回调。
- * @param progressBlock 播放进度回调。
- * @param completeBlock 播放结束回调。
+ * You must assign an ID to each music track so that you can start, stop, or set the volume of music tracks by ID.
+ * @param musicParam Music parameter
+ * @param startBlock Callback of starting music
+ * @param progressBlock Callback of playback progress
+ * @param completeBlock Callback of ending music
  * @note
- * 1. 如果要多次播放同一首背景音乐，请不要每次播放都分配一个新的 ID，我们推荐使用相同的 ID。
- * 2. 若您希望同时播放多首不同的音乐，请为不同的音乐分配不同的 ID 进行播放。
- * 3. 如果使用同一个 ID 播放不同音乐，SDK 会先停止播放旧的音乐，再播放新的音乐。
+ * 1. If you play the same music track multiple times, please use the same ID instead of a separate ID for each playback.
+ * 2. If you want to play different music tracks at the same time, use different IDs for them.
+ * 3. If you use the same ID to play a music track different from the current one, the SDK will stop the current one before playing the new one.
  */
 - (void)startPlayMusic:(TXAudioMusicParam *)musicParam onStart:(TXAudioMusicStartBlock _Nullable)startBlock onProgress:(TXAudioMusicProgressBlock _Nullable)progressBlock onComplete:(TXAudioMusicCompleteBlock _Nullable)completeBlock;
 
 /**
- * 2.2 停止播放背景音乐。
+ * 2.2 Stopping background music.
  *
- * @param id  音乐 ID。
+ * @param id    Music ID
  */
 - (void)stopPlayMusic:(int32_t)id;
 
 /**
- * 2.3 暂停播放背景音乐。
+ * 2.3 Pausing background music.
  *
- * @param id  音乐 ID。
+ * @param id    Music ID
  */
 - (void)pausePlayMusic:(int32_t)id;
 
 /**
- * 2.4 恢复播放背景音乐。
+ * 2.4 Resuming background music.
  *
- * @param id  音乐 ID。
+ * @param id    Music ID
  */
 - (void)resumePlayMusic:(int32_t)id;
 
 /**
- * 2.5 设置所有背景音乐的本地音量和远端音量的大小。
+ * 2.5 Setting the local and remote playback volume of background music.
  *
- * 该接口可以设置所有背景音乐的本地音量和远端音量。
- * - 本地音量：即主播本地可以听到的背景音乐的音量大小。
- * - 远端音量：即观众端可以听到的背景音乐的音量大小。
- * @param volume 音量大小，取值范围为 [0, 150]，默认值：60。
- * @note 如果将 volume 设置成 100 之后感觉音量还是太小，可以将 volume 最大设置成 150，但超过 100 的 volume 会有爆音的风险，请谨慎操作。
+ * This API is used to set the local and remote playback volume of background music.
+ * - Local volume: the volume of music heard by anchors
+ * - Remote volume: the volume of music heard by audience
+ * @param volume Volume. Value range: [0, 150]; default: 60
+ * @note If 100 is still not loud enough for you, you can set the volume to up to 150, but there may be side effects.
  */
 - (void)setAllMusicVolume:(NSInteger)volume;
 
 /**
- * 2.6 设置某一首背景音乐的远端音量的大小。
+ * 2.6 Setting the remote playback volume of a specific music track.
  *
- * 该接口可以细粒度地控制每一首背景音乐的远端音量，也就是观众端可听到的背景音乐的音量大小。
- * @param id     音乐 ID。
- * @param volume 音量大小，取值范围为 [0, 150]；默认值：60。
- * @note 如果将 volume 设置成 100 之后感觉音量还是太小，可以将 volume 最大设置成 150，但超过 100 的 volume 会有爆音的风险，请谨慎操作。
+ * This API is used to control the remote playback volume (the volume heard by audience) of a specific music track.
+ * @param id     Music ID
+ * @param volume Volume. Value range: [0, 150]; default: 60
+ * @note If 100 is still not loud enough for you, you can set the volume to up to 150, but there may be side effects.
  */
 - (void)setMusicPublishVolume:(int32_t)id volume:(NSInteger)volume;
 
 /**
- * 2.7 设置某一首背景音乐的本地音量的大小。
+ * 2.7 Setting the local playback volume of a specific music track.
  *
- * 该接口可以细粒度地控制每一首背景音乐的本地音量，也就是主播本地可以听到的背景音乐的音量大小。
- * @param id     音乐 ID。
- * @param volume 音量大小，取值范围为 [0, 150]，默认值：60。
- * @note 如果将 volume 设置成 100 之后感觉音量还是太小，可以将 volume 最大设置成 150，但超过 100 的 volume 会有爆音的风险，请谨慎操作。
+ * This API is used to control the local playback volume (the volume heard by anchors) of a specific music track.
+ * @param id     Music ID
+ * @param volume Volume. Value range: [0, 150]. default: 60
+ * @note If 100 is still not loud enough for you, you can set the volume to up to 150, but there may be side effects.
  */
 - (void)setMusicPlayoutVolume:(int32_t)id volume:(NSInteger)volume;
 
 /**
- * 2.8 调整背景音乐的音调高低。
+ * 2.8 Adjusting the pitch of background music.
  *
- * @param id    音乐 ID。
- * @param pitch 音调，取值范围为 [-1.0f, 1.0f] 之间的浮点数，默认值：0.0f。
+ * @param id    Music ID
+ * @param pitch Pitch. Value range: floating point numbers in the range of [-1, 1]; default: 0.0f
  */
 - (void)setMusicPitch:(int32_t)id pitch:(double)pitch;
 
 /**
- * 2.9 调整背景音乐的变速效果。
+ * 2.9 Changing the speed of background music.
  *
- * @param id    音乐 ID。
- * @param speedRate 速度，取值范围为 [0.5f, 2.0f] 之间的浮点数，默认值：1.0f。
+ * @param id    Music ID
+ * @param speedRate Music speed. Value range: floating point numbers in the range of [0.5, 2]; default: 1.0f
  */
 - (void)setMusicSpeedRate:(int32_t)id speedRate:(double)speedRate;
 
 /**
- * 2.10 获取背景音乐的播放进度（单位：毫秒）。
+ * 2.10 Getting the playback progress (ms) of background music.
  *
- * @param id    音乐 ID。
- * @return 成功返回当前播放时间，单位：毫秒，失败返回 -1。
+ * @param id    Music ID
+ * @return The milliseconds that have passed since playback started. -1 indicates failure to get the the playback progress.
  */
 - (NSInteger)getMusicCurrentPosInMS:(int32_t)id;
 
 /**
- * 2.11 获取背景音乐的总时长（单位：毫秒）。
+ * 2.11 Getting the total length (ms) of background music.
  *
- * @param path 音乐文件路径。
- * @return 成功返回时长，失败返回 -1。
+ * @param path Path of the music file.
+ * @return The length of the specified music file is returned. -1 indicates failure to get the length.
  */
 - (NSInteger)getMusicDurationInMS:(NSString *)path;
 
 /**
- * 2.12 设置背景音乐的播放进度（单位：毫秒）。
+ * 2.12 Setting the playback progress (ms) of background music.
  *
- * @param id  音乐 ID。
- * @param pts 单位: 毫秒。
- * @note 请尽量避免过度频繁地调用该接口，因为该接口可能会再次读写音乐文件，耗时稍高。
- *       因此，当用户拖拽音乐的播放进度条时，请在用户完成拖拽操作后再调用本接口。
- *       因为 UI 上的进度条控件往往会以很高的频率反馈用户的拖拽进度，如不做频率限制，会导致较差的用户体验。
+ * @param id    Music ID
+ * @param pts Unit: millisecond
+ * @note Do not call this API frequently as the music file may be read and written to each time the API is called, which can be time-consuming.
+ *       Wait till users finish dragging the progress bar before you call this API.
+ *       The progress bar controller on the UI tends to update the progress at a high frequency as users drag the progress bar. This will result in poor user experience unless you limit the frequency.
  */
 - (void)seekMusicToPosInMS:(int32_t)id pts:(NSInteger)pts;
 
 /**
- * 2.13 调整搓碟的变速效果。
+ * 2.13 Adjust the speed change effect of the scratch disc.
  *
- * @param id    音乐 ID。
- * @param scratchSpeedRate 搓碟速度，取值范围为 [-12.0, 12.0] 之间的浮点数，默认值是 1.0f，速度值正/负表示方向正/反，绝对值大小表示速度快慢。
- * @note 前置条件 preloadMusic 成功。
+ * @param id    Music ID
+ * @param scratchSpeedRate Scratch disc speed, the default value is 1.0f, the range is: a floating point number between [-12.0 ~ 12.0], the positive/negative speed value indicates the direction is positive/negative, and the absolute value indicates
+ * the speed.
+ * @note Precondition preloadMusic succeeds.
  */
 - (void)setMusicScratchSpeedRate:(int32_t)id speedRate:(double)scratchSpeedRate;
 
 /**
- * 2.15 预加载背景音乐。
+ * 2.15 Preload background music.
  *
- * 每个音乐都需要您指定具体的 ID，您可以通过该 ID 对音乐的开始、停止、音量等进行设置。
- * @param preloadParam 预加载音乐参数。
+ * You must assign an ID to each music track so that you can start, stop, or set the volume of music tracks by ID.
+ * @param musicParam Music parameter
  * @note
- * 1. 预先加载最多同时支持2个不同 ID 的预加载，且预加载时长不超过10分钟，使用完需调用 {@link stopPlayMusic}，否则内存不释放。
- * 2. 若该ID对应的音乐正在播放中，预加载会失败，需先调用 {@link stopPlayMusic}。
- * 3. 当 `musicParam` 和传入 {@link startPlayMusic} 的 `musicParam` 完全相同时，预加载有效。
+ * 1. Preload supports up to 2 preloads with different IDs at the same time, and the preload time does not exceed 10 minutes,you need to call {@link stopPlayMusic} API after use, otherwise the memory will not be released.
+ * 2. If the music corresponding to the ID is being played, the preloading fails, and {@link stopPlayMusic} must be called first.
+ * 3. When the `musicParam` passed to {@link startPlayMusic} is exactly the same, preloading works.
  */
 - (void)preloadMusic:(TXAudioMusicParam *)preloadParam onProgress:(TXMusicPreloadProgressBlock _Nullable)progressBlock onError:(TXMusicPreloadErrorBlock _Nullable)errorBlock;
 
 /**
- * 2.16 获取背景音乐的音轨数量。
+ * 2.16 Get the number of tracks of background music.
  *
- * @param id 音乐 ID。
+ * @param id  Music ID
  */
 - (NSInteger)getMusicTrackCount:(int32_t)id;
 
 /**
- * 2.17 指定背景音乐的播放音轨。
+ * 2.17 Specify the playback track of background music.
  *
- * @param id    音乐 ID。
- * @param index 默认播放第一个音轨。取值范围[0, 音轨总数)。
- * @note 音轨总数量可通过 getMusicTrackCount 接口获取。
+ * @param id    Music ID
+ * @param index Specify which track to play (the first track is played by default). Value range [0, total number of tracks).
+ * @note The total number of tracks can be obtained through the {@link getMusicTrackCount} interface.
  */
 - (void)setMusicTrack:(int32_t)id track:(NSInteger)track;
 

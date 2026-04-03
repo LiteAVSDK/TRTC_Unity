@@ -421,6 +421,10 @@ namespace TRTCCUnityDemo {
       PrintfTestCallbackLog($"onScreenCaptureCovered ");
     }
 
+    public void onSnapshotComplete(string userId, TRTCVideoStreamType type, byte[] data, UInt32 length, UInt32 width, UInt32 height, TRTCVideoPixelFormat format) {
+      PrintfTestCallbackLog($"onSnapshotComplete {userId} , {type} , {length} , {width} , {height} , {format}");
+    }
+
 #endregion
 
 

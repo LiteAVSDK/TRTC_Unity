@@ -6,8 +6,12 @@ using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Runtime.InteropServices;
+#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_ANDROID || UNITY_IOS || UNITY_OPENHARMONY || UNITY_WEBGL
 using AOT;
 using UnityEngine;
+#else
+using System.Diagnostics;
+#endif
 
 namespace trtc {
   public struct RenderKey {
@@ -26,7 +30,7 @@ namespace trtc {
     }
   }
   public class TRTCWrapperCallback {
-#region DataModel
+    #region DataModel
 
     [Serializable]
     public struct QualityArrayInfo {
@@ -38,34 +42,34 @@ namespace trtc {
       public TRTCVolumeInfo[] userVolumesArray;
     }
 
-#endregion
+    #endregion
 
-#region CloudCallback
+    #region CloudCallback
 
     private readonly List<ITRTCCloudCallback> _cloudCallbackList = new List<ITRTCCloudCallback>();
-    private UnityEngine.Object _callBackListLock = new UnityEngine.Object();
+    private readonly object _callBackListLock = new object();
 
     public void AddAppCloudCallback(ITRTCCloudCallback callback) {
-      lock(_callBackListLock) {
+      lock (_callBackListLock) {
         _cloudCallbackList.Add(callback);
       }
     }
 
     public void RemoveAppCloudCallback(ITRTCCloudCallback callback) {
-      lock(_callBackListLock) {
+      lock (_callBackListLock) {
         _cloudCallbackList.Remove(callback);
       }
     }
-	
+
     public void ClearAppCloudCallback() {
-      lock(_callBackListLock) {
+      lock (_callBackListLock) {
         _cloudCallbackList.Clear();
       }
     }
 
     public List<ITRTCCloudCallback> GetAppCloudCallback() {
       List<ITRTCCloudCallback> cloudCallbackList = null;
-      lock(_callBackListLock) {
+      lock (_callBackListLock) {
         cloudCallbackList = new List<ITRTCCloudCallback>(_cloudCallbackList);
       }
       return cloudCallbackList;
@@ -75,16 +79,16 @@ namespace trtc {
       return _cloudCallbackObj;
     }
 
-#endregion
+    #endregion
 
-#region VideoFrame
+    #region VideoFrame
 
     private ITRTCVideoFrameCallback _videoFrameCallback;
 
     public void SetAppVideoFrameCallback(ITRTCVideoFrameCallback callback) {
       _videoFrameCallback = callback;
     }
-	
+
     public void ClearAppVideoFrameCallback() {
       _videoFrameCallback = null;
     }
@@ -97,9 +101,9 @@ namespace trtc {
       return _videoFrameCallback == null ? IntPtr.Zero : _nativeVideoFrameCallback;
     }
 
-#endregion
+    #endregion
 
-#region VideRender
+    #region VideRender
 
     private readonly ConcurrentDictionary<RenderKey, ITRTCVideoRenderCallback> _videoRenderCallbackMap =
         new ConcurrentDictionary<RenderKey, ITRTCVideoRenderCallback>();
@@ -110,11 +114,12 @@ namespace trtc {
           ITRTCVideoRenderCallback outCallback;
           _videoRenderCallbackMap.TryRemove(key, out outCallback);
         }
-      } else {
+      }
+      else {
         _videoRenderCallbackMap[key] = callback;
       }
     }
-	
+
     public void ClearAppVideoRenderCallback() {
       _videoRenderCallbackMap.Clear();
     }
@@ -145,16 +150,16 @@ namespace trtc {
       return _videoRenderCallbackMap.ContainsKey(key) ? _nativeVideoRenderCallback : IntPtr.Zero;
     }
 
-#endregion
+    #endregion
 
-#region AudioFrame
+    #region AudioFrame
 
     private ITRTCAudioFrameCallback _audioFrameCallback;
 
     public void SetAppAudioFrameCallback(ITRTCAudioFrameCallback audioFrameCallback) {
       _audioFrameCallback = audioFrameCallback;
     }
-	
+
     public void ClearAppAudioFrameCallback() {
       _audioFrameCallback = null;
     }
@@ -167,16 +172,16 @@ namespace trtc {
       return _audioFrameCallback == null ? IntPtr.Zero : _nativeAudioFrameCallback;
     }
 
-#endregion
+    #endregion
 
-#region Log
+    #region Log
 
     private ITRTCLogCallback _logCallback;
 
     public void SetAppLogCallback(ITRTCLogCallback logCallback) {
       _logCallback = logCallback;
     }
-	
+
     public void ClearAppLogCallback() {
       _logCallback = null;
     }
@@ -189,7 +194,7 @@ namespace trtc {
       return _logCallback == null ? IntPtr.Zero : _nativeLogCallback;
     }
 
-#endregion
+    #endregion
 
     private IntPtr _nativeObj;
     private TRTCCallbackObj _cloudCallbackObj;
@@ -205,142 +210,145 @@ namespace trtc {
       _nativeCloudCallback = TRTCCloudCallbackNative.trtc_cloud_create_cloud_callback(_nativeObj);
       // main_handler
       TRTCCloudCallbackNative.trtc_cloud_set_on_error_handler(
-          _nativeObj, CloudCallback.OnErrorHandler, IntPtr.Zero);
+          _nativeObj, CloudCallback._OnErrorHandlerRef, IntPtr.Zero);
       TRTCCloudCallbackNative.trtc_cloud_set_on_warning_handler(
-          _nativeObj, CloudCallback.OnWarningHandler, IntPtr.Zero);
+          _nativeObj, CloudCallback._OnWarningHandlerRef, IntPtr.Zero);
 
       // room_handler
       TRTCCloudCallbackNative.trtc_cloud_set_on_enter_room_handler(
-          _nativeObj, CloudCallback.OnEnterRoomHandler, IntPtr.Zero);
+          _nativeObj, CloudCallback._OnEnterRoomHandlerRef, IntPtr.Zero);
 
       TRTCCloudCallbackNative.trtc_cloud_set_on_exit_room_handler(
-          _nativeObj, CloudCallback.OnExitRoomHandler, IntPtr.Zero);
+          _nativeObj, CloudCallback._OnExitRoomHandlerRef, IntPtr.Zero);
 
       TRTCCloudCallbackNative.trtc_cloud_set_on_switch_role_handler(
-          _nativeObj, CloudCallback.OnSwitchRoleHandler, IntPtr.Zero);
+          _nativeObj, CloudCallback._OnSwitchRoleHandlerRef, IntPtr.Zero);
 
       TRTCCloudCallbackNative.trtc_cloud_set_on_switch_room_handler(
-          _nativeObj, CloudCallback.OnSwitchRoomHandler, IntPtr.Zero);
+          _nativeObj, CloudCallback._OnSwitchRoomHandlerRef, IntPtr.Zero);
 
       TRTCCloudCallbackNative.trtc_cloud_set_on_connect_other_room_handler(
-          _nativeObj, CloudCallback.OnConnectOtherRoomHandler, IntPtr.Zero);
+          _nativeObj, CloudCallback._OnConnectOtherRoomHandlerRef, IntPtr.Zero);
 
       TRTCCloudCallbackNative.trtc_cloud_set_on_disconnect_other_room_handler(
-          _nativeObj, CloudCallback.OnDisconnectOtherRoomHandler, IntPtr.Zero);
+          _nativeObj, CloudCallback._OnDisconnectOtherRoomHandlerRef, IntPtr.Zero);
 
       // user_handler
       TRTCCloudCallbackNative.trtc_cloud_set_on_remote_user_enter_room_handler(
-          _nativeObj, CloudCallback.OnRemoteUserEnterRoomHandler, IntPtr.Zero);
+          _nativeObj, CloudCallback._OnRemoteUserEnterRoomHandlerRef, IntPtr.Zero);
 
       TRTCCloudCallbackNative.trtc_cloud_set_on_remote_user_leave_room_handler(
-          _nativeObj, CloudCallback.OnRemoteUserLeaveRoomHandler, IntPtr.Zero);
+          _nativeObj, CloudCallback._OnRemoteUserLeaveRoomHandlerRef, IntPtr.Zero);
 
       TRTCCloudCallbackNative.trtc_cloud_set_on_user_video_available_handler(
-          _nativeObj, CloudCallback.OnUserVideoAvailableHandler, IntPtr.Zero);
+          _nativeObj, CloudCallback._OnUserVideoAvailableHandlerRef, IntPtr.Zero);
 
       TRTCCloudCallbackNative.trtc_cloud_set_on_user_sub_stream_available_handler(
-          _nativeObj, CloudCallback.OnUserSubStreamAvailableHandler, IntPtr.Zero);
+          _nativeObj, CloudCallback._OnUserSubStreamAvailableHandlerRef, IntPtr.Zero);
 
       TRTCCloudCallbackNative.trtc_cloud_set_on_user_audio_available_handler(
-          _nativeObj, CloudCallback.OnUserAudioAvailableHandler, IntPtr.Zero);
+          _nativeObj, CloudCallback._OnUserAudioAvailableHandlerRef, IntPtr.Zero);
 
       TRTCCloudCallbackNative.trtc_cloud_set_on_first_video_frame_handler(
-          _nativeObj, CloudCallback.OnFirstVideoFrameHandler, IntPtr.Zero);
+          _nativeObj, CloudCallback._OnFirstVideoFrameHandlerRef, IntPtr.Zero);
 
       TRTCCloudCallbackNative.trtc_cloud_set_on_first_audio_frame_handler(
-          _nativeObj, CloudCallback.OnFirstAudioFrameHandler, IntPtr.Zero);
-      
+          _nativeObj, CloudCallback._OnFirstAudioFrameHandlerRef, IntPtr.Zero);
+
       TRTCCloudCallbackNative.trtc_cloud_set_on_send_first_local_video_frame_handler(
-        _nativeObj, CloudCallback.OnSendFirstLocalVideoFrameHandler, IntPtr.Zero);
-      
+        _nativeObj, CloudCallback._OnSendFirstLocalVideoFrameHandlerRef, IntPtr.Zero);
+
       TRTCCloudCallbackNative.trtc_cloud_set_on_send_first_local_audio_frame_handler(
-        _nativeObj, CloudCallback.OnSendFirstLocalAudioFrameHandler, IntPtr.Zero);
+        _nativeObj, CloudCallback._OnSendFirstLocalAudioFrameHandlerRef, IntPtr.Zero);
 
       // net_stat_handler
       TRTCCloudCallbackNative.trtc_cloud_set_on_network_quality_handler(
-          _nativeObj, CloudCallback.OnNetworkQualityHandler, IntPtr.Zero);
+          _nativeObj, CloudCallback._OnNetworkQualityHandlerRef, IntPtr.Zero);
       TRTCCloudCallbackNative.trtc_cloud_set_on_statistics_handler(
-          _nativeObj, CloudCallback.OnStatisticsHandler, IntPtr.Zero);
+          _nativeObj, CloudCallback._OnStatisticsHandlerRef, IntPtr.Zero);
       TRTCCloudCallbackNative.trtc_cloud_set_on_speed_test_result_handler(
-          _nativeObj, CloudCallback.OnSpeedTestResultHandler, IntPtr.Zero);
+          _nativeObj, CloudCallback._OnSpeedTestResultHandlerRef, IntPtr.Zero);
 
       // connect_handler
       TRTCCloudCallbackNative.trtc_cloud_set_on_connection_lost_handler(
-          _nativeObj, CloudCallback.OnConnectionLostHandler, IntPtr.Zero);
+          _nativeObj, CloudCallback._OnConnectionLostHandlerRef, IntPtr.Zero);
       TRTCCloudCallbackNative.trtc_cloud_set_on_try_to_reconnect_handler(
-          _nativeObj, CloudCallback.OnTryToReconnectHandler, IntPtr.Zero);
+          _nativeObj, CloudCallback._OnTryToReconnectHandlerRef, IntPtr.Zero);
       TRTCCloudCallbackNative.trtc_cloud_set_on_connection_recovery_handler(
-          _nativeObj, CloudCallback.OnConnectionRecoveryHandler, IntPtr.Zero);
+          _nativeObj, CloudCallback._OnConnectionRecoveryHandlerRef, IntPtr.Zero);
 
       // hardware_handler
       TRTCCloudCallbackNative.trtc_cloud_set_on_camera_did_ready_handler(
-          _nativeObj, CloudCallback.OnCameraDidReadyHandler, IntPtr.Zero);
+          _nativeObj, CloudCallback._OnCameraDidReadyHandlerRef, IntPtr.Zero);
       TRTCCloudCallbackNative.trtc_cloud_set_on_mic_did_ready_handler(
-          _nativeObj, CloudCallback.OnMicDidReadyHandler, IntPtr.Zero);
+          _nativeObj, CloudCallback._OnMicDidReadyHandlerRef, IntPtr.Zero);
       TRTCCloudCallbackNative.trtc_cloud_set_on_audio_route_changed_handler(
-          _nativeObj, CloudCallback.OnAudioRouteChangedHandler, IntPtr.Zero);
+          _nativeObj, CloudCallback._OnAudioRouteChangedHandlerRef, IntPtr.Zero);
       TRTCCloudCallbackNative.trtc_cloud_set_on_user_voice_volume_handler(
-          _nativeObj, CloudCallback.OnUserVoiceVolumeHandler, IntPtr.Zero);
+          _nativeObj, CloudCallback._OnUserVoiceVolumeHandlerRef, IntPtr.Zero);
       TRTCCloudCallbackNative.trtc_cloud_set_on_device_change_handler(
-          _nativeObj, CloudCallback.OnDeviceChangeHandler, IntPtr.Zero);
+          _nativeObj, CloudCallback._OnDeviceChangeHandlerRef, IntPtr.Zero);
       TRTCCloudCallbackNative.trtc_cloud_set_on_test_mic_volume_handler(
-          _nativeObj, CloudCallback.OnTestMicVolumeHandler, IntPtr.Zero);
+          _nativeObj, CloudCallback._OnTestMicVolumeHandlerRef, IntPtr.Zero);
       TRTCCloudCallbackNative.trtc_cloud_set_on_test_speaker_volume_handler(
-          _nativeObj, CloudCallback.OnTestSpeakerVolumeHandler, IntPtr.Zero);
+          _nativeObj, CloudCallback._OnTestSpeakerVolumeHandlerRef, IntPtr.Zero);
 
       // custom_msg_handler
       TRTCCloudCallbackNative.trtc_cloud_set_on_recv_custom_cmd_msg_handler(
-          _nativeObj, CloudCallback.OnRecvCustomCmdMsgHandler, IntPtr.Zero);
+          _nativeObj, CloudCallback._OnRecvCustomCmdMsgHandlerRef, IntPtr.Zero);
       TRTCCloudCallbackNative.trtc_cloud_set_on_miss_custom_cmd_msg_handler(
-          _nativeObj, CloudCallback.OnMissCustomCmdMsgHandler, IntPtr.Zero);
+          _nativeObj, CloudCallback._OnMissCustomCmdMsgHandlerRef, IntPtr.Zero);
       TRTCCloudCallbackNative.trtc_cloud_set_on_recv_sei_msg_handler(
-          _nativeObj, CloudCallback.OnRecvSEIMsgHandler, IntPtr.Zero);
+          _nativeObj, CloudCallback._OnRecvSEIMsgHandlerRef, IntPtr.Zero);
 
       TRTCCloudCallbackNative.trtc_cloud_set_on_start_publishing_handler(
-          _nativeObj, CloudCallback.OnStartPublishingHandler, IntPtr.Zero);
+          _nativeObj, CloudCallback._OnStartPublishingHandlerRef, IntPtr.Zero);
       TRTCCloudCallbackNative.trtc_cloud_set_on_stop_publishing_handler(
-          _nativeObj, CloudCallback.OnStopPublishingHandler, IntPtr.Zero);
+          _nativeObj, CloudCallback._OnStopPublishingHandlerRef, IntPtr.Zero);
       TRTCCloudCallbackNative.trtc_cloud_set_on_set_mix_transcoding_config_handler(
-          _nativeObj, CloudCallback.OnSetMixTranscodingConfigHandler, IntPtr.Zero);
+          _nativeObj, CloudCallback._OnSetMixTranscodingConfigHandlerRef, IntPtr.Zero);
       TRTCCloudCallbackNative.trtc_cloud_set_on_start_publish_media_stream_handler(
-          _nativeObj, CloudCallback.OnStartPublishMediaStreamHandler, IntPtr.Zero);
+          _nativeObj, CloudCallback._OnStartPublishMediaStreamHandlerRef, IntPtr.Zero);
       TRTCCloudCallbackNative.trtc_cloud_set_on_update_publish_media_stream_handler(
-          _nativeObj, CloudCallback.OnUpdatePublishMediaStreamHandler, IntPtr.Zero);
+          _nativeObj, CloudCallback._OnUpdatePublishMediaStreamHandlerRef, IntPtr.Zero);
       TRTCCloudCallbackNative.trtc_cloud_set_on_stop_publish_media_stream_handler(
-          _nativeObj, CloudCallback.OnStopPublishMediaStreamHandler, IntPtr.Zero);
+          _nativeObj, CloudCallback._OnStopPublishMediaStreamHandlerRef, IntPtr.Zero);
       TRTCCloudCallbackNative.trtc_cloud_set_on_cdn_stream_state_changed_handler(
-          _nativeObj, CloudCallback.OnCdnStreamStateChangedHandler, IntPtr.Zero);
+          _nativeObj, CloudCallback._OnCdnStreamStateChangedHandlerRef, IntPtr.Zero);
 
       // screen_share_handler
       TRTCCloudCallbackNative.trtc_cloud_set_on_screen_capture_started_handler(
-          _nativeObj, CloudCallback.OnScreenCaptureStartedHandler, IntPtr.Zero);
+          _nativeObj, CloudCallback._OnScreenCaptureStartedHandlerRef, IntPtr.Zero);
       TRTCCloudCallbackNative.trtc_cloud_set_on_screen_capture_paused_handler(
-          _nativeObj, CloudCallback.OnScreenCapturePausedHandler, IntPtr.Zero);
+          _nativeObj, CloudCallback._OnScreenCapturePausedHandlerRef, IntPtr.Zero);
       TRTCCloudCallbackNative.trtc_cloud_set_on_screen_capture_resumed_handler(
-          _nativeObj, CloudCallback.OnScreenCaptureResumedHandler, IntPtr.Zero);
+          _nativeObj, CloudCallback._OnScreenCaptureResumedHandlerRef, IntPtr.Zero);
       TRTCCloudCallbackNative.trtc_cloud_set_on_screen_capture_stoped_handler(
-          _nativeObj, CloudCallback.OnScreenCaptureStopedHandler, IntPtr.Zero);
+          _nativeObj, CloudCallback._OnScreenCaptureStopedHandlerRef, IntPtr.Zero);
+
+      TRTCCloudCallbackNative.trtc_cloud_set_on_snapshot_complete_handler(
+          _nativeObj, CloudCallback._OnSnapshotCompleteHandlerRef, IntPtr.Zero);
 
       _cloudCallbackObj =
           new TRTCCallbackObj("TRTCCloudNative_CallbackObj_" + _nativeObj.GetHashCode());
 
       _nativeVideoFrameCallback = TRTCCloudNative.trtc_cloud_create_video_frame_callback(
-          _nativeObj, VideoFrameCallback.OnGLContextCreatedHandler,
-          VideoFrameCallback.OnProcessVideoFrameHandler,
-          VideoFrameCallback.OnGLContextDestroyHandler);
+          _nativeObj, VideoFrameCallback._OnGLContextCreatedRef,
+          VideoFrameCallback._OnProcessVideoFrameRef,
+          VideoFrameCallback._OnGLContextDestroyRef);
 
       _nativeVideoRenderCallback = TRTCCloudNative.trtc_cloud_create_video_render_callback(
-          _nativeObj, VideoRenderCallback.OnRenderVideoFrameHandler);
+          _nativeObj, VideoRenderCallback._OnRenderVideoFrameRef);
 
       _nativeAudioFrameCallback = TRTCCloudNative.trtc_cloud_create_audio_frame_callback(
-          _nativeObj, AudioFrameCallback.OnCapturedAudioFrameHandler,
-          AudioFrameCallback.OnLocalProcessedAudioFrameHandler,
-          AudioFrameCallback.OnPlayAudioFrameHandler,
-          AudioFrameCallback.OnMixedPlayAudioFrameHandler,
-          AudioFrameCallback.OnMixedAllAudioFrameHandler);
+          _nativeObj, AudioFrameCallback._OnCapturedAudioFrameRef,
+          AudioFrameCallback._OnLocalProcessedAudioFrameRef,
+          AudioFrameCallback._OnPlayAudioFrameRef,
+          AudioFrameCallback._OnMixedPlayAudioFrameRef,
+          AudioFrameCallback._OnMixedAllAudioFrameRef);
 
       _nativeLogCallback =
-          TRTCCloudNative.trtc_cloud_create_log_callback(_nativeObj, LogCallback.OnLogHandler);
+          TRTCCloudNative.trtc_cloud_create_log_callback(_nativeObj, LogCallback._OnLogRef);
     }
 
     ~TRTCWrapperCallback() {
@@ -348,7 +356,7 @@ namespace trtc {
       TRTCCloudCallbackNative.trtc_cloud_destroy_cloud_callback(_nativeCloudCallback);
       _nativeCloudCallback = IntPtr.Zero;
 
-       TRTCCloudNative.trtc_cloud_destroy_video_frame_callback(_nativeVideoFrameCallback);
+      TRTCCloudNative.trtc_cloud_destroy_video_frame_callback(_nativeVideoFrameCallback);
       _nativeVideoFrameCallback = IntPtr.Zero;
 
       TRTCCloudNative.trtc_cloud_destroy_video_render_callback(_nativeVideoRenderCallback);
@@ -358,7 +366,7 @@ namespace trtc {
       _nativeAudioFrameCallback = IntPtr.Zero;
 
       TRTCCloudNative.trtc_cloud_destroy_log_callback(_nativeLogCallback);
-      
+
       _nativeLogCallback = IntPtr.Zero;
       _nativeObj = IntPtr.Zero;
     }
@@ -387,6 +395,54 @@ namespace trtc {
   }
 
   static class CloudCallback {
+    public static readonly TRTCCloudCallbackNative.OnErrorHandler _OnErrorHandlerRef = OnErrorHandler;
+    public static readonly TRTCCloudCallbackNative.OnWarningHandler _OnWarningHandlerRef = OnWarningHandler;
+    public static readonly TRTCCloudCallbackNative.OnEnterRoomHandler _OnEnterRoomHandlerRef = OnEnterRoomHandler;
+    public static readonly TRTCCloudCallbackNative.OnExitRoomHandler _OnExitRoomHandlerRef = OnExitRoomHandler;
+    public static readonly TRTCCloudCallbackNative.OnSwitchRoleHandler _OnSwitchRoleHandlerRef = OnSwitchRoleHandler;
+    public static readonly TRTCCloudCallbackNative.OnSwitchRoomHandler _OnSwitchRoomHandlerRef = OnSwitchRoomHandler;
+    public static readonly TRTCCloudCallbackNative.OnConnectOtherRoomHandler _OnConnectOtherRoomHandlerRef = OnConnectOtherRoomHandler;
+    public static readonly TRTCCloudCallbackNative.OnDisconnectOtherRoomHandler _OnDisconnectOtherRoomHandlerRef = OnDisconnectOtherRoomHandler;
+    public static readonly TRTCCloudCallbackNative.OnRemoteUserEnterRoomHandler _OnRemoteUserEnterRoomHandlerRef = OnRemoteUserEnterRoomHandler;
+    public static readonly TRTCCloudCallbackNative.OnRemoteUserLeaveRoomHandler _OnRemoteUserLeaveRoomHandlerRef = OnRemoteUserLeaveRoomHandler;
+    public static readonly TRTCCloudCallbackNative.OnUserVideoAvailableHandler _OnUserVideoAvailableHandlerRef = OnUserVideoAvailableHandler;
+    public static readonly TRTCCloudCallbackNative.OnUserSubStreamAvailableHandler _OnUserSubStreamAvailableHandlerRef = OnUserSubStreamAvailableHandler;
+    public static readonly TRTCCloudCallbackNative.OnUserAudioAvailableHandler _OnUserAudioAvailableHandlerRef = OnUserAudioAvailableHandler;
+    public static readonly TRTCCloudCallbackNative.OnFirstVideoFrameHandler _OnFirstVideoFrameHandlerRef = OnFirstVideoFrameHandler;
+    public static readonly TRTCCloudCallbackNative.OnFirstAudioFrameHandler _OnFirstAudioFrameHandlerRef = OnFirstAudioFrameHandler;
+    public static readonly TRTCCloudCallbackNative.OnSendFirstLocalVideoFrameHandler _OnSendFirstLocalVideoFrameHandlerRef = OnSendFirstLocalVideoFrameHandler;
+    public static readonly TRTCCloudCallbackNative.OnSendFirstLocalAudioFrameHandler _OnSendFirstLocalAudioFrameHandlerRef = OnSendFirstLocalAudioFrameHandler;
+    public static readonly TRTCCloudCallbackNative.OnNetworkQualityHandler _OnNetworkQualityHandlerRef = OnNetworkQualityHandler;
+    public static readonly TRTCCloudCallbackNative.OnStatisticsHandler _OnStatisticsHandlerRef = OnStatisticsHandler;
+    public static readonly TRTCCloudCallbackNative.OnSpeedTestResultHandler _OnSpeedTestResultHandlerRef = OnSpeedTestResultHandler;
+    public static readonly TRTCCloudCallbackNative.OnConnectionLostHandler _OnConnectionLostHandlerRef = OnConnectionLostHandler;
+    public static readonly TRTCCloudCallbackNative.OnTryToReconnectHandler _OnTryToReconnectHandlerRef = OnTryToReconnectHandler;
+    public static readonly TRTCCloudCallbackNative.OnConnectionRecoveryHandler _OnConnectionRecoveryHandlerRef = OnConnectionRecoveryHandler;
+    public static readonly TRTCCloudCallbackNative.OnCameraDidReadyHandler _OnCameraDidReadyHandlerRef = OnCameraDidReadyHandler;
+    public static readonly TRTCCloudCallbackNative.OnMicDidReadyHandler _OnMicDidReadyHandlerRef = OnMicDidReadyHandler;
+    public static readonly TRTCCloudCallbackNative.OnAudioRouteChangedHandler _OnAudioRouteChangedHandlerRef = OnAudioRouteChangedHandler;
+    public static readonly TRTCCloudCallbackNative.OnUserVoiceVolumeHandler _OnUserVoiceVolumeHandlerRef = OnUserVoiceVolumeHandler;
+    public static readonly TRTCCloudCallbackNative.OnDeviceChangeHandler _OnDeviceChangeHandlerRef = OnDeviceChangeHandler;
+    public static readonly TRTCCloudCallbackNative.OnAudioDeviceCaptureVolumeChangedHandler _OnAudioDeviceCaptureVolumeChangedHandlerRef = OnAudioDeviceCaptureVolumeChangedHandler;
+    public static readonly TRTCCloudCallbackNative.OnAudioDevicePlayoutVolumeChangedHandler _OnAudioDevicePlayoutVolumeChangedHandlerRef = OnAudioDevicePlayoutVolumeChangedHandler;
+    public static readonly TRTCCloudCallbackNative.OnTestMicVolumeHandler _OnTestMicVolumeHandlerRef = OnTestMicVolumeHandler;
+    public static readonly TRTCCloudCallbackNative.OnTestSpeakerVolumeHandler _OnTestSpeakerVolumeHandlerRef = OnTestSpeakerVolumeHandler;
+    public static readonly TRTCCloudCallbackNative.OnRecvCustomCmdMsgHandler _OnRecvCustomCmdMsgHandlerRef = OnRecvCustomCmdMsgHandler;
+    public static readonly TRTCCloudCallbackNative.OnMissCustomCmdMsgHandler _OnMissCustomCmdMsgHandlerRef = OnMissCustomCmdMsgHandler;
+    public static readonly TRTCCloudCallbackNative.OnRecvSEIMsgHandler _OnRecvSEIMsgHandlerRef = OnRecvSEIMsgHandler;
+    public static readonly TRTCCloudCallbackNative.OnStartPublishingHandler _OnStartPublishingHandlerRef = OnStartPublishingHandler;
+    public static readonly TRTCCloudCallbackNative.OnStopPublishingHandler _OnStopPublishingHandlerRef = OnStopPublishingHandler;
+    public static readonly TRTCCloudCallbackNative.OnSetMixTranscodingConfigHandler _OnSetMixTranscodingConfigHandlerRef = OnSetMixTranscodingConfigHandler;
+    public static readonly TRTCCloudCallbackNative.OnStartPublishMediaStreamHandler _OnStartPublishMediaStreamHandlerRef = OnStartPublishMediaStreamHandler;
+    public static readonly TRTCCloudCallbackNative.OnUpdatePublishMediaStreamHandler _OnUpdatePublishMediaStreamHandlerRef = OnUpdatePublishMediaStreamHandler;
+    public static readonly TRTCCloudCallbackNative.OnStopPublishMediaStreamHandler _OnStopPublishMediaStreamHandlerRef = OnStopPublishMediaStreamHandler;
+    public static readonly TRTCCloudCallbackNative.OnCdnStreamStateChangedHandler _OnCdnStreamStateChangedHandlerRef = OnCdnStreamStateChangedHandler;
+    public static readonly TRTCCloudCallbackNative.OnScreenCaptureStartedHandler _OnScreenCaptureStartedHandlerRef = OnScreenCaptureStartedHandler;
+    public static readonly TRTCCloudCallbackNative.OnScreenCapturePausedHandler _OnScreenCapturePausedHandlerRef = OnScreenCapturePausedHandler;
+    public static readonly TRTCCloudCallbackNative.OnScreenCaptureResumedHandler _OnScreenCaptureResumedHandlerRef = OnScreenCaptureResumedHandler;
+    public static readonly TRTCCloudCallbackNative.OnScreenCaptureStopedHandler _OnScreenCaptureStopedHandlerRef = OnScreenCaptureStopedHandler;
+    public static readonly TRTCCloudCallbackNative.OnSnapshotCompleteHandler _OnSnapshotCompleteHandlerRef = OnSnapshotCompleteHandler;
+
     private static List<ITRTCCloudCallback> QueryCallbacks(IntPtr instance,
                                                            ref TRTCCallbackObj callbackObj) {
       if (instance == IntPtr.Zero) {
@@ -647,11 +703,16 @@ namespace trtc {
         TRTCQualityInfo localQuality;
         TRTCWrapperCallback.QualityArrayInfo remoteQuality;
         try {
+#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_ANDROID || UNITY_IOS || UNITY_OPENHARMONY || UNITY_WEBGL
           localQuality = JsonUtility.FromJson<TRTCQualityInfo>(strLocalQuality);
-          remoteQuality =JsonUtility.FromJson<TRTCWrapperCallback.QualityArrayInfo>(strRemoteQuality);
+          remoteQuality = JsonUtility.FromJson<TRTCWrapperCallback.QualityArrayInfo>(strRemoteQuality);
+#else
+          localQuality = Newtonsoft.Json.JsonConvert.DeserializeObject<TRTCQualityInfo>(strLocalQuality);
+          remoteQuality = Newtonsoft.Json.JsonConvert.DeserializeObject<TRTCWrapperCallback.QualityArrayInfo>(strRemoteQuality);
+#endif
         }
-        catch (System.Exception ex) {
-          Debug.LogError("Exception caught while OnNetworkQualityHandler: " + ex.Message);
+        catch (System.Exception exception) {
+          TRTCLogger.Error("Exception caught while OnNetworkQualityHandler: " + exception);
           return;
         }
 
@@ -669,17 +730,19 @@ namespace trtc {
 
     [MonoPInvokeCallback(typeof(TRTCCloudCallbackNative.OnStatisticsHandler))]
     public static void OnStatisticsHandler(IntPtr instance, string strStatistics, IntPtr userData) {
-
-
       TRTCCallbackObj callbackObj = null;
       var callbacks = QueryCallbacks(instance, ref callbackObj);
       callbackObj?.GetActionQueue().Enqueue(() => {
         TRTCStatistics statistics;
         try {
+#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_ANDROID || UNITY_IOS || UNITY_OPENHARMONY || UNITY_WEBGL
           statistics = JsonUtility.FromJson<TRTCStatistics>(strStatistics);
+#else
+          statistics = Newtonsoft.Json.JsonConvert.DeserializeObject<TRTCStatistics>(strStatistics);
+#endif
         }
-        catch (System.Exception ex) {
-          Debug.LogError("Exception caught while OnStatisticsHandler: " + ex.Message);
+        catch (System.Exception exception) {
+          TRTCLogger.Error("Exception caught while OnStatisticsHandler: " + exception);
           return;
         }
         foreach (var callback in callbacks) {
@@ -697,10 +760,14 @@ namespace trtc {
       callbackObj?.GetActionQueue().Enqueue(() => {
         TRTCSpeedTestResult testResult;
         try {
+#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_ANDROID || UNITY_IOS || UNITY_OPENHARMONY || UNITY_WEBGL
           testResult = JsonUtility.FromJson<TRTCSpeedTestResult>(strTestResult);
+#else
+          testResult = Newtonsoft.Json.JsonConvert.DeserializeObject<TRTCSpeedTestResult>(strTestResult);
+#endif
         }
-        catch (System.Exception ex) {
-          Debug.LogError("Exception caught while OnSpeedTestResultHandler: " + ex.Message);
+        catch (System.Exception exception) {
+          TRTCLogger.Error("Exception caught while OnSpeedTestResultHandler: " + exception);
           return;
         }
         foreach (var callback in callbacks) {
@@ -790,10 +857,14 @@ namespace trtc {
       callbackObj?.GetActionQueue().Enqueue(() => {
         TRTCWrapperCallback.VolumeArrayInfo userVolumeArrayInfo;
         try {
+#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_ANDROID || UNITY_IOS || UNITY_OPENHARMONY || UNITY_WEBGL
           userVolumeArrayInfo = JsonUtility.FromJson<TRTCWrapperCallback.VolumeArrayInfo>(strUserVolumes);
-        } 
-        catch (System.Exception ex) {
-          Debug.LogError("Exception caught while OnUserVoiceVolumeHandler: " + ex.Message);
+#else
+          userVolumeArrayInfo = Newtonsoft.Json.JsonConvert.DeserializeObject<TRTCWrapperCallback.VolumeArrayInfo>(strUserVolumes);
+#endif
+        }
+        catch (System.Exception exception) {
+          TRTCLogger.Error("Exception caught while OnUserVoiceVolumeHandler: " + exception);
           return;
         }
 
@@ -873,62 +944,63 @@ namespace trtc {
     // 7
     [MonoPInvokeCallback(typeof(TRTCCloudCallbackNative.OnRecvCustomCmdMsgHandler))]
     public static void OnRecvCustomCmdMsgHandler(IntPtr instance,
-                                                 String userId,
+                                                 IntPtr userId,
                                                  int cmdID,
                                                  int seq,
                                                  IntPtr message,
                                                  int messageSize,
                                                  IntPtr userData) {
       if (message == IntPtr.Zero || messageSize <= 0) {
-        Debug.Log("OnRecvCustomCmdMsgHandler: messageSize: " + messageSize);
+        TRTCLogger.Error("OnRecvCustomCmdMsgHandler: messageSize: " + messageSize);
         return;
       }
-
+      string userIdStr = TRTCTypeConverter.NativeUtf8PtrToString(userId);
       var data = new byte[messageSize];
       Marshal.Copy(message, data, 0, messageSize);
       TRTCCallbackObj callbackObj = null;
       var callbacks = QueryCallbacks(instance, ref callbackObj);
       callbackObj?.GetActionQueue().Enqueue(() => {
         foreach (var callback in callbacks) {
-          callback.onRecvCustomCmdMsg(userId, cmdID, seq, data, messageSize);
+          callback.onRecvCustomCmdMsg(userIdStr, cmdID, seq, data, messageSize);
         }
       });
     }
 
     [MonoPInvokeCallback(typeof(TRTCCloudCallbackNative.OnMissCustomCmdMsgHandler))]
     public static void OnMissCustomCmdMsgHandler(IntPtr instance,
-                                                 String userId,
+                                                 IntPtr userId,
                                                  int cmdID,
                                                  int errCode,
                                                  int missed,
                                                  IntPtr userData) {
       TRTCCallbackObj callbackObj = null;
+      string userIdStr = TRTCTypeConverter.NativeUtf8PtrToString(userId);
       var callbacks = QueryCallbacks(instance, ref callbackObj);
       callbackObj?.GetActionQueue().Enqueue(() => {
         foreach (var callback in callbacks) {
-          callback.onMissCustomCmdMsg(userId, cmdID, errCode, missed);
+          callback.onMissCustomCmdMsg(userIdStr, cmdID, errCode, missed);
         }
       });
     }
 
     [MonoPInvokeCallback(typeof(TRTCCloudCallbackNative.OnRecvSEIMsgHandler))]
     public static void OnRecvSEIMsgHandler(IntPtr instance,
-                                           string userId,
+                                           IntPtr userId,
                                            IntPtr message,
                                            UInt32 messageSize,
                                            IntPtr userData) {
       if (message == IntPtr.Zero || messageSize <= 0) {
-        Debug.Log("OnRecvSEIMsgHandler: messageSize:" + messageSize);
+        TRTCLogger.Error("OnRecvSEIMsgHandler: messageSize:" + messageSize);
         return;
       }
-
+      string userIdStr = TRTCTypeConverter.NativeUtf8PtrToString(userId);
       var data = new byte[messageSize];
       Marshal.Copy(message, data, 0, (int)messageSize);
       TRTCCallbackObj callbackObj = null;
       var callbacks = QueryCallbacks(instance, ref callbackObj);
       callbackObj?.GetActionQueue().Enqueue(() => {
         foreach (var callback in callbacks) {
-          callback.onRecvSEIMsg(userId, data, messageSize);
+          callback.onRecvSEIMsg(userIdStr, data, messageSize);
         }
       });
     }
@@ -1085,12 +1157,57 @@ namespace trtc {
         }
       });
     }
+
+    [MonoPInvokeCallback(typeof(TRTCCloudCallbackNative.OnSnapshotCompleteHandler))]
+    public static void OnSnapshotCompleteHandler(IntPtr instance,
+                                                    IntPtr userId,
+                                                    TRTCVideoStreamType type,
+                                                    IntPtr data,
+                                                    uint length,
+                                                    uint width,
+                                                    uint height,
+                                                    TRTCVideoPixelFormat format,
+                                                    IntPtr userData) {
+      byte[] dataByte = null;
+      if (data == IntPtr.Zero || length <= 0) {
+        TRTCLogger.Warning("OnSnapshotCompleteHandler: length:" + length);
+        length = 0;
+      }
+      else {
+        dataByte = new byte[length];
+        try {
+          Marshal.Copy(data, dataByte, 0, (int)length);
+        }
+        catch (AccessViolationException ex) {
+          TRTCLogger.Error("OnSnapshotCompleteHandler: Marshal.Copy access violation - " + ex.Message);
+          dataByte = null;
+          length = 0;
+        }
+        catch (Exception ex) {
+          TRTCLogger.Error("OnSnapshotCompleteHandler: Marshal.Copy error - " + ex.Message);
+          dataByte = null;
+          length = 0;
+        }
+      }
+      TRTCCallbackObj callbackObj = null;
+      var callbacks = QueryCallbacks(instance, ref callbackObj);
+      var userIdStr = TRTCTypeConverter.NativeUtf8PtrToString(userId);
+      callbackObj?.GetActionQueue().Enqueue(() => {
+        foreach (var callback in callbacks) {
+          callback.onSnapshotComplete(userIdStr, type, dataByte, length, width, height, format);
+        }
+      });
+    }
   }
 
+
   public static class VideoFrameCallback {
+    public static readonly TRTCVideoFrameCallbackNative.OnGLContextCreatedHandler _OnGLContextCreatedRef = OnGLContextCreatedHandler;
+    public static readonly TRTCVideoFrameCallbackNative.OnProcessVideoFrameHandler _OnProcessVideoFrameRef = OnProcessVideoFrameHandler;
+    public static readonly TRTCVideoFrameCallbackNative.OnGLContextDestroyHandler _OnGLContextDestroyRef = OnGLContextDestroyHandler;
     //  todo 老版本未用到，暂不实现
     [MonoPInvokeCallback(typeof(TRTCVideoFrameCallbackNative.OnGLContextCreatedHandler))]
-    public static void OnGLContextCreatedHandler(IntPtr instance) {}
+    public static void OnGLContextCreatedHandler(IntPtr instance) { }
 
     [MonoPInvokeCallback(typeof(TRTCVideoFrameCallbackNative.OnProcessVideoFrameHandler))]
     public static int OnProcessVideoFrameHandler(IntPtr instance,
@@ -1100,10 +1217,11 @@ namespace trtc {
     }
 
     [MonoPInvokeCallback(typeof(TRTCVideoFrameCallbackNative.OnGLContextDestroyHandler))]
-    public static void OnGLContextDestroyHandler(IntPtr instance) {}
+    public static void OnGLContextDestroyHandler(IntPtr instance) { }
   }
 
   public static class VideoRenderCallback {
+    public static readonly TRTCVideoRenderCallbackNative.OnRenderVideoFrameHandler _OnRenderVideoFrameRef = OnRenderVideoFrameHandler;
     private static ITRTCVideoRenderCallback QueryCallbacks(IntPtr instance, RenderKey key) {
       if (instance == IntPtr.Zero) {
         return null;
@@ -1119,7 +1237,7 @@ namespace trtc {
                                                  TRTCVideoStreamType streamType,
                                                  ref VideoFrame frame) {
       if (frame.data == IntPtr.Zero || frame.length <= 0) {
-        Debug.Log("OnRenderVideoFrameHandler: frame.length:" + frame.length);
+        TRTCLogger.Error("OnRenderVideoFrameHandler: frame.length:" + frame.length);
         return;
       }
 
@@ -1139,7 +1257,7 @@ namespace trtc {
       if (callback != null) {
         callback.onRenderVideoFrame(userID, streamType, videoFrame);
       }
-      
+
       var keyWithUserID = new RenderKey(userID);
       var newCallback = QueryCallbacks(instance, keyWithUserID);
       if (newCallback != null) {
@@ -1149,6 +1267,11 @@ namespace trtc {
   }
 
   public static class AudioFrameCallback {
+    public static readonly TRTCAudioFrameCallbackNative.OnCapturedAudioFrameHandler _OnCapturedAudioFrameRef = OnCapturedAudioFrameHandler;
+    public static readonly TRTCAudioFrameCallbackNative.OnLocalProcessedAudioFrameHandler _OnLocalProcessedAudioFrameRef = OnLocalProcessedAudioFrameHandler;
+    public static readonly TRTCAudioFrameCallbackNative.OnPlayAudioFrameHandler _OnPlayAudioFrameRef = OnPlayAudioFrameHandler;
+    public static readonly TRTCAudioFrameCallbackNative.OnMixedPlayAudioFrameHandler _OnMixedPlayAudioFrameRef = OnMixedPlayAudioFrameHandler;
+    public static readonly TRTCAudioFrameCallbackNative.OnMixedAllAudioFrameHandler _OnMixedAllAudioFrameRef = OnMixedAllAudioFrameHandler;
     private static ITRTCAudioFrameCallback QueryCallbacks(IntPtr instance) {
       if (instance == IntPtr.Zero) {
         return null;
@@ -1161,7 +1284,7 @@ namespace trtc {
     [MonoPInvokeCallback(typeof(TRTCAudioFrameCallbackNative.OnCapturedAudioFrameHandler))]
     public static void OnCapturedAudioFrameHandler(IntPtr instance, ref AudioFrame audioFrame) {
       if (audioFrame.data == IntPtr.Zero || audioFrame.length <= 0) {
-        Debug.Log("OnCapturedAudioFrameHandler: audioFrame.length:" + audioFrame.length);
+        TRTCLogger.Error("OnCapturedAudioFrameHandler: audioFrame.length:" + audioFrame.length);
         return;
       }
 
@@ -1170,8 +1293,10 @@ namespace trtc {
         return;
       }
 
-      var frame = new TRTCAudioFrame { audioFormat = audioFrame.audioFormat,
-                                       data = new byte[audioFrame.length] };
+      var frame = new TRTCAudioFrame {
+        audioFormat = audioFrame.audioFormat,
+        data = new byte[audioFrame.length]
+      };
       Marshal.Copy(audioFrame.data, frame.data, 0, (int)audioFrame.length);
       frame.sampleRate = audioFrame.sampleRate;
       frame.channel = audioFrame.channel;
@@ -1179,7 +1304,7 @@ namespace trtc {
       frame.length = audioFrame.length;
 
       callback.onCapturedRawAudioFrame(frame);
-      
+
       Marshal.Copy(frame.data, 0, audioFrame.data, (int)audioFrame.length);
       frame.data = null;
     }
@@ -1188,7 +1313,7 @@ namespace trtc {
     public static void OnLocalProcessedAudioFrameHandler(IntPtr instance,
                                                          ref AudioFrame audioFrame) {
       if (audioFrame.data == IntPtr.Zero || audioFrame.length <= 0) {
-        Debug.Log("OnLocalProcessedAudioFrameHandler: audioFrame.length:" + audioFrame.length);
+        TRTCLogger.Error("OnLocalProcessedAudioFrameHandler: audioFrame.length:" + audioFrame.length);
         return;
       }
       var callback = QueryCallbacks(instance);
@@ -1216,7 +1341,7 @@ namespace trtc {
                                                ref AudioFrame audioFrame,
                                                string userId) {
       if (audioFrame.data == IntPtr.Zero || audioFrame.length <= 0) {
-        Debug.Log("OnLocalProcessedAudioFrameHandler: audioFrame.length:" + audioFrame.length);
+        TRTCLogger.Error("OnLocalProcessedAudioFrameHandler: audioFrame.length:" + audioFrame.length);
         return;
       }
 
@@ -1225,8 +1350,10 @@ namespace trtc {
         return;
       }
 
-      var frame = new TRTCAudioFrame { audioFormat = audioFrame.audioFormat,
-                                       data = new byte[audioFrame.length] };
+      var frame = new TRTCAudioFrame {
+        audioFormat = audioFrame.audioFormat,
+        data = new byte[audioFrame.length]
+      };
       Marshal.Copy(audioFrame.data, frame.data, 0, (int)audioFrame.length);
       frame.sampleRate = audioFrame.sampleRate;
       frame.channel = audioFrame.channel;
@@ -1242,7 +1369,7 @@ namespace trtc {
     [MonoPInvokeCallback(typeof(TRTCAudioFrameCallbackNative.OnMixedPlayAudioFrameHandler))]
     public static void OnMixedPlayAudioFrameHandler(IntPtr instance, ref AudioFrame audioFrame) {
       if (audioFrame.data == IntPtr.Zero || audioFrame.length <= 0) {
-        Debug.Log("OnMixedPlayAudioFrameHandler: audioFrame.length:" + audioFrame.length);
+        TRTCLogger.Error("OnMixedPlayAudioFrameHandler: audioFrame.length:" + audioFrame.length);
         return;
       }
 
@@ -1251,14 +1378,16 @@ namespace trtc {
         return;
       }
 
-      var frame = new TRTCAudioFrame { audioFormat = audioFrame.audioFormat,
-                                       data = new byte[audioFrame.length] };
+      var frame = new TRTCAudioFrame {
+        audioFormat = audioFrame.audioFormat,
+        data = new byte[audioFrame.length]
+      };
       Marshal.Copy(audioFrame.data, frame.data, 0, (int)audioFrame.length);
       frame.sampleRate = audioFrame.sampleRate;
       frame.channel = audioFrame.channel;
       frame.timestamp = audioFrame.timestamp;
       frame.length = audioFrame.length;
-      
+
       callback.onMixedPlayAudioFrame(frame);
 
       Marshal.Copy(frame.data, 0, audioFrame.data, (int)audioFrame.length);
@@ -1266,10 +1395,11 @@ namespace trtc {
     }
 
     [MonoPInvokeCallback(typeof(TRTCAudioFrameCallbackNative.OnMixedAllAudioFrameHandler))]
-    public static void OnMixedAllAudioFrameHandler(IntPtr instance, ref AudioFrame audioFrame) {}
+    public static void OnMixedAllAudioFrameHandler(IntPtr instance, ref AudioFrame audioFrame) { }
   }
 
   public static class LogCallback {
+    public static readonly TRTCLogCallbackNative.OnLogHandler _OnLogRef = OnLogHandler;
     private static ITRTCLogCallback QueryCallbacks(IntPtr instance) {
       if (instance == IntPtr.Zero) {
         return null;

@@ -3,15 +3,23 @@
 
 using System;
 using System.Runtime.InteropServices;
+#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_ANDROID || UNITY_IOS || UNITY_OPENHARMONY || UNITY_WEBGL
 using AOT;
-using UnityEngine;
+#endif
 
 namespace liteav {
+#if !(UNITY_EDITOR || UNITY_STANDALONE || UNITY_ANDROID || UNITY_IOS || UNITY_OPENHARMONY || UNITY_WEBGL)
+  [AttributeUsage(AttributeTargets.All)]
+  internal class MonoPInvokeCallbackAttribute : Attribute {
+    public MonoPInvokeCallbackAttribute(Type delegateType) {
+    }
+  }
+#endif
   public class V2TXLivePlayerWrapperCallback {
     private IntPtr _nativeObj = IntPtr.Zero;
     private LivePlayerCallback _livePlayerCallback = null;
 
-    ~V2TXLivePlayerWrapperCallback() {}
+    ~V2TXLivePlayerWrapperCallback() { }
 
     public V2TXLivePlayerWrapperCallback(IntPtr nativeObj) {
       _nativeObj = nativeObj;
@@ -20,7 +28,7 @@ namespace liteav {
           _nativeObj, LivePlayerCallback.OnErrorHandler);
 
       V2TXLivePlayerCallbackNative.v2tx_live_player_set_on_warning_handler(
-          _nativeObj, LivePlayerCallback.OnWraningHandler);
+          _nativeObj, LivePlayerCallback.OnWarningHandler);
 
       V2TXLivePlayerCallbackNative.v2tx_live_player_set_on_video_resolution_changed_handler(
           _nativeObj, LivePlayerCallback.OnVideoResolutionChangedHandler);
@@ -39,8 +47,16 @@ namespace liteav {
     }
   }
   public class LivePlayerCallback {
+    public static readonly V2TXLivePlayerCallbackNative.OnErrorHandler OnErrorHandler = OnErrorHandlerRef;
+    public static readonly V2TXLivePlayerCallbackNative.OnWarningHandler OnWarningHandler = OnWarningHandlerRef;
+    public static readonly V2TXLivePlayerCallbackNative.OnVideoResolutionChangedHandler OnVideoResolutionChangedHandler = OnVideoResolutionChangedHandlerRef;
+    public static readonly V2TXLivePlayerCallbackNative.OnConnectedHandler OnConnectedHandler = OnConnectedHandlerRef;
+    public static readonly V2TXLivePlayerCallbackNative.OnAudioPlayingHandler OnAudioPlayingHandler = OnAudioPlayingHandlerRef;
+    public static readonly V2TXLivePlayerCallbackNative.OnVideoPlayingHandler OnVideoPlayingHandler = OnVideoPlayingHandlerRef;
+    public static readonly V2TXLivePlayerCallbackNative.OnRenderVideoFrameHandler OnRenderVideoFrameHandler = OnRenderVideoFrameHandlerRef;
+
     [MonoPInvokeCallback(typeof(V2TXLivePlayerCallbackNative.OnErrorHandler))]
-    public static void OnErrorHandler(IntPtr instance,
+    public static void OnErrorHandlerRef(IntPtr instance,
                                       V2TXLiveCode errCode,
                                       string errMsg,
                                       IntPtr extraInfo,
@@ -54,7 +70,7 @@ namespace liteav {
     }
 
     [MonoPInvokeCallback(typeof(V2TXLivePlayerCallbackNative.OnWarningHandler))]
-    public static void OnWraningHandler(IntPtr instance,
+    public static void OnWarningHandlerRef(IntPtr instance,
                                         V2TXLiveCode errCode,
                                         string errMsg,
                                         IntPtr extraInfo,
@@ -68,7 +84,7 @@ namespace liteav {
     }
 
     [MonoPInvokeCallback(typeof(V2TXLivePlayerCallbackNative.OnVideoResolutionChangedHandler))]
-    public static void OnVideoResolutionChangedHandler(IntPtr player,
+    public static void OnVideoResolutionChangedHandlerRef(IntPtr player,
                                                        int width,
                                                        int height,
                                                        IntPtr userData) {
@@ -81,7 +97,7 @@ namespace liteav {
     }
 
     [MonoPInvokeCallback(typeof(V2TXLivePlayerCallbackNative.OnConnectedHandler))]
-    public static void OnConnectedHandler(IntPtr player, IntPtr extraInfo, IntPtr userData) {
+    public static void OnConnectedHandlerRef(IntPtr player, IntPtr extraInfo, IntPtr userData) {
       var livePlayerImpl = V2TXLivePlayerManager.GetLivePlayer(player);
       if (livePlayerImpl == null || livePlayerImpl.GetCallback() == null) {
         return;
@@ -91,7 +107,7 @@ namespace liteav {
     }
 
     [MonoPInvokeCallback(typeof(V2TXLivePlayerCallbackNative.OnAudioPlayingHandler))]
-    public static void OnAudioPlayingHandler(IntPtr player,
+    public static void OnAudioPlayingHandlerRef(IntPtr player,
                                              int firstPlay,
                                              IntPtr extraInfo,
                                              IntPtr userData) {
@@ -104,7 +120,7 @@ namespace liteav {
     }
 
     [MonoPInvokeCallback(typeof(V2TXLivePlayerCallbackNative.OnVideoPlayingHandler))]
-    public static void OnVideoPlayingHandler(IntPtr player,
+    public static void OnVideoPlayingHandlerRef(IntPtr player,
                                              int firstPlay,
                                              IntPtr extraInfo,
                                              IntPtr userData) {
@@ -117,7 +133,7 @@ namespace liteav {
     }
 
     [MonoPInvokeCallback(typeof(V2TXLivePlayerCallbackNative.OnRenderVideoFrameHandler))]
-    public static void OnRenderVideoFrameHandler(IntPtr player,
+    public static void OnRenderVideoFrameHandlerRef(IntPtr player,
                                                  ref VideoFrame frame,
                                                  IntPtr userData) {
       V2TXLivePlayerImplement livePlayerImpl = V2TXLivePlayerManager.GetLivePlayer(player);
@@ -128,8 +144,11 @@ namespace liteav {
         return;
       }
       var appVideoFrame =
-          new V2TXLiveVideoFrame { pixelFormat = frame.pixelFormat, bufferType = frame.bufferType,
-                                   rotation = frame.rotation };
+          new V2TXLiveVideoFrame {
+            pixelFormat = frame.pixelFormat,
+            bufferType = frame.bufferType,
+            rotation = frame.rotation
+          };
       appVideoFrame.data = new byte[frame.length];
       Marshal.Copy(frame.data, appVideoFrame.data, 0, (int)frame.length);
       appVideoFrame.length = frame.length;

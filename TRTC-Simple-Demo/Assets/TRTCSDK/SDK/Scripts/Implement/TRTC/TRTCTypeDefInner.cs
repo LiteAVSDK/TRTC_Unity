@@ -5,6 +5,21 @@ using System;
 using System.Runtime.InteropServices;
 
 namespace trtc {
+  //  5.1 
+  [StructLayout(LayoutKind.Sequential)]
+  public struct TRTCParamsInner {
+    public UInt32 sdkAppId;
+    public IntPtr userId;
+    public IntPtr userSig;
+    public UInt32 roomId;
+    public IntPtr strRoomId;
+    public TRTCRoleType role;
+    public IntPtr streamId;
+    public IntPtr userDefineRecordId;
+    public IntPtr privateMapKey;
+    public IntPtr businessInfo;
+  }
+
   // 5.10
   [StructLayout(LayoutKind.Sequential)]
   public struct VideoFrame {
@@ -69,7 +84,7 @@ namespace trtc {
   public struct ScreenCaptureSourceInfo {
     public TRTCScreenCaptureSourceType type;
     public IntPtr sourceId;
-    public string sourceName;
+    public IntPtr sourceName;
     public ImageBuffer thumbBGRA;
     public ImageBuffer iconBGRA;
     public bool isMinimizeWindow;
@@ -172,12 +187,23 @@ namespace trtc {
 
   [StructLayout(LayoutKind.Sequential)]
   public struct DeviceInfo {
-    public String devicePID;
-    public String deviceName;
-    public String deviceProperties;
+    public IntPtr devicePID;
+    public IntPtr deviceName;
+    public IntPtr deviceProperties;
     public UInt32 devicePIDLen;
     public UInt32 deviceNameLen;
     public UInt32 devicePropertiesLen;
+  }
+
+  [StructLayout(LayoutKind.Sequential)]
+  public struct AudioMusicParamInner {
+    public int id;
+    public IntPtr path;
+    public int loopCount;
+    public bool publish;
+    public bool isShortFile;
+    public int startTimeMS;
+    public int endTimeMS;
   }
 
   public enum TRTCLogWriteLevel {

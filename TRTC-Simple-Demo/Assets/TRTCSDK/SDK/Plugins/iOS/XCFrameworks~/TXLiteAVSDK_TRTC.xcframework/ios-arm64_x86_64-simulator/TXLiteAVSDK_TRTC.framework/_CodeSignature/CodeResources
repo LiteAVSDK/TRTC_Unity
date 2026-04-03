@@ -4,9 +4,13 @@
 <dict>
 	<key>files</key>
 	<dict>
+		<key>Headers/AITranscriberManager.h</key>
+		<data>
+		Fhvy/M8OhzX5eIvA4iMslu69qdI=
+		</data>
 		<key>Headers/DeprecatedTRTCCloud.h</key>
 		<data>
-		WR+6A4gP6t8HJjfxvonm2k16k+k=
+		2zZcxKKjQKTiCeJXg9EC0wFBXyo=
 		</data>
 		<key>Headers/ITRTCAudioPacketListener.h</key>
 		<data>
@@ -14,19 +18,19 @@
 		</data>
 		<key>Headers/TRTCCloud.h</key>
 		<data>
-		wqU9u1tQQ8Mr59pl0uZheJWCjJo=
+		9B09Viswd3gAwkmlFqmlTS5PJgw=
 		</data>
 		<key>Headers/TRTCCloudDef.h</key>
 		<data>
-		y9qGSbJQDFNOzV7RhUO3SkgnhTc=
+		XTGS3j5wrHSoQ9OwbcG5+jrleXE=
 		</data>
 		<key>Headers/TRTCCloudDelegate.h</key>
 		<data>
-		2n3HBwZ51AiZShbsy9NpzR8bF5c=
+		KccjM5fYCglxyZP1KGdyRBRMeBA=
 		</data>
 		<key>Headers/TRTCStatistics.h</key>
 		<data>
-		D/nj+Yhy7uuj0M4w4eFpOQ1lPPw=
+		YLyJ2kzHEYWZ2W1qS3lOi60le3w=
 		</data>
 		<key>Headers/TXAudioCustomProcessDelegate.h</key>
 		<data>
@@ -34,7 +38,7 @@
 		</data>
 		<key>Headers/TXAudioEffectManager.h</key>
 		<data>
-		GSE6KhY+g8+6jZjP/8fWoREvXyo=
+		ApEz2e1QpDQ6vcVHR/UoxBAcCdk=
 		</data>
 		<key>Headers/TXAudioRawDataDelegate.h</key>
 		<data>
@@ -42,11 +46,11 @@
 		</data>
 		<key>Headers/TXBeautyManager.h</key>
 		<data>
-		cUsVWSLRVPtnXyoMSMvZ6723Jaw=
+		ZrZkne9st2ncokbFCltlsbhHk2I=
 		</data>
 		<key>Headers/TXDeviceManager.h</key>
 		<data>
-		JG0462re1sAZ9CI2P7zgAnVT9U4=
+		eAmL7YHXzw4zIo+fY/yp9Dv9/jU=
 		</data>
 		<key>Headers/TXLiteAVBuffer.h</key>
 		<data>
@@ -54,7 +58,7 @@
 		</data>
 		<key>Headers/TXLiteAVCode.h</key>
 		<data>
-		/tFExMyfr04U4G3XSYBjGBxijic=
+		Moo06FmLlj2OKh7WTY3DAMrlsB4=
 		</data>
 		<key>Headers/TXLiteAVEncodedDataProcessingListener.h</key>
 		<data>
@@ -62,7 +66,7 @@
 		</data>
 		<key>Headers/TXLiteAVSDK.h</key>
 		<data>
-		fnK0w2Jl1fkmYc1nq3fNKo3nTcU=
+		bjtI7dWaMr+WuhWIxL+vYbfg0a0=
 		</data>
 		<key>Headers/TXLiteAVSymbolExport.h</key>
 		<data>
@@ -74,7 +78,7 @@
 		</data>
 		<key>Headers/TXLiveBase.h</key>
 		<data>
-		voi3dsUz2ufWLYaqLyWyeOPf2Vs=
+		1vLl5GeESt4e7IbVesJtrKQOCzM=
 		</data>
 		<key>Headers/TXLivePlayConfig.h</key>
 		<data>
@@ -110,83 +114,91 @@
 		</data>
 		<key>Headers/V2TXLiveCode.h</key>
 		<data>
-		Ycb7/saPQ/f5ARCMGymNBhfgEcE=
+		TZZSbbm1lq2w5HgSa1vxbB+6SG4=
 		</data>
 		<key>Headers/V2TXLiveDef.h</key>
 		<data>
-		9Yl1CAG4fWO8y04/kmdNlVZTmnw=
+		DrdcIjcPZBYhzxhD22B2M7qzzhA=
 		</data>
 		<key>Headers/V2TXLivePlayer.h</key>
 		<data>
-		NCJ9A+tPkN3QruP5cn2gZb5w3u4=
+		Fwixr+dzpQuEnYgbrwU+sEG/MrI=
 		</data>
 		<key>Headers/V2TXLivePlayerObserver.h</key>
 		<data>
-		Zt1YVKyHq5gpOtLEvCtgZKycYwk=
+		sXq50bDAnXoxr2xgCot5WGTrLJE=
 		</data>
 		<key>Headers/V2TXLivePremier.h</key>
 		<data>
-		m14ZKF6wqKwG2FDaIFp7wu8VeIo=
+		vCV6vCMk4sbzwBEJmzZ9s9dHAWw=
 		</data>
 		<key>Headers/V2TXLiveProperty.h</key>
 		<data>
-		iLmhPcKMoifm/7JBtrBTGWXfW2I=
+		gJnw6SsBviOCBA69vd4/Lik+7ac=
+		</data>
+		<key>Headers/cpp_interface/AITranscriberManager.h</key>
+		<data>
+		WvZ3tsXwL1xUx5Bzao5N3bxn//A=
 		</data>
 		<key>Headers/cpp_interface/IDeprecatedTRTCCloud.h</key>
 		<data>
-		mzwj4AwjUa5rjY70klFWsJI+IKk=
+		6D1wXXPmt8HmtnhwfBjegNWlB38=
 		</data>
 		<key>Headers/cpp_interface/ITRTCCloud.h</key>
 		<data>
-		RdWNEq8KZWkVz1legubN3aXgjBQ=
+		7DRxjdo0lx4iqKDD4pLnMP0/HSY=
 		</data>
 		<key>Headers/cpp_interface/ITRTCStatistics.h</key>
 		<data>
-		7s6iQLzf6Pihc0Yrbt4O19l/qFA=
+		fCGm9atAdisijFrIin+mOs2w3ZA=
 		</data>
 		<key>Headers/cpp_interface/ITXAudioEffectManager.h</key>
 		<data>
-		Akj7U+J3VJMOaYoMn0Ei+4p520Y=
+		k84c0xh6AF0wJSKvC5PfmQfpMmk=
+		</data>
+		<key>Headers/cpp_interface/ITXBeautyManager.h</key>
+		<data>
+		Vg+CeIyytEQJt05s+b67ewyy2Og=
 		</data>
 		<key>Headers/cpp_interface/ITXDeviceManager.h</key>
 		<data>
-		PjJdXLe3C8NFFavUTB48s73u6yg=
+		IX6Yu8M40MJw5ABvVYvhaZmOHd4=
 		</data>
 		<key>Headers/cpp_interface/TRTCCloudCallback.h</key>
 		<data>
-		myo8KyOBVOc8Bn76MRPJottCjOM=
+		Bh0iPltSVG/4dk9ehj9+mBxUSXo=
 		</data>
 		<key>Headers/cpp_interface/TRTCTypeDef.h</key>
 		<data>
-		yy8uvsiniTDUgR8Zm6epPIt9GzY=
+		Kw9AxgYr+DrafdaskKer289UjQo=
 		</data>
 		<key>Headers/cpp_interface/TXLiteAVCode.h</key>
 		<data>
-		/tFExMyfr04U4G3XSYBjGBxijic=
+		Moo06FmLlj2OKh7WTY3DAMrlsB4=
 		</data>
 		<key>Headers/cpp_interface/V2TXLiveCode.hpp</key>
 		<data>
-		AkDLERT9LQbQkVD/1DHkgOb514Y=
+		RgQQP0WGjigyB8LZhnz8iW1SdVY=
 		</data>
 		<key>Headers/cpp_interface/V2TXLiveDef.hpp</key>
 		<data>
-		fJhB3XAM9svB769M9kt8CFYrfSs=
+		TkCwLptbvK7l7Pd+h0PzPyyNGdw=
 		</data>
 		<key>Headers/cpp_interface/V2TXLivePlayer.hpp</key>
 		<data>
-		tky8sCeDmxPnfHxRU94iEJbRqfE=
+		U3fKhmo43+9SYuOoLYMEvSiVzZg=
 		</data>
 		<key>Headers/cpp_interface/V2TXLivePlayerObserver.hpp</key>
 		<data>
-		FWlDZOqMfZsjraVtKH1iT53w1Mw=
+		2dwY59oF+9LdYBKBbO71O+mdKZ4=
 		</data>
 		<key>Headers/cpp_interface/V2TXLivePremier.hpp</key>
 		<data>
-		Llg6w5AS8bL/EKEhI/80tBP/v4o=
+		POqmHvSjQm8DgQcUJwC/VaC+nXA=
 		</data>
 		<key>Info.plist</key>
 		<data>
-		EEv8pIVKOxwmULTXgVR+QxAEbeY=
+		udo9fNSt5fmi6KNY4axxVXMXRaE=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
@@ -198,16 +210,23 @@
 		</data>
 		<key>TXLiteAVSDK_TRTC_x64</key>
 		<data>
-		+4Qur0hhEF5aTKhkE/wRdKZVC0Q=
+		YjyNznOBnFC6ly8OzYNoVi5/fEo=
 		</data>
 	</dict>
 	<key>files2</key>
 	<dict>
+		<key>Headers/AITranscriberManager.h</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Q4Y2o22MdrH+1YTMksrtE6QPe+xEHnLQ7A8uVkG2QVM=
+			</data>
+		</dict>
 		<key>Headers/DeprecatedTRTCCloud.h</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			Ux4JlLgHUPDwBLWfm9l/84Bt0N37F/Eb/lg2G9tk0go=
+			urQ8S7XH2nrSCw+xVriIQ/GNavZI+WZUjrVt2edQAs0=
 			</data>
 		</dict>
 		<key>Headers/ITRTCAudioPacketListener.h</key>
@@ -221,28 +240,28 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			yAC/0lguYW5Zj5yv1PkWJSGY0ymXraVS3mPDnTRVc6A=
+			EqSmCwoCOTQtrvayl1KygfwA+p6CEkOpbv8peuOPY4o=
 			</data>
 		</dict>
 		<key>Headers/TRTCCloudDef.h</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			t3UWhRiQu5+mGflaWrK5SEx6/gfRwSXjN4TeGEc8lw0=
+			tV8ld1fP2JQqaJhni7VH91udG17dlZuc+UGc90nemvQ=
 			</data>
 		</dict>
 		<key>Headers/TRTCCloudDelegate.h</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			nJ34GmeB3jcXcMwkPmt8SeSJCT5sh/l/Va+ZnLhx1Wk=
+			iQ/jnaSqqGYCYhAkXbdUKEL077fqN11PO3t/qNae2No=
 			</data>
 		</dict>
 		<key>Headers/TRTCStatistics.h</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			A6Zs8KDFx9muMZCzlsr31qjbPJp27yiBg1bgx/L4B5o=
+			ZZvMAsghfMuXn9sIsVUeOqzVnaerdCf+EhilpXzYNf0=
 			</data>
 		</dict>
 		<key>Headers/TXAudioCustomProcessDelegate.h</key>
@@ -256,7 +275,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			Wncjmv4/HK+Zwr/TPG4YBfRsD38/DGXFV/yggv/QKyI=
+			fY7wdCIoz7UwJsfdk2LmIunWXOQUAgYyR+PKZyQrrfM=
 			</data>
 		</dict>
 		<key>Headers/TXAudioRawDataDelegate.h</key>
@@ -270,14 +289,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			2z+JN1rREnlPGs7QApHj2U9m2Ry6Ll/jj3FXArzU/uM=
+			bMvZYMUXcPk18fZeUAJAksX+qwkwC82ZP0/VI2hDUoA=
 			</data>
 		</dict>
 		<key>Headers/TXDeviceManager.h</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			9DL8UyOw77i+GNl+Zx4LewGBBnijLvagQuz3HcM/gy0=
+			gUEdTYMYp35NSfjkf24xx4FJM9cXgYtdTcPnLi6s7DI=
 			</data>
 		</dict>
 		<key>Headers/TXLiteAVBuffer.h</key>
@@ -291,7 +310,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			LjcuEb1AeB2zHTvlbTvuxzfsBRFaCNCq130nm2EHGU8=
+			4Gx1yuXy9uL5fH9N2133IGyFjcdR78T6IapKfIdkEXM=
 			</data>
 		</dict>
 		<key>Headers/TXLiteAVEncodedDataProcessingListener.h</key>
@@ -305,7 +324,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			knxKwISO/6DVKP2UjpY4M4QsBi+bNqLkz4zZpnWxeqU=
+			cDptCg+Kk/ccK3/kfignmklciwe7EhmPNfp8v2MZFEU=
 			</data>
 		</dict>
 		<key>Headers/TXLiteAVSymbolExport.h</key>
@@ -326,7 +345,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			UVQbMvOfIQzPszRjridcWFnQI5vs+3eY6HSaJRvGzVo=
+			YPIT0w9HfwiY8wUnTHcIqDrVl4EYbGBffwYX/Pk+BmQ=
 			</data>
 		</dict>
 		<key>Headers/TXLivePlayConfig.h</key>
@@ -389,133 +408,147 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			FUZADZ/zlNIf3NB3U1q3orgJIMO9Wk8GrH0scqmgpGI=
+			88Nr0ANyHh4+6ajwiXyzS+KraBUz7cGUcaOrh3hpaY4=
 			</data>
 		</dict>
 		<key>Headers/V2TXLiveDef.h</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			zi0WoOnhClvXaJQ6c1SrzppgohhCCEcKsph6p55w3As=
+			znZ/3heTXTU5aUDqSqCcuVlfFb01dFeukPhIivuAgO0=
 			</data>
 		</dict>
 		<key>Headers/V2TXLivePlayer.h</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			QYdgnn7GdJalhqs3E27cRRcEV8uEThcwiBaxldf14Qk=
+			yv/Qq+hQaUG6RKxWP/rUOo9joFpnA5dAZo7GNx0Z6Qs=
 			</data>
 		</dict>
 		<key>Headers/V2TXLivePlayerObserver.h</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			VHEwK97KpG68KiIRwucDPOZGxuBq+UURLRy7J3xgRgs=
+			bxlbopGb5bItNgPgVVN56JWRBOdk9KclVW7zWknKlkM=
 			</data>
 		</dict>
 		<key>Headers/V2TXLivePremier.h</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			g7zWrZAEjS350nvN1DixK6z6WmcY6IXmfK5+tT0rJzs=
+			A4Bz0Awl5J3QpprtnnnXjKqmfESJRknb45b3wInNWiw=
 			</data>
 		</dict>
 		<key>Headers/V2TXLiveProperty.h</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			YTj2j2EQe/4rawyigOaRpDqaehlq+/4kVC+EgCA3dzQ=
+			yCc4JOMl1q1nPgkycwCRciW4H6VuvFmP4T7FVXXJV1w=
+			</data>
+		</dict>
+		<key>Headers/cpp_interface/AITranscriberManager.h</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			yuO87oN9LiQtes9fn/ue2z9n5dw1JbDW1VWpfYq1lgs=
 			</data>
 		</dict>
 		<key>Headers/cpp_interface/IDeprecatedTRTCCloud.h</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			SmkGE48t03YcccOVeQ8mutrTGHxUdrUF5f/3U2V2qNQ=
+			3UFDxpPGXj3fxLjS0+VBhGaWQn7RxC+rklp7Wuzf9M0=
 			</data>
 		</dict>
 		<key>Headers/cpp_interface/ITRTCCloud.h</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			GUkiEhXBEfzyobK6dhXtjoLMcnLQ7zJiigWfhYKGfbk=
+			OBO7ylHgDiGOJz8eIrGchvnFHy5XfuJtYyUKs5N3q/c=
 			</data>
 		</dict>
 		<key>Headers/cpp_interface/ITRTCStatistics.h</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			hkavKl/2UnXyHZ1NSFIkyU/Ta4MRJjlPa6J0rWbNYGg=
+			QwItfa32sspy1z44YgZxiDrZKKBcEknWcTdBdT1xoGQ=
 			</data>
 		</dict>
 		<key>Headers/cpp_interface/ITXAudioEffectManager.h</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			Mzl7cQMvRs8Z0BKVYcyhqAEKyo3R2wj+JCBoc2V6v3s=
+			jBGL8iSok6tCO2KzRg6Ze4bDhP5+0Np4qoutBR6Ndpo=
+			</data>
+		</dict>
+		<key>Headers/cpp_interface/ITXBeautyManager.h</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			LqvhfKzYfCG8SvOwwIe0pKnmxeL2+nTZWDGL6FEKW9o=
 			</data>
 		</dict>
 		<key>Headers/cpp_interface/ITXDeviceManager.h</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			D/TBgC+juiQ2SxD8SwMuiCncs0G617ORZgpnlTOLHUw=
+			zYss11hxCArT/SwDfgGyI2eYIvmcPfUT6ZGS5PoZBCg=
 			</data>
 		</dict>
 		<key>Headers/cpp_interface/TRTCCloudCallback.h</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			10mzHCx4RN/QBfal2FpA0N2i+hjyQS9MHY9rBIvay8c=
+			zDw/plkGDdJzDSTNkVWhvhCyZuFQOX814MgqAytZxts=
 			</data>
 		</dict>
 		<key>Headers/cpp_interface/TRTCTypeDef.h</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			6VVgeTDmKxEMA6P3KnWUg+6FhlOYJ10G/lwTKMxPeWU=
+			3kdx54relEiGbECTiN8X+vJkctDBqtmeME/9OaWfOwo=
 			</data>
 		</dict>
 		<key>Headers/cpp_interface/TXLiteAVCode.h</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			LjcuEb1AeB2zHTvlbTvuxzfsBRFaCNCq130nm2EHGU8=
+			4Gx1yuXy9uL5fH9N2133IGyFjcdR78T6IapKfIdkEXM=
 			</data>
 		</dict>
 		<key>Headers/cpp_interface/V2TXLiveCode.hpp</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			2Ea4crS4jl6w8YRhy9sWCLjulGSbOOJbucScH9iHWRI=
+			lUkCi4/HWLHwQr6XyGedoqNd6k6BnnAmwQjbLvvk2QI=
 			</data>
 		</dict>
 		<key>Headers/cpp_interface/V2TXLiveDef.hpp</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			ac7/5ij+UtlaFVdxrIf9yLyN2OBi3Zk5D5IIM2yrQZc=
+			0DkAPffQBy7MAdwzzLpfY2VD4c+bfGct8w5AD6BCLCc=
 			</data>
 		</dict>
 		<key>Headers/cpp_interface/V2TXLivePlayer.hpp</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			rxUMTyVoCSiziAvZ0P6NTbzxHhFOEHDgIMyXFDhcQLA=
+			ZL1pNHHrKbmo3nHCyhlH4NKCMVgHtOwqOSO2qQK/omI=
 			</data>
 		</dict>
 		<key>Headers/cpp_interface/V2TXLivePlayerObserver.hpp</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			gu+G0y7IUcUSzi8QcwD6cRUfjeuFYeg9SsJ1zgSpON0=
+			H5L9BnR8MMC4xF9HiN8K/aI5nQ/NJ4YQHLHKxTHM8zY=
 			</data>
 		</dict>
 		<key>Headers/cpp_interface/V2TXLivePremier.hpp</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			/2BaMH6OxqLgiNO67KR6ZNEMV7JheZKx6A+cQxf+CLI=
+			lQpVWuCGzmo4zhdftaeDZEXvevvE42VCNw3RFPLlLBM=
 			</data>
 		</dict>
 		<key>Modules/module.modulemap</key>
@@ -536,7 +569,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			MTB4ibOTBd1Cnes3FiM4u//OqYvdNqJiX6iwD7Fv1HQ=
+			5fOzb9/7kGGSb+UYdCpOjz2tJZe+fxOLETGPKfuJJVs=
 			</data>
 		</dict>
 	</dict>

@@ -9,10 +9,10 @@ namespace trtc {
     protected const string TRTCLibName = "liteavsdk";
 #elif (UNITY_IPHONE || UNITY_WEBGL) && !UNITY_EDITOR
     protected const string TRTCLibName = "__Internal";
-#elif UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
-    protected const string TRTCLibName = "liteav";
-#else
+#elif UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
     protected const string TRTCLibName = "TXLiteAVSDK_TRTC_Mac";
+#else
+    protected const string TRTCLibName = "liteav";
 #endif
   }
 }

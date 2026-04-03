@@ -1,10 +1,7 @@
 using System;
-using UnityEngine;
 
-namespace trtc
-{
-    public abstract class IDeprecatedTRTCCloud
-    {
+namespace trtc {
+    public abstract class IDeprecatedTRTCCloud {
         // 3.1
         [Obsolete("use startPublishMediaStream")]
         public abstract void startPublishing(string streamId, TRTCVideoStreamType streamType);

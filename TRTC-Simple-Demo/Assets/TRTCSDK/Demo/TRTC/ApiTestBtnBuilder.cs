@@ -107,6 +107,13 @@ namespace TRTCCUnityDemo {
         new ApiFuncObj("setAudioFrameCallback", "setAudioFrameCallbackClick", "音频数据回调"),
         new ApiFuncObj("setRemoteUserAudioFrameCallbackFormat-open", "openSetRemoteUserAudioFrameCallbackFormatClick", "开启修改音频下行数据"),
         new ApiFuncObj("setRemoteUserAudioFrameCallbackFormat-close", "closeSetRemoteUserAudioFrameCallbackFormatClick", "关闭修改音频下行数据"),
+        new ApiFuncObj("startMicDeviceTest", "startMicDeviceTest100Click", "开始麦克风测试100ms-仅适用于桌面端"),
+        new ApiFuncObj("startMicDeviceTest", "startMicDeviceTest50Click", "开始麦克风测试50ms-仅适用于桌面端"),
+        new ApiFuncObj("startMicDeviceTest", "startMicDeviceForPlaybackFalseTestClick", "开始麦克风测试PlaybackFalse-桌面端"),
+        new ApiFuncObj("startMicDeviceTest", "startMicDeviceForPlaybackTrueTestClick", "开始麦克风测试PlaybackTrue-桌面端"),
+        new ApiFuncObj("stopMicDeviceTest", "stopMicDeviceTestClick", "结束麦克风测试-仅适用于桌面端"),
+        new ApiFuncObj("startSpeakerDeviceTest", "startSpeakerDeviceTestClick", "开始扬声器测试-仅适用于桌面端"),
+        new ApiFuncObj("stopSpeakerDeviceTest", "stopSpeakerDeviceTestClick", "结束扬声器测试-仅适用于桌面端")
       });
       apiList.Add("音乐特效和人声特效", new[] {
         new ApiFuncObj("setVoiceReverbType", "setVoiceReverbTypeClick", "设置人声的混响效果-金属"),

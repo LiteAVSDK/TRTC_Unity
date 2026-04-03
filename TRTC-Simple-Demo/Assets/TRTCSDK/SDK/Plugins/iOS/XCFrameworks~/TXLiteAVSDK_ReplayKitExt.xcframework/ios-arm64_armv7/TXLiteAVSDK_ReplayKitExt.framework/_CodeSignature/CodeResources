@@ -6,7 +6,7 @@
 	<dict>
 		<key>Headers/TXLiteAVSDK_ReplayKitExt.h</key>
 		<data>
-		3EtuYquTlPNLc80ruyP8fGXsJ2c=
+		Hz1Aia5YF8RhnIvVBdpzh1I4vkQ=
 		</data>
 		<key>Headers/TXReplayKitExt.h</key>
 		<data>
@@ -14,7 +14,7 @@
 		</data>
 		<key>Info.plist</key>
 		<data>
-		EdLxMEyUS9v3WvFMWiIQDs6MW4Q=
+		bLa16+YuVXYZv6wdJ5UFzvkWCQs=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
@@ -26,7 +26,7 @@
 		</data>
 		<key>TXLiteAVSDK_ReplayKitExt_arm</key>
 		<data>
-		XQJlNN+N1Sza2EwMdq+pt6PHZ6I=
+		taUVeMmVpSICQM8NDD467jEJqHI=
 		</data>
 	</dict>
 	<key>files2</key>
@@ -35,11 +35,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			3EtuYquTlPNLc80ruyP8fGXsJ2c=
+			Hz1Aia5YF8RhnIvVBdpzh1I4vkQ=
 			</data>
 			<key>hash2</key>
 			<data>
-			8eF1PjJszJQhdMWMgKoRBB4s0MMXwgJhwzCzAiEWh/Q=
+			nhBZ3Fneu9pZP7euoD5IIIkskqlj/vMqpSx25ED7ccw=
 			</data>
 		</dict>
 		<key>Headers/TXReplayKitExt.h</key>
@@ -79,11 +79,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			XQJlNN+N1Sza2EwMdq+pt6PHZ6I=
+			taUVeMmVpSICQM8NDD467jEJqHI=
 			</data>
 			<key>hash2</key>
 			<data>
-			QGd0zAkjEMGc9JHrB29ihhr+6SpmwsRmfn88FST2Dq0=
+			fKlfazqXYYv3Gk2ByA1CnTH+lG3FBFwi5YGK0295DEc=
 			</data>
 		</dict>
 	</dict>

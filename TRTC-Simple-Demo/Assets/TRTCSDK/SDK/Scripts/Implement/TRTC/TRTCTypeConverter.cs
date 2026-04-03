@@ -2,10 +2,7 @@
 // Author: felixyyan
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using AOT;
-using UnityEngine;
 
 namespace trtc {
   [StructLayout(LayoutKind.Sequential)]
@@ -31,7 +28,16 @@ namespace trtc {
     public string image;
   }
 
+#if !(UNITY_EDITOR || UNITY_STANDALONE || UNITY_ANDROID || UNITY_IOS || UNITY_OPENHARMONY || UNITY_WEBGL)
+  [AttributeUsage(AttributeTargets.All)]
+  internal class MonoPInvokeCallbackAttribute : Attribute {
+    public MonoPInvokeCallbackAttribute(Type delegateType) {
+    }
+  }
+#endif
+
   public class TRTCTypeConverter {
+    private const int _deviceInfoLen = 1024;
     public static TRTCInnerMixUser ConvertTRTCMixUser(TRTCMixUser user) {
       TRTCInnerMixUser innerMixUser = new TRTCInnerMixUser();
       innerMixUser.userId = user.userId;
@@ -103,7 +109,8 @@ namespace trtc {
           IntPtr ptr = new IntPtr(innerMixingConfig.audioMixUserList.ToInt64() + i * Marshal.SizeOf(typeof(TRTCMixUser)));
           Marshal.StructureToPtr(config.audioMixUserList[i], ptr, false);
         }
-      } else {
+      }
+      else {
         innerMixingConfig.audioMixUserList = IntPtr.Zero;
       }
 
@@ -114,7 +121,8 @@ namespace trtc {
           IntPtr ptr = new IntPtr(innerMixingConfig.watermarkList.ToInt64() + i * Marshal.SizeOf(typeof(TRTCWaterMark)));
           Marshal.StructureToPtr(config.watermarkList[i], ptr, false);
         }
-      } else {
+      }
+      else {
         innerMixingConfig.watermarkList = IntPtr.Zero;
       }
 
@@ -164,6 +172,174 @@ namespace trtc {
       innerTranscodingConfig.videoSeiParams = config.videoSeiParams;
 
       return innerTranscodingConfig;
+    }
+
+    public static IntPtr StringToNativeUtf8Ptr(string inputStr) {
+      if (inputStr == null) return IntPtr.Zero;
+      byte[] bytes = System.Text.Encoding.UTF8.GetBytes(inputStr);
+      IntPtr memPtr = Marshal.AllocHGlobal(bytes.Length + 1);
+      Marshal.Copy(bytes, 0, memPtr, bytes.Length);
+      Marshal.WriteByte(memPtr, bytes.Length, 0);
+      return memPtr;
+    }
+
+    public static string NativeUtf8PtrToString(IntPtr ptr) {
+      if (ptr == IntPtr.Zero) return null;
+      int len = 0;
+      while (Marshal.ReadByte(ptr, len) != 0) ++len;
+      byte[] buffer = new byte[len];
+      Marshal.Copy(ptr, buffer, 0, len);
+      return System.Text.Encoding.UTF8.GetString(buffer);
+    }
+
+    public static TRTCParamsInner ConvertTRTCParamsToInner(TRTCParams param) {
+      TRTCParamsInner innerParam = new TRTCParamsInner();
+      innerParam.sdkAppId = param.sdkAppId;
+      innerParam.userId = StringToNativeUtf8Ptr(param.userId);
+      innerParam.userSig = StringToNativeUtf8Ptr(param.userSig);
+      innerParam.roomId = param.roomId;
+      innerParam.strRoomId = StringToNativeUtf8Ptr(param.strRoomId);
+      innerParam.role = param.role;
+      innerParam.streamId = StringToNativeUtf8Ptr(param.streamId);
+      innerParam.userDefineRecordId = StringToNativeUtf8Ptr(param.userDefineRecordId);
+      innerParam.privateMapKey = StringToNativeUtf8Ptr(param.privateMapKey);
+      innerParam.businessInfo = StringToNativeUtf8Ptr(param.businessInfo);
+      return innerParam;
+    }
+
+    public static void SafeFreeHGlobal(ref IntPtr ptr) {
+      if (ptr != IntPtr.Zero) {
+        Marshal.FreeHGlobal(ptr);
+        ptr = IntPtr.Zero;
+      }
+    }
+
+    public static void FreeTRTCParamsInner(TRTCParamsInner innerParam) {
+      SafeFreeHGlobal(ref innerParam.userId);
+      SafeFreeHGlobal(ref innerParam.userSig);
+      SafeFreeHGlobal(ref innerParam.strRoomId);
+      SafeFreeHGlobal(ref innerParam.streamId);
+      SafeFreeHGlobal(ref innerParam.userDefineRecordId);
+      SafeFreeHGlobal(ref innerParam.privateMapKey);
+      SafeFreeHGlobal(ref innerParam.businessInfo);
+    }
+
+    public static void AllocateDeviceInfoMemory(ref DeviceInfo deviceInfo) {
+      deviceInfo.devicePID = Marshal.AllocHGlobal(_deviceInfoLen);
+      deviceInfo.deviceName = Marshal.AllocHGlobal(_deviceInfoLen);
+      deviceInfo.deviceProperties = Marshal.AllocHGlobal(_deviceInfoLen);
+      deviceInfo.devicePIDLen = _deviceInfoLen;
+      deviceInfo.deviceNameLen = _deviceInfoLen;
+      deviceInfo.devicePropertiesLen = _deviceInfoLen;
+    }
+
+    public static void FreeDeviceInfoMemory(ref DeviceInfo deviceInfo) {
+      SafeFreeHGlobal(ref deviceInfo.devicePID);
+      SafeFreeHGlobal(ref deviceInfo.deviceName);
+      SafeFreeHGlobal(ref deviceInfo.deviceProperties);
+    }
+
+    public static TXDeviceInfo ConvertToTXDeviceInfo(ref DeviceInfo innerDeviceInfo) {
+      TXDeviceInfo deviceInfo = new TXDeviceInfo();
+      deviceInfo.devicePID = NativeUtf8PtrToString(innerDeviceInfo.devicePID);
+      deviceInfo.deviceName = NativeUtf8PtrToString(innerDeviceInfo.deviceName);
+      deviceInfo.deviceProperties = NativeUtf8PtrToString(innerDeviceInfo.deviceProperties);
+      return deviceInfo;
+    }
+
+    public static AudioMusicParamInner ConvertAudioMusicParamToInner(AudioMusicParam param) {
+      AudioMusicParamInner innerParam = new AudioMusicParamInner();
+      innerParam.id = param.id;
+      innerParam.path = StringToNativeUtf8Ptr(param.path);
+      innerParam.loopCount = param.loopCount;
+      innerParam.publish = param.publish;
+      innerParam.isShortFile = param.isShortFile;
+      innerParam.startTimeMS = param.startTimeMS;
+      innerParam.endTimeMS = param.endTimeMS;
+      return innerParam;
+    }
+
+    public static void FreeAudioMusicParamInner(AudioMusicParamInner innerParam) {
+      SafeFreeHGlobal(ref innerParam.path);
+    }
+  }
+
+  public class Utf8StringMarshaler : IDisposable {
+    private string _stringValue;
+    private IntPtr _intPtrValue;
+    private bool _isStringSource;
+    private bool _disposed = false;
+
+    public Utf8StringMarshaler(string str) {
+      _stringValue = str;
+      _isStringSource = true;
+      _intPtrValue = IntPtr.Zero;
+    }
+
+    public Utf8StringMarshaler(IntPtr ptr) {
+      _intPtrValue = ptr;
+      _isStringSource = false;
+      _stringValue = null;
+    }
+
+    public IntPtr GetUtf8IntPtr() {
+      if (_isStringSource && _stringValue != null) {
+        if (_intPtrValue == IntPtr.Zero) {
+          _intPtrValue = MarshalStringToUtf8IntPtr(_stringValue);
+        }
+      }
+      return _intPtrValue;
+    }
+
+    public string GetString() {
+      if (!_isStringSource && _intPtrValue != IntPtr.Zero) {
+        _stringValue = MarshalUtf8IntPtrToString(_intPtrValue);
+      }
+      return _stringValue;
+    }
+
+    public void Dispose() {
+      if (!_disposed) {
+        if (_isStringSource && _intPtrValue != IntPtr.Zero) {
+          MarshalFreeUtf8Ptr(ref _intPtrValue);
+        }
+        _disposed = true;
+        GC.SuppressFinalize(this);
+      }
+    }
+
+    ~Utf8StringMarshaler() {
+      if (!_disposed) {
+        if (_isStringSource && _intPtrValue != IntPtr.Zero) {
+          MarshalFreeUtf8Ptr(ref _intPtrValue);
+        }
+        _disposed = true;
+      }
+    }
+
+    public static IntPtr MarshalStringToUtf8IntPtr(string inputStr) {
+      if (inputStr == null) return IntPtr.Zero;
+      byte[] bytes = System.Text.Encoding.UTF8.GetBytes(inputStr);
+      IntPtr memPtr = Marshal.AllocHGlobal(bytes.Length + 1);
+      Marshal.Copy(bytes, 0, memPtr, bytes.Length);
+      Marshal.WriteByte(memPtr, bytes.Length, 0);
+      return memPtr;
+    }
+
+    public static string MarshalUtf8IntPtrToString(IntPtr ptr) {
+      if (ptr == IntPtr.Zero) return null;
+      int len = 0;
+      while (Marshal.ReadByte(ptr, len) != 0) ++len;
+      byte[] buffer = new byte[len];
+      Marshal.Copy(ptr, buffer, 0, len);
+      return System.Text.Encoding.UTF8.GetString(buffer);
+    }
+
+    public static void MarshalFreeUtf8Ptr(ref IntPtr ptr) {
+      if (ptr != IntPtr.Zero) {
+        Marshal.FreeHGlobal(ptr);
+        ptr = IntPtr.Zero;
+      }
     }
   }
 }

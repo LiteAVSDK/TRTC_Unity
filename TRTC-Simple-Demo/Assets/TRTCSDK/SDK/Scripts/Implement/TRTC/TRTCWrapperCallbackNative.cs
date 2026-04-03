@@ -178,7 +178,7 @@ namespace trtc {
     // 7
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate void OnRecvCustomCmdMsgHandler(IntPtr instance,
-                                                   string userID,
+                                                   IntPtr userID,
                                                    int cmdID,
                                                    int seq,
                                                    IntPtr message,
@@ -187,7 +187,7 @@ namespace trtc {
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate void OnMissCustomCmdMsgHandler(IntPtr instance,
-                                                   string userID,
+                                                   IntPtr userID,
                                                    int cmdID,
                                                    int errCode,
                                                    int missed,
@@ -195,7 +195,7 @@ namespace trtc {
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate void OnRecvSEIMsgHandler(IntPtr instance,
-                                             string userID,
+                                             IntPtr userID,
                                              IntPtr message,
                                              uint messageSize,
                                              IntPtr userData);
@@ -273,12 +273,12 @@ namespace trtc {
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate void OnSnapshotCompleteHandler(IntPtr instance,
-                                                   string userId,
+                                                   IntPtr userId,
                                                    TRTCVideoStreamType type,
                                                    IntPtr data,
-                                                   int length,
-                                                   int width,
-                                                   int height,
+                                                   uint length,
+                                                   uint width,
+                                                   uint height,
                                                    TRTCVideoPixelFormat format,
                                                    IntPtr userData);
 
@@ -369,14 +369,14 @@ namespace trtc {
         IntPtr instance,
         OnFirstAudioFrameHandler onFirstAudioFrame,
         IntPtr userDataPtr);
-    
+
     [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
     public static extern void trtc_cloud_set_on_send_first_local_video_frame_handler(
         IntPtr instance,
         OnSendFirstLocalVideoFrameHandler onSendFirstLocalVideoFrame,
         IntPtr userDataPtr);
 
-    
+
     [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
     public static extern void trtc_cloud_set_on_send_first_local_audio_frame_handler(
         IntPtr instance,
@@ -563,7 +563,7 @@ namespace trtc {
     public static extern void trtc_cloud_reset_all_handler(IntPtr instance);
 
     [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
-     public static extern void trtc_cloud_destroy_cloud_callback(IntPtr callback);
+    public static extern void trtc_cloud_destroy_cloud_callback(IntPtr callback);
   }
 
   public class TRTCVideoRenderCallbackNative {
@@ -601,7 +601,7 @@ namespace trtc {
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate void OnMixedPlayAudioFrameHandler(IntPtr instance, ref AudioFrame frame);
-    
+
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate void OnMixedAllAudioFrameHandler(IntPtr instance, ref AudioFrame frame);
   }

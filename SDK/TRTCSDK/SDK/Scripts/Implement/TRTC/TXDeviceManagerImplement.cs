@@ -6,7 +6,6 @@ using System;
 namespace trtc {
   public class TXDeviceManagerImplement : ITXDeviceManager {
     private IntPtr _nativeObj;
-    private const UInt32 _deviceInfoLen = 1024;
     public TXDeviceManagerImplement(IntPtr nativeObj) { _nativeObj = nativeObj; }
 
     public void DestroyNativeObj() { _nativeObj = IntPtr.Zero; }
@@ -66,18 +65,15 @@ namespace trtc {
       TXDeviceInfo[] deviceInfos = new TXDeviceInfo[count];
       DeviceInfo inner_deviceInfo = new DeviceInfo();
       for (int i = 0; i < count; i++) {
-        inner_deviceInfo.devicePIDLen = _deviceInfoLen;
-        inner_deviceInfo.deviceNameLen = _deviceInfoLen;
-        inner_deviceInfo.devicePropertiesLen = _deviceInfoLen;
-        inner_deviceInfo.deviceName = new string(' ', (int)inner_deviceInfo.deviceNameLen);
-        inner_deviceInfo.devicePID = new string(' ', (int)inner_deviceInfo.devicePIDLen);
-        inner_deviceInfo.deviceProperties =
-            new string(' ', (int)inner_deviceInfo.devicePropertiesLen);
-        TXDeviceManagerNative.tx_device_manager_get_device_info(_nativeObj, type, i,
-                                                                ref inner_deviceInfo);
-        deviceInfos[i].deviceName = inner_deviceInfo.deviceName;
-        deviceInfos[i].devicePID = inner_deviceInfo.devicePID;
-        deviceInfos[i].deviceProperties = inner_deviceInfo.deviceProperties;
+        try {
+          TRTCTypeConverter.AllocateDeviceInfoMemory(ref inner_deviceInfo);
+          TXDeviceManagerNative.tx_device_manager_get_device_info(_nativeObj, type, i,
+                                                                  ref inner_deviceInfo);
+          deviceInfos[i] = TRTCTypeConverter.ConvertToTXDeviceInfo(ref inner_deviceInfo);
+        }
+        finally {
+          TRTCTypeConverter.FreeDeviceInfoMemory(ref inner_deviceInfo);
+        }
       }
 
       return deviceInfos;
@@ -91,25 +87,36 @@ namespace trtc {
     // 2.3
     public override TXDeviceInfo getCurrentDevice(TXMediaDeviceType type) {
       DeviceInfo inner_deviceInfo = new DeviceInfo();
-
-      inner_deviceInfo.devicePIDLen = _deviceInfoLen;
-      inner_deviceInfo.deviceNameLen = _deviceInfoLen;
-      inner_deviceInfo.devicePropertiesLen = _deviceInfoLen;
-      inner_deviceInfo.deviceName = new string(' ', (int)inner_deviceInfo.deviceNameLen);
-      inner_deviceInfo.devicePID = new string(' ', (int)inner_deviceInfo.deviceNameLen);
-      inner_deviceInfo.deviceProperties =
-          new string(' ', (int)inner_deviceInfo.devicePropertiesLen);
-
-      TXDeviceManagerNative.tx_device_manager_get_current_device(_nativeObj, type,
-                                                                 ref inner_deviceInfo);
-      TXDeviceInfo deviceInfo = new TXDeviceInfo();
-      deviceInfo.deviceName = inner_deviceInfo.deviceName;
-      deviceInfo.devicePID = inner_deviceInfo.devicePID;
-      deviceInfo.deviceProperties = inner_deviceInfo.deviceProperties;
-
-      return deviceInfo;
+      try {
+        TRTCTypeConverter.AllocateDeviceInfoMemory(ref inner_deviceInfo);
+        TXDeviceManagerNative.tx_device_manager_get_current_device(_nativeObj, type,
+                                                                   ref inner_deviceInfo);
+        return TRTCTypeConverter.ConvertToTXDeviceInfo(ref inner_deviceInfo);
+      }
+      finally {
+        TRTCTypeConverter.FreeDeviceInfoMemory(ref inner_deviceInfo);
+      }
     }
 
+    public override int startMicDeviceTest(uint interval) {
+      return TXDeviceManagerNative.tx_device_manager_start_mic_device_test(_nativeObj, interval);
+    }
+
+    public override int startMicDeviceTest(uint interval, bool playback) {
+      return TXDeviceManagerNative.tx_device_manager_start_mic_device_test_and_playback(_nativeObj, interval, playback);
+    }
+
+    public override int stopMicDeviceTest() {
+      return TXDeviceManagerNative.tx_device_manager_stop_mic_device_test(_nativeObj);
+    }
+
+    public override int startSpeakerDeviceTest(string filePath) {
+      return TXDeviceManagerNative.tx_device_manager_start_speaker_device_test(_nativeObj, filePath);
+    }
+
+    public override int stopSpeakerDeviceTest() {
+      return TXDeviceManagerNative.tx_device_manager_stop_speaker_device_test(_nativeObj);
+    }
     // 2.4
     public override int setSystemVolumeType(TXSystemVolumeType type) {
 #if UNITY_IPHONE || UNITY_ANDROID || UNITY_OPENHARMONY

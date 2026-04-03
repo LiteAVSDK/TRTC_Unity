@@ -200,7 +200,7 @@ namespace liteav {
         ///  【字段含义】从 SDK 到云端的往返延时（ms），注：仅支持前缀为 [trtc://] 或 [webrtc://] 的播放地址。
         public int rtt;
 
-        ///  【字段含义】下载速度（kbps）
+        ///  【字段含义】下载速度（Kbps）
         public int netSpeed;
     }
 

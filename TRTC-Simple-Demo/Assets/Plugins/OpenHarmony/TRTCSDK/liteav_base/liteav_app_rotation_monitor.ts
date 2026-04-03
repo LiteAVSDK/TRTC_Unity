@@ -14,10 +14,10 @@ export class LiteavAppRotationMonitor {
 
   private lastSensorOrientation: number = ORIENTATION_UNKNOWN;
   private sensorRotation: number = 0;
-  private displayOrientation: display.Orientation = display.Orientation.PORTRAIT;
+  private displayRotation: number = 0;
   private displayCallback: Callback<number> = (data: number) => {
-    this.displayOrientation = display.getDefaultDisplaySync().orientation;
-    this.nativeNotifyDisplayOrientationChanged();
+    this.displayRotation = display.getDefaultDisplaySync().rotation;
+    this.nativeNotifyDisplayRotationChanged();
   };
 
   private sensorCallback: Callback<sensor.GravityResponse> = (data: sensor.GravityResponse) => {
@@ -39,11 +39,13 @@ export class LiteavAppRotationMonitor {
       while (sensorOrientation < 0) {
         sensorOrientation += 360;
       }
+    } else {
+      sensorOrientation = this.lastSensorOrientation;
     }
 
     if (this.lastSensorOrientation != ORIENTATION_UNKNOWN &&
       Math.abs(sensorOrientation - this.lastSensorOrientation) <=
-        SENSOR_ROTATION_DETECTION_THRESHOLD) {
+      SENSOR_ROTATION_DETECTION_THRESHOLD) {
       return;
     }
 
@@ -67,7 +69,7 @@ export class LiteavAppRotationMonitor {
 
   nativeStart(): void {
     try {
-      this.displayOrientation = display.getDefaultDisplaySync().orientation;
+      this.displayRotation = display.getDefaultDisplaySync().rotation;
       display.on("change", this.displayCallback);
       sensor.on(sensor.SensorId.GRAVITY, this.sensorCallback, { interval: 'ui' });
     } catch (error) {
@@ -84,15 +86,15 @@ export class LiteavAppRotationMonitor {
     }
   }
 
-  nativeGetCurrentDisplayOrientation(): display.Orientation {
-    return this.displayOrientation;
+  nativeGetCurrentDisplayRotation(): number {
+    return this.displayRotation;
   }
 
   nativeGetCurrentSensorRotation(): number {
     return this.sensorRotation;
   }
 
-  nativeNotifyDisplayOrientationChanged(): void {
+  nativeNotifyDisplayRotationChanged(): void {
   }
 
   nativeNotifySensorRotationChanged(): void {

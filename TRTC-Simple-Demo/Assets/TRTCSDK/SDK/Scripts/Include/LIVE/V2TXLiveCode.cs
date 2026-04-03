@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2021 Tencent. All rights reserved.
  * Module:   V2TXLiveCode @ TXLiteAVSDK
- * Function: 腾讯云直播服务(LVB)错误码和警告码的定义。
+ * Function: 腾讯云直播服务 (Live Video Broadcasting，LVB) 错误码和警告码的定义。
  */
 namespace liteav {
 

@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2021 Tencent. All rights reserved.
  * Module:   V2TXLivePremier @ TXLiteAVSDK
- * Function: V2TXLive 高级接口
+ * Function: V2TXLive High-level interface
  */
 #import "V2TXLiveDef.h"
 #import "TXLiteAVSymbolExport.h"
@@ -9,7 +9,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /////////////////////////////////////////////////////////////////////////////////
 //
-//                      V2TXLive 高级接口
+//                      V2TXLive High-level interface
 //
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -17,91 +17,90 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol V2TXLivePremier <NSObject>
 
 /**
- * 获取 SDK 版本号
+ * Get the SDK version number
  */
 + (NSString *)getSDKVersionStr;
 
 /**
- * 设置 V2TXLivePremier 回调接口
+ * Set V2TXLivePremier callback interface
  */
 + (void)setObserver:(id<V2TXLivePremierObserver>)observer;
 
 /**
- * 设置 Log 的配置信息
+ * Set Log configuration information
  */
 + (V2TXLiveCode)setLogConfig:(V2TXLiveLogConfig *)config;
 
 /**
- * 设置 SDK 接入环境
+ * Set up SDK access environment
  *
- * @note 如您的应用无特殊需求，请不要调用此接口进行设置。
- * @param env 目前支持 “default” 和 “GDPR” 两个参数。
- *        - default：默认环境，SDK 会在全球寻找最佳接入点进行接入。
- *        - GDPR：所有音视频数据和质量统计数据都不会经过中国大陆地区的服务器。
+ * @note If your application has no special requirements, please do not call this interface for setting.
+ * @param env currently supports two parameters "default" and "GDPR".
+ *        - default: In the default environment, the SDK will find the best access point in the world for access.
+ *        - GDPR: All audio and video data and quality statistics will not pass through servers in mainland China.
  */
 + (V2TXLiveCode)setEnvironment:(const char *)env;
 
 /**
- * 设置 SDK 的授权 License
+ * Set SDK authorization license
  *
- * 文档地址：https://cloud.tencent.com/document/product/454/34750。
- * @param url licence的地址。
- * @param key licence的秘钥。
+ * Try and Purchase a License: https://intl.cloud.tencent.com/document/product/1071/38546.
+ * @param url the url of licence.
+ * @param key the key of licence.
  */
 #if TARGET_OS_IPHONE
 + (void)setLicence:(NSString *)url key:(NSString *)key;
 #endif
 
 /**
- * 设置 SDK socks5 代理配置
+ * Set SDK socks5 proxy config
  *
- * @param host socks5 代理服务器的地址。
- * @param port socks5 代理服务器的端口。
- * @param username socks5 代理服务器的验证的用户名。
- * @param password socks5 代理服务器的验证的密码。
- * @param config 配置使用 socks5 代理服务器的协议。
+ * @param host socks5 proxy host.
+ * @param port socks5 proxy port.
+ * @param username socks5 proxy username.
+ * @param password socks5 proxy password.
+ * @param config protocol configured with socks5 proxy.
  */
 + (V2TXLiveCode)setSocks5Proxy:(NSString *)host port:(NSInteger)port username:(NSString *)username password:(NSString *)password config:(V2TXLiveSocks5ProxyConfig *)config;
 
 /**
- * 开启/关闭对音频采集数据的监听回调（可读写）
+ * Enables/Disables audio capture callback
  *
- * @param enable 是否开启。 【默认值】：false。
- * @param format 设置回调出的 AudioFrame 的格式。
- * @note 需要在 {@link startPush} 之前调用，才会生效。
+ * @param enable `YES`: enable; `NO` (**default**): disable.
+ * @param format audio frame format.
+ * @note This API works only if you call it before {@link startPush}.
  */
 + (V2TXLiveCode)enableAudioCaptureObserver:(BOOL)enable format:(V2TXLiveAudioFrameObserverFormat *)format;
 
 /**
- * 开启/关闭对最终系统要播放出的音频数据的监听回调
+ * Enables/Disables audio playout callback
  *
- * @param enable 是否开启。 【默认值】：false。
- * @param format 设置回调出的 AudioFrame 的格式。
+ * @param enable `YES`: enable; `NO` (**default**): disable.
+ * @param format audio frame format.
  */
 + (V2TXLiveCode)enableAudioPlayoutObserver:(BOOL)enable format:(V2TXLiveAudioFrameObserverFormat *)format;
 
 /**
- * 开启/关闭耳返音频数据的监听回调
+ * Enables/Disables in-ear monitoring callback
  *
- * @param enable 是否开启。 【默认值】：false。
+ * @param enable `YES`: enable; `NO` (**default**): disable.
  */
 + (V2TXLiveCode)enableVoiceEarMonitorObserver:(BOOL)enable;
 
 /**
- * 设置 userId
+ * Set user id
  *
- * @param userId 业务侧自身维护的用户/设备id。
+ * @param userId User/device id maintained by the service side itself.
  */
 + (void)setUserId:(NSString *)userId;
 
 /**
- * 调用实验性 API 接口
+ * Call experimental APIs
  *
- * @note  该接口用于调用一些实验性功能。
- * @param jsonStr 接口及参数描述的 JSON 字符串。
- * @return 返回值 {@link V2TXLiveCode}。
- *         - V2TXLIVE_OK: 成功。
- *         - V2TXLIVE_ERROR_INVALID_PARAMETER: 操作失败，参数非法。
+ * @param jsonStr JSON string describing interface and parameters.
+ * @return Return code {@link V2TXLiveCode}.
+ *         - V2TXLIVE_OK: successful.
+ *         - V2TXLIVE_ERROR_INVALID_PARAMETER: operation failed because of illegal parameter.
  */
 + (V2TXLiveCode)callExperimentalAPI:(NSString *)jsonStr;
 
@@ -109,7 +108,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /////////////////////////////////////////////////////////////////////////////////
 //
-//                      V2TXLive 高级回调接口
+//                      V2TXLive Advanced callback interface
 //
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -117,59 +116,57 @@ NS_ASSUME_NONNULL_BEGIN
 @optional
 
 /**
- * 自定义 Log 输出回调接口
+ * Custom Log output callback interface
  */
 - (void)onLog:(V2TXLiveLogLevel)level log:(NSString *)log;
 
 /**
- * setLicence 接口回调
+ * setLicence result callback interface
  *
- * @param result 设置 licence 结果 0 成功，负数失败。
- * @param reason 设置 licence 失败原因。
+ * @param result the result of setLicence interface, 0 succeeds, negative number fails.
+ * @param reason the reason for failure.
  */
 - (void)onLicenceLoaded:(int)result Reason:(NSString *)reason;
 
 /**
- * 本地麦克风采集到的音频数据回调
+ * Raw audio data captured locally
  *
- * @param frame 音频数据。
+ * @param frame Audio frames in PCM format.
  * @note
- * - 请不要在此回调函数中做任何耗时操作，建议直接拷贝到另一线程进行处理，否则会导致各种声音问题。
- * - 此接口回调出的音频数据支持修改。
- * - 此接口回调出的音频时间帧长固定为0.02s。
- *         由时间帧长转化为字节帧长的公式为【采样率 × 时间帧长 × 声道数 × 采样点位宽】。
- *         以SDK默认的音频录制格式48000采样率、单声道、16采样点位宽为例，字节帧长为【48000 × 0.02s × 1 × 16bit = 15360bit = 1920字节】。
- * - 此接口回调出的音频数据**不包含**背景音、音效、混响等前处理效果，延迟极低。
- * - 需要您调用 {@link enableAudioCaptureObserver} 开启回调开关。
+ * 1. Please avoid time-consuming operations in this callback function. The SDK processes an audio frame every 20 ms, so if your operation takes more than 20 ms, it will cause audio exceptions.
+ * 2. The audio data returned via this callback can be read and modified, but please keep the duration of your operation short.
+ * 3. The audio data returned via this callback **does not include** pre-processing effects like background music, audio effects, or reverb, and therefore has a very short delay.
  */
 - (void)onCaptureAudioFrame:(V2TXLiveAudioFrame *)frame;
 
 /**
- * 将各路待播放音频混合之后并在最终提交系统播放之前的数据回调
+ * Data mixed from each channel before being submitted to the system for playback
  *
- * 当您设置完音频数据自定义回调之后，SDK 内部会把各路待播放的音频混合之后的音频数据，在提交系统播放之前，以 PCM 格式的形式通过本接口回调给您。
- * - 此接口回调出的音频时间帧长固定为 0.02s，格式为 PCM 格式。
- * - 由时间帧长转化为字节帧长的公式为 `采样率 × 时间帧长 × 声道数 × 采样点位宽`。
- * - 以 SDK 默认的音频录制格式 48000 采样率、单声道、16 采样点位宽为例，字节帧长为 `48000 × 0.02s × 1 × 16bit = 15360bit = 1920字节`。
- * @param frame PCM 格式的音频数据帧。
+ * After you configure the callback of custom audio processing, the SDK will return to you via this callback the data (PCM format) mixed from each channel before it is submitted to the system for playback.
+ * - The audio data returned via this callback is in PCM format and has a fixed frame length (time) of 0.02s.
+ * - The formula to convert a frame length in seconds to one in bytes is **sample rate * frame length in seconds * number of sound channels * audio bit depth**.
+ * - Assume that the audio is recorded on a single channel with a sample rate of 48,000 Hz and audio bit depth of 16 bits, which are the default settings of SDK. The frame length in bytes will be **48000 * 0.02s * 1 * 16 bits = 15360 bits = 1920
+ * bytes**.
+ * @param frame Audio frames in PCM format.
  * @note
- * 1. 请不要在此回调函数中做任何耗时操作，由于 SDK 每隔 20ms 就要处理一帧音频数据，如果您的处理时间超过 20ms，就会导致声音异常。
- * 2. 此接口回调出的音频数据是可读写的，也就是说您可以在回调函数中同步修改音频数据，但请保证处理耗时。
- * 3. 此接口回调出的是对各路待播放音频数据的混合，但其中并不包含耳返的音频数据。
+ * 1. Please avoid time-consuming operations in this callback function. The SDK processes an audio frame every 20 ms, so if your operation takes more than 20 ms, it will cause audio exceptions.
+ * 2. The audio data returned via this callback can be read and modified, but please keep the duration of your operation short.
+ * 3. The audio data returned via this callback is the audio data mixed from each channel before it is played. It does not include the in-ear monitoring data.
  */
 - (void)onPlayoutAudioFrame:(V2TXLiveAudioFrame *)frame;
 
 /**
- * 耳返的音频数据
+ * In-ear monitoring data
  *
- * 当您设置完音频数据自定义回调之后，SDK 内部会把耳返的音频数据在播放之前以 PCM 格式的形式通过本接口回调给您。
- * - 此接口回调出的音频时间帧长不固定，格式为 PCM 格式。
- * - 由时间帧长转化为字节帧长的公式为 `采样率 × 时间帧长 × 声道数 × 采样点位宽`。
- * - 以 TRTC 默认的音频录制格式 48000 采样率、单声道、16采样点位宽为例，0.02s 的音频数据字节帧长为 `48000 × 0.02s × 1 × 16bit = 15360bit = 1920字节`。
- * @param frame PCM 格式的音频数据帧。
+ * After you configure the callback of custom audio processing, the SDK will return to you via this callback the in-ear monitoring data (PCM format) before it is submitted to the system for playback.
+ * - The audio returned is in PCM format and has a not-fixed frame length (time).
+ * - The formula to convert a frame length in seconds to one in bytes is **sample rate * frame length in seconds * number of sound channels * audio bit depth**.
+ * - Assume that the audio is recorded on a single channel with a sample rate of 48,000 Hz and audio bit depth of 16 bits, which are the default settings of TRTC. The length of 0.02s frame in bytes will be **48000 * 0.02s * 1 * 16 bits = 15360 bits =
+ * 1920 bytes**.
+ * @param frame Audio frames in PCM format
  * @note
- * 1. 请不要在此回调函数中做任何耗时操作，否则会导致声音异常。
- * 2. 此接口回调出的音频数据是可读写的，也就是说您可以在回调函数中同步修改音频数据，但请保证处理耗时。
+ * 1. Please avoid time-consuming operations in this callback function, or it will cause audio exceptions.
+ * 2. The audio data returned via this callback can be read and modified, but please keep the duration of your operation short.
  */
 - (void)onVoiceEarMonitorAudioFrame:(V2TXLiveAudioFrame *)frame;
 

@@ -142,7 +142,7 @@ namespace trtc {
     /**
      * 音视频设备的相关信息（仅适用于桌面平台）。
      *
-     * 该结构体用于描述一个音视频设备的关键信息，比如设备 ID、设备名称等等，以便用户能够在用户界面上选择自己期望使用的音视频设备。
+     * 该结构体用于描述一个音视频设备的关键信息，例如设备 ID、设备名称等等，以便用户能够在用户界面上选择自己期望使用的音视频设备。
      */
     [Serializable]
     public struct TXDeviceInfo {
@@ -252,7 +252,7 @@ namespace trtc {
          * 2.2 设置当前要使用的设备（仅适用于桌面端）。
          *
          * @param type 设备类型，详见 TXMediaDeviceType 定义。
-         * @param deviceId 设备ID，您可以通过接口 {@link getDevicesList} 获得设备 ID。
+         * @param deviceId 设备 ID，您可以通过接口 {@link getDevicesList} 获得设备 ID。
          * @return 0：操作成功；负数：操作失败。
          */
         public abstract int setCurrentDevice(TXMediaDeviceType type, String deviceId);
@@ -261,6 +261,42 @@ namespace trtc {
          * 2.3 获取当前正在使用的设备（仅适用于桌面端）。
          */
         public abstract TXDeviceInfo getCurrentDevice(TXMediaDeviceType type);
+
+        /**
+         * 2.11 开始麦克风测试（仅适用于桌面端）。
+         *
+         * 该接口可以测试麦克风是否能正常工作，测试到的麦克风采集音量的大小，会以回调的形式通知给您，其中 volume 的取值范围为 [0, 100]。
+         * @param interval 麦克风音量的回调间隔，单位为毫秒（ms）。
+         * @note 该接口调用后默认会回播麦克风录制到的声音到扬声器中。
+         */
+        public abstract int startMicDeviceTest(uint interval);
+
+        /**
+         * 2.12 开始麦克风测试（仅适用于桌面端）。
+         *
+         * 该接口可以测试麦克风是否能正常工作，测试到的麦克风采集音量的大小，会以回调的形式通知给您，其中 volume 的取值范围为 [0, 100]。
+         * @param interval 麦克风音量的回调间隔，单位为毫秒（ms）。
+         * @param playback 是否开启回播麦克风声音，开启后用户测试麦克风时会听到自己的声音。
+         */
+        public abstract int startMicDeviceTest(uint interval, bool playback);
+
+        /**
+         * 2.13 结束麦克风测试（仅适用于桌面端）。
+         */
+        public abstract int stopMicDeviceTest();
+
+        /**
+         * 2.14 开始扬声器测试（仅适用于桌面端）。
+         *
+         * 该接口通过播放指定的音频文件，用于测试播放设备是否能正常工作。如果用户在测试时能听到声音，说明播放设备能正常工作。
+         * @param filePath 声音文件的路径
+         */
+        public abstract int startSpeakerDeviceTest(string filePath);
+
+        /**
+         * 2.15 结束扬声器测试（仅适用于桌面端）。
+         */
+        public abstract int stopSpeakerDeviceTest();
 
         /////////////////////////////////////////////////////////////////////////////////
         //

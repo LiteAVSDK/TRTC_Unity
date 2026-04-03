@@ -73,7 +73,7 @@ namespace trtc {
         /// 安装音频驱动插件失败
         ERR_AUDIO_PLUGIN_INSTALL_FAILED = -1332,
 
-        /// 安装虚拟声卡插件成功，但首次安装后功能暂时不可用，此为 Mac 系统限制，请在收到此错误码后提示用户重启当前 APP
+        /// 安装虚拟声卡插件成功，但首次安装后功能暂时不可用，此为 Mac 系统限制，请在收到此错误码后提示用户重启当前 App
         ERR_AUDIO_PLUGIN_INSTALLED_BUT_NEED_RESTART = -1333,
 
         /// 音频帧编码失败，例如传入自定义音频数据，SDK 无法处理

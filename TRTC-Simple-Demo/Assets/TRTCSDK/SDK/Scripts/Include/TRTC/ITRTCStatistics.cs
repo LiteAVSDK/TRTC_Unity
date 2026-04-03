@@ -82,10 +82,10 @@ namespace trtc {
         /// 【字段含义】远端视频的码率，单位 Kbps。
         public UInt32 videoBitrate;
 
-        /// 【字段含义】本地音频的采样率，单位 Hz。
+        /// 【字段含义】远端音频的采样率，单位 Hz。
         public UInt32 audioSampleRate;
 
-        /// 【字段含义】本地音频的码率，单位 Kbps
+        /// 【字段含义】远端音频的码率，单位 Kbps
         public UInt32 audioBitrate;
 
         /// 【字段含义】播放延迟，单位 ms
@@ -171,7 +171,7 @@ namespace trtc {
         /// 需要特别解释的是，rtt 代表 “SDK=>云端=>SDK” 的总耗时，所以不需要区分 upRtt 和 downRtt。
         public UInt32 rtt;
 
-        /// 【字段含义】从 SDK 到本地路由器的往返时延，单位 ms 该数值代表从 SDK 发送一个网络包到本地路由器网关，再从网关回送一个网络包到 SDK 的总计耗时，也就是一个网络包经历 【SDK>网关>SDK【 的总耗时。
+        /// 【字段含义】从 SDK 到本地路由器的往返时延，单位 ms 该数值代表从 SDK 发送一个网络包到本地路由器网关，再从网关回送一个网络包到 SDK 的总计耗时，也就是一个网络包经历 “SDK=>网关=>SDK” 的总耗时。
         /// 该数值越小越好：如果 gatewayRtt < 50ms，意味着较低的音视频通话延迟；如果 gatewayRtt > 200ms，则意味着较高的音视频通话延迟。
         /// 当网络类型为蜂窝网时，该值无效。
         public UInt32 gatewayRtt;

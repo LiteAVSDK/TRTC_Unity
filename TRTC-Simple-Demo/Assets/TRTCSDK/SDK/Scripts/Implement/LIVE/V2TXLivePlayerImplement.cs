@@ -2,7 +2,9 @@
 // Author: makbaktan
 
 using System;
+#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_ANDROID || UNITY_IOS || UNITY_OPENHARMONY || UNITY_WEBGL
 using UnityEngine;
+#endif
 
 namespace liteav {
 
@@ -11,7 +13,7 @@ namespace liteav {
     private V2TXLivePlayerWrapperCallback _wrapperCallback = null;
     private V2TXLivePlayerObserver _callback = null;
 
-    private UnityEngine.Object _callBackLock = new UnityEngine.Object();
+    private readonly object _callBackLock = new object();
     public V2TXLivePlayerImplement() {
 #if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
       LoadTrtcPlugin();
@@ -102,12 +104,14 @@ namespace liteav {
     public static void LoadTrtcPlugin() {
       try {
         V2TXLivePlayerNative.load_TXFFmpeg();
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
       }
 
       try {
         V2TXLivePlayerNative.load_TXSoundTouch();
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
       }
     }
 

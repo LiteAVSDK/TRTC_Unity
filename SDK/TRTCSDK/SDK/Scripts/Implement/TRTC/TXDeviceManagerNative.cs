@@ -73,5 +73,31 @@ namespace trtc {
     [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
     public static extern int tx_device_manager_set_system_volume_type(IntPtr instance,
                                                                        TXSystemVolumeType volumeType);
+
+    // 2.11
+    [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern int tx_device_manager_start_mic_device_test(IntPtr instance,
+                                                         uint interval);
+    // 2.12
+    [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern int tx_device_manager_start_mic_device_test_and_playback(IntPtr instance,
+                                                                      uint interval,
+                                                                      [MarshalAs(UnmanagedType.I1)] bool playback);
+    // 2.13
+    [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern int tx_device_manager_stop_mic_device_test(IntPtr instance);
+
+    // 2.14
+    [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern int tx_device_manager_start_speaker_device_test(IntPtr instance,
+                                                             [MarshalAs(UnmanagedType.LPStr)] string file_path);
+
+    // 2.15
+    [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern int tx_device_manager_stop_speaker_device_test(IntPtr instance);
+
+
+
+
   }
 }

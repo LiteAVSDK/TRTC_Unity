@@ -156,6 +156,15 @@ LITEAV_EXPORT @interface TXLiveBase : NSObject
  *          - NO: 关闭自定义解析Dns，默认关闭
  */
 + (void)enableCustomHttpDNS:(BOOL)enable;
+
+
+/**
+ * 设置 SDK 工作的根目录，SDK 内部所有文件都会放置在该目录下
+ *
+ * @param path 根目录绝对路径
+ */
++ (void)setRootDirectory:(NSString *)path;
+
 @end
 
 NS_ASSUME_NONNULL_END

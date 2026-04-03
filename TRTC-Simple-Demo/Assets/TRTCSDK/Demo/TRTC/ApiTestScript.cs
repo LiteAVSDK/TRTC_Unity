@@ -291,6 +291,9 @@ namespace TRTCCUnityDemo {
     public void onScreenCaptureCovered() {
       AppLogToCallback($"onScreenCaptureCovered ");
     }
+    public void onSnapshotComplete(string userId, TRTCVideoStreamType type, byte[] data, UInt32 length, UInt32 width, UInt32 height, TRTCVideoPixelFormat format) {
+      AppLogToCallback($"onSnapshotComplete {userId} , {type} , {length} , {width} , {height} , {format}");
+    }
 
 #endregion
 
@@ -588,6 +591,7 @@ namespace TRTCCUnityDemo {
       initTrtc();
       CopyResources();
       musicPath = "https://imgcache.qq.com/operation/dianshi/other/daoxiang.72c46ee085f15dc72603b0ba154409879cbeb15e.mp3";
+      inputParam.text = Application.persistentDataPath + "/" + "deviceTest.mp3";
       audio = BackGroundMusicHelper.getInstanceGroundMusicHelper().getAudioSoucre();
       GameObject trtcCloudobj = transform.Find("Left/roomPanel/dropdownInstance").gameObject;
       if (trtcCloudobj != null) {
@@ -699,6 +703,7 @@ namespace TRTCCUnityDemo {
       StartCoroutine(CopyFileFromAssetsToPersistent("48_1_audio.pcm"));
       StartCoroutine(CopyFileFromAssetsToPersistent("48_1_audio.pcm"));
       StartCoroutine(CopyFileFromAssetsToPersistent("click.mp3"));
+      StartCoroutine(CopyFileFromAssetsToPersistent("deviceTest.mp3"));
     }
 
     private IEnumerator CopyFileFromAssetsToPersistent(string fileName) {
@@ -948,7 +953,7 @@ namespace TRTCCUnityDemo {
       var mTarget =
            new TRTCPublishTarget { cdnUrlListSize = 1, cdnUrlList = new TRTCPublishCdnUrl[1] };
       mTarget.mode = TRTCPublishMode.TRTCPublishMixStreamToRoom;
-      mTarget.mixStreamIdentity.strRoomId = "";
+      mTarget.mixStreamIdentity.strRoomId = "678";
       mTarget.mixStreamIdentity.userId = "600000";
       mTarget.mixStreamIdentity.intRoomId = 678;
 
@@ -987,12 +992,12 @@ namespace TRTCCUnityDemo {
       mStreamMixingConfig.videoLayoutList[0].fixedVideoUser = new TRTCUserParam {
         userId = DataManager.GetInstance().GetUserID(),
         intRoomId = (uint)int.Parse(DataManager.GetInstance().GetRoomID()),
-        strRoomId = "0"
+        strRoomId = DataManager.GetInstance().GetRoomID()
       };
       mStreamMixingConfig.videoLayoutList[1].fixedVideoUser = new TRTCUserParam {
         userId = "345",
         intRoomId = (uint)int.Parse(DataManager.GetInstance().GetRoomID()),
-        strRoomId = "0"
+        strRoomId = DataManager.GetInstance().GetRoomID()
       };
       mStreamMixingConfig.videoLayoutList[0].fixedVideoStreamType = TRTCVideoStreamType.TRTCVideoStreamTypeBig;
       mStreamMixingConfig.videoLayoutList[1].fixedVideoStreamType = TRTCVideoStreamType.TRTCVideoStreamTypeBig;
@@ -1048,7 +1053,7 @@ namespace TRTCCUnityDemo {
       mStreamMixingConfig.videoLayoutList[0].fixedVideoUser = new TRTCUserParam {
         userId = DataManager.GetInstance().GetUserID(),
         intRoomId = (uint)int.Parse(DataManager.GetInstance().GetRoomID()),
-        strRoomId = "0"
+        strRoomId = DataManager.GetInstance().GetRoomID()
       };
       mStreamMixingConfig.videoLayoutList[0].fixedVideoStreamType = TRTCVideoStreamType.TRTCVideoStreamTypeBig;
 
@@ -1270,6 +1275,62 @@ namespace TRTCCUnityDemo {
       data["params"] = param;
       var api = data.ToJson();
       getTRTCCloudInstance()?.callExperimentalAPI(api);
+    }
+
+    public void startMicDeviceTest100Click () {
+      if (getDeviceManager() == null) {
+        return;
+      }
+      getDeviceManager().startMicDeviceTest(100);
+      AppLogToBtnClick($"startMicDeviceTest100Click ");
+    }
+
+    public void startMicDeviceTest50Click () {
+      if (getDeviceManager() == null) {
+        return;
+      }
+      getDeviceManager().startMicDeviceTest(50);
+      AppLogToBtnClick($"startMicDeviceTest50Click ");
+    }
+
+    public void startMicDeviceForPlaybackFalseTestClick () {
+      if (getDeviceManager() == null) {
+        return;
+      }
+      getDeviceManager().startMicDeviceTest(100, false);
+      AppLogToBtnClick($"startMicDeviceForPlaybackFalseTestClick Playback : false");
+    }
+
+    public void startMicDeviceForPlaybackTrueTestClick () {
+       if (getDeviceManager() == null) {
+        return;
+      }
+      getDeviceManager().startMicDeviceTest(100, true);
+      AppLogToBtnClick($"startMicDeviceForPlaybackTrueTestClick Playback : true");
+    }
+
+    public void stopMicDeviceTestClick () {
+      if (getDeviceManager() == null) {
+        return;
+      }
+      getDeviceManager().stopMicDeviceTest();
+      AppLogToBtnClick($"stopMicDeviceTestClick");
+    }
+
+    public void startSpeakerDeviceTestClick () {
+      if (getDeviceManager() == null) {
+        return;
+      }
+      getDeviceManager().startSpeakerDeviceTest(inputParam.text);
+      AppLogToBtnClick($"startSpeakerDeviceTestClick");
+    }        
+    
+    public void stopSpeakerDeviceTestClick () {
+      if (getDeviceManager() == null) {
+        return;
+      }
+      getDeviceManager().stopSpeakerDeviceTest();
+      AppLogToBtnClick($"stopSpeakerDeviceTestClick");
     }
 
     public void setVoiceReverbTypeClick() {

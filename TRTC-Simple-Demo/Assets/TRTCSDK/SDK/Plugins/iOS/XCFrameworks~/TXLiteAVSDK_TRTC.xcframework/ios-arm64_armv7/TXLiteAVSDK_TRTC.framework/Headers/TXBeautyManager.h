@@ -1,12 +1,11 @@
 /**
  * Copyright (c) 2021 Tencent. All rights reserved.
- * Module:   美颜与图像处理参数设置类
- * Function: 修改美颜、滤镜、绿幕等参数
+ * Module: beauty filter and image processing parameter configurations
+ * Function: you can modify parameters such as beautification, filter, and green screen
  */
 #import <Foundation/Foundation.h>
 #import <TargetConditionals.h>
 #import "TXLiteAVSymbolExport.h"
-
 #if TARGET_OS_IPHONE
 #import <UIKit/UIKit.h>
 typedef UIImage TXImage;
@@ -18,334 +17,357 @@ typedef NSImage TXImage;
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * 美颜（磨皮）算法。
+ * Beauty (skin smoothing) filter algorithm.
  *
- * TRTC 内置多种不同的磨皮算法，您可以选择最适合您产品定位的方案。
+ * TRTC has multiple built-in skin smoothing algorithms. You can select the one most suitable for your product needs.
  */
 typedef NS_ENUM(NSInteger, TXBeautyStyle) {
 
-    /// 光滑，算法比较激进，磨皮效果比较明显，适用于秀场直播。
+    /// Smooth style, which uses a more radical algorithm for more obvious effect and is suitable for show live streaming.
     TXBeautyStyleSmooth = 0,
 
-    /// 自然，算法更多地保留了面部细节，磨皮效果更加自然，适用于绝大多数直播场景。
+    /// Natural style, which retains more facial details for more natural effect and is suitable for most live streaming use cases.
     TXBeautyStyleNature = 1,
 
-    /// 优图，由优图实验室提供，磨皮效果介于光滑和自然之间，比光滑保留更多皮肤细节，比自然磨皮程度更高。
+    /// Pitu style, which is provided by YouTu Lab. Its skin smoothing effect is between the smooth style and the natural style, that is, it retains more skin details than the smooth style and has a higher skin smoothing degree than the natural
+    /// style.
     TXBeautyStylePitu = 2
 };
 
 /////////////////////////////////////////////////////////////////////////////////
 //
-//                    美颜相关接口
+//                    beauty interface
 //
 /////////////////////////////////////////////////////////////////////////////////
 
 LITEAV_EXPORT @interface TXBeautyManager : NSObject
 
 /**
- * 设置美颜（磨皮）算法。
+ * Sets the beauty (skin smoothing) filter algorithm.
  *
- * TRTC 内置多种不同的磨皮算法，您可以选择最适合您产品定位的方案：
- * @param beautyStyle 美颜风格，TXBeautyStyleSmooth：光滑；TXBeautyStyleNature：自然；TXBeautyStylePitu：优图。
+ * TRTC has multiple built-in skin smoothing algorithms. You can select the one most suitable for your product needs:
+ * @param beautyStyle Beauty filter style. `TXBeautyStyleSmooth`: smooth; `TXBeautyStyleNature`: natural; `TXBeautyStylePitu`: Pitu
  */
 - (void)setBeautyStyle:(TXBeautyStyle)beautyStyle;
 
 /**
- * 设置美颜级别。
+ * Sets the strength of the beauty filter.
  *
- * @param beautyLevel 美颜级别，取值范围 [0, 9]； 0 表示关闭，9 表示效果最明显。
+ * @param beautyLevel Strength of the beauty filter. Value range: [0, 9]. `0` indicates to disable the filter, and `9` indicates the most obvious effect.
  */
 - (void)setBeautyLevel:(float)beautyLevel;
 
 /**
- * 设置美白级别。
+ * Sets the strength of the brightening filter.
  *
- * @param whitenessLevel 美白级别，取值范围 [0, 9]；0 表示关闭，9 表示效果最明显。
+ * @param whitenessLevel Strength of the brightening filter. Value range: [0, 9]. `0` indicates to disable the filter, and `9` indicates the most obvious effect.
  */
 - (void)setWhitenessLevel:(float)whitenessLevel;
 
 /**
- * 开启清晰度增强。
+ * Enables clarity enhancement.
  */
 - (void)enableSharpnessEnhancement:(BOOL)enable;
 
 /**
- * 设置红润级别。
+ * Sets the strength of the rosy skin filter.
  *
- * @param ruddyLevel 红润级别，取值范围 [0, 9]；0 表示关闭，9 表示效果最明显。
+ * @param ruddyLevel Strength of the rosy skin filter. Value range: [0, 9]. `0` indicates to disable the filter, and `9` indicates the most obvious effect.
  */
 - (void)setRuddyLevel:(float)ruddyLevel;
 
 /**
- * 设置色彩滤镜效果。
+ * Sets color filter.
  *
- * 色彩滤镜，是一张包含色彩映射关系的颜色查找表图片，您可以在我们提供的官方 Demo 中找到预先准备好的几张滤镜图片。
- * SDK 会根据该查找表中的映射关系，对摄像头采集出的原始视频画面进行二次处理，以达到预期的滤镜效果。
- * @param image 包含色彩映射关系的颜色查找表图片，必须是 png 格式。
+ * The color filter is a color lookup table image containing color mapping relationships. You can find several predefined filter images in the official demo we provide.
+ * The SDK performs secondary processing on the original video image captured by the camera according to the mapping relationships in the lookup table to achieve the expected filter effect.
+ * @param image Color lookup table containing color mapping relationships. The image must be in PNG format.
  */
 - (void)setFilter:(nullable TXImage *)image;
 
 /**
- * 设置色彩滤镜的强度。
+ * Sets the strength of color filter.
  *
- * 该数值越高，色彩滤镜的作用强度越明显，经过滤镜处理后的视频画面跟原画面的颜色差异越大。
- * 我默认的滤镜浓度是 0.5，如果您觉得默认的滤镜效果不明显，可以设置为 0.5 以上的数字，最大值为 1。
- * @param strength 取值范围 [0, 1]，数值越大滤镜效果越明显，默认值为 0.5。
+ * The larger this value, the more obvious the effect of the color filter, and the greater the color difference between the video image processed by the filter and the original video image.
+ * The default strength is 0.5, and if it is not sufficient, it can be adjusted to a value above 0.5. The maximum value is 1.
+ * @param strength Value range: [0, 1]. The greater the value, the more obvious the effect. Default value: 0.5
  */
 - (void)setFilterStrength:(float)strength;
 
 /**
- * 设置绿幕背景视频。
+ * Sets green screen video.
  *
- * 该接口仅在 企业版
- * SDK（旧版已下线，新版本SDK如需使用高级美颜功能请参见[腾讯美颜特效SDK](https://cloud.tencent.com/document/product/647/68504)）中生效。此接口所开启的绿幕功能不具备智能去除背景的能力，需要被拍摄者的背后有一块绿色的幕布来辅助产生特效。
- * @param path MP4格式的视频文件路径; 设置空值表示关闭特效。
- * @return 0：成功；-5：当前 License 对应 feature 不支持。
+ * This interface is only available in the enterprise version SDK (the old version has been offline, if you need to use the advanced beauty function in the new version SDK, please refer to [Tencent Beauty Effect
+ * SDK](https://www.tencentcloud.com/document/product/1143/53942)) in effect. The green screen feature enabled by this API is not capable of intelligent keying. It requires that there be a green screen behind the videoed person or object for further
+ * chroma keying.
+ * @param path Path of the video file in MP4 format. An empty value indicates to disable the effect.
+ * @return 0: Success; -5: feature of license not supported.
  */
 - (int)setGreenScreenFile:(nullable NSString *)path;
 
 /**
- * 设置大眼级别。
+ * Sets the strength of the eye enlarging filter.
  *
- * 该接口仅在 企业版 SDK（旧版已下线，新版本SDK如需使用高级美颜功能请参见[腾讯美颜特效SDK](https://cloud.tencent.com/document/product/647/68504)）中生效。
- * @param eyeScaleLevel 大眼级别，取值范围 [0, 9]；0 表示关闭，9 表示效果最明显。
- * @return 0：成功；-5：当前 License 对应 feature 不支持。
+ * This interface is only available in the enterprise version SDK (the old version has been offline, if you need to use the advanced beauty function in the new version SDK, please refer to [Tencent Beauty Effect
+ * SDK](https://www.tencentcloud.com/document/product/1143/53942)) in effect.
+ * @param eyeScaleLevel Strength of the eye enlarging filter. Value range: [0, 9]. `0` indicates to disable the filter, and `9` indicates the most obvious effect.
+ * @return 0: Success; -5: feature of license not supported.
  */
 #if TARGET_OS_IPHONE
 - (int)setEyeScaleLevel:(float)eyeScaleLevel;
 #endif
 
 /**
- * 设置瘦脸级别。
+ * Sets the strength of the face slimming filter.
  *
- * 该接口仅在 企业版 SDK（旧版已下线，新版本SDK如需使用高级美颜功能请参见[腾讯美颜特效SDK](https://cloud.tencent.com/document/product/647/68504)）中生效。
- * @param faceSlimLevel 瘦脸级别，取值范围 [0, 9]；0 表示关闭，9 表示效果最明显。
- * @return 0：成功；-5：当前 License 对应 feature 不支持。
+ * This interface is only available in the enterprise version SDK (the old version has been offline, if you need to use the advanced beauty function in the new version SDK, please refer to [Tencent Beauty Effect
+ * SDK](https://www.tencentcloud.com/document/product/1143/53942)) in effect.
+ * @param faceSlimLevel Strength of the face slimming filter. Value range: [0, 9]. `0` indicates to disable the filter, and `9` indicates the most obvious effect.
+ * @return 0: Success; -5: feature of license not supported.
  */
 #if TARGET_OS_IPHONE
 - (int)setFaceSlimLevel:(float)faceSlimLevel;
 #endif
 
 /**
- * 设置 V 脸级别。
+ * Sets the strength of the chin slimming filter.
  *
- * 该接口仅在 企业版 SDK（旧版已下线，新版本SDK如需使用高级美颜功能请参见[腾讯美颜特效SDK](https://cloud.tencent.com/document/product/647/68504)）中生效。
- * @param faceVLevel V 脸级别，取值范围 [0, 9]；0 表示关闭，9 表示效果最明显。
- * @return 0：成功；-5：当前 License 对应 feature 不支持。
+ * This interface is only available in the enterprise version SDK (the old version has been offline, if you need to use the advanced beauty function in the new version SDK, please refer to [Tencent Beauty Effect
+ * SDK](https://www.tencentcloud.com/document/product/1143/53942)) in effect.
+ * @param faceVLevel Strength of the chin slimming filter. Value range: [0, 9]. `0` indicates to disable the filter, and `9` indicates the most obvious effect.
+ * @return 0: Success; -5: feature of license not supported.
  */
 #if TARGET_OS_IPHONE
 - (int)setFaceVLevel:(float)faceVLevel;
 #endif
 
 /**
- * 设置下巴拉伸或收缩。
+ * Sets the strength of the chin lengthening/shortening filter.
  *
- * 该接口仅在 企业版 SDK（旧版已下线，新版本SDK如需使用高级美颜功能请参见[腾讯美颜特效SDK](https://cloud.tencent.com/document/product/647/68504)）中生效。
- * @param chinLevel 下巴拉伸或收缩级别，取值范围 [-9, 9]；0 表示关闭，小于 0 表示收缩，大于 0 表示拉伸。
- * @return 0：成功；-5：当前 License 对应 feature 不支持。
+ * This interface is only available in the enterprise version SDK (the old version has been offline, if you need to use the advanced beauty function in the new version SDK, please refer to [Tencent Beauty Effect
+ * SDK](https://www.tencentcloud.com/document/product/1143/53942)) in effect.
+ * @param chinLevel Strength of the chin lengthening/shortening filter. Value range: [-9, 9]. `0` indicates to disable the filter, a value smaller than 0 indicates that the chin is shortened, and a value greater than 0 indicates that the chin is
+ * lengthened.
+ * @return 0: Success; -5: feature of license not supported.
  */
 #if TARGET_OS_IPHONE
 - (int)setChinLevel:(float)chinLevel;
 #endif
 
 /**
- * 设置短脸级别。
+ * Sets the strength of the face shortening filter.
  *
- * 该接口仅在 企业版 SDK（旧版已下线，新版本SDK如需使用高级美颜功能请参见[腾讯美颜特效SDK](https://cloud.tencent.com/document/product/647/68504)）中生效。
- * @param faceShortLevel 短脸级别，取值范围 [0, 9]；0 表示关闭，9 表示效果最明显。
- * @return 0：成功；-5：当前 License 对应 feature 不支持。
+ * This interface is only available in the enterprise version SDK (the old version has been offline, if you need to use the advanced beauty function in the new version SDK, please refer to [Tencent Beauty Effect
+ * SDK](https://www.tencentcloud.com/document/product/1143/53942)) in effect.
+ * @param faceShortLevel Strength of the face shortening filter. Value range: [0, 9]. `0` indicates to disable the filter, and `9` indicates the most obvious effect.
+ * @return 0: Success; -5: feature of license not supported.
  */
 #if TARGET_OS_IPHONE
 - (int)setFaceShortLevel:(float)faceShortLevel;
 #endif
 
 /**
- * 设置窄脸级别。
+ * Sets the strength of the face narrowing filter.
  *
- * 该接口仅在 企业版 SDK（旧版已下线，新版本SDK如需使用高级美颜功能请参见[腾讯美颜特效SDK](https://cloud.tencent.com/document/product/647/68504)）中生效。
- * @param level 窄脸级别，取值范围 [0, 9]；0 表示关闭，9 表示效果最明显。
- * @return 0：成功；-5：当前 License 对应 feature 不支持。
+ * This interface is only available in the enterprise version SDK (the old version has been offline, if you need to use the advanced beauty function in the new version SDK, please refer to [Tencent Beauty Effect
+ * SDK](https://www.tencentcloud.com/document/product/1143/53942)) in effect.
+ * @param level Strength of the face narrowing filter. Value range: [0, 9]. `0` indicates to disable the filter, and `9` indicates the most obvious effect.
+ * @return 0: Success; -5: feature of license not supported.
  */
 #if TARGET_OS_IPHONE
 - (int)setFaceNarrowLevel:(float)faceNarrowLevel;
 #endif
 
 /**
- * 设置瘦鼻级别。
+ * Sets the strength of the nose slimming filter.
  *
- * 该接口仅在 企业版 SDK（旧版已下线，新版本SDK如需使用高级美颜功能请参见[腾讯美颜特效SDK](https://cloud.tencent.com/document/product/647/68504)）中生效。
- * @param noseSlimLevel 瘦鼻级别，取值范围 [0, 9]；0 表示关闭，9 表示效果最明显。
- * @return 0：成功；-5：当前 License 对应 feature 不支持。
+ * This interface is only available in the enterprise version SDK (the old version has been offline, if you need to use the advanced beauty function in the new version SDK, please refer to [Tencent Beauty Effect
+ * SDK](https://www.tencentcloud.com/document/product/1143/53942)) in effect.
+ * @param noseSlimLevel Strength of the nose slimming filter. Value range: [0, 9]. `0` indicates to disable the filter, and `9` indicates the most obvious effect.
+ * @return 0: Success; -5: feature of license not supported.
  */
 #if TARGET_OS_IPHONE
 - (int)setNoseSlimLevel:(float)noseSlimLevel;
 #endif
 
 /**
- * 设置亮眼级别。
+ * Sets the strength of the eye brightening filter.
  *
- * 该接口仅在 企业版 SDK（旧版已下线，新版本SDK如需使用高级美颜功能请参见[腾讯美颜特效SDK](https://cloud.tencent.com/document/product/647/68504)）中生效。
- * @param eyeLightenLevel 亮眼级别，取值范围 [0, 9]；0 表示关闭，9 表示效果最明显。
- * @return 0：成功；-5：当前 License 对应 feature 不支持。
+ * This interface is only available in the enterprise version SDK (the old version has been offline, if you need to use the advanced beauty function in the new version SDK, please refer to [Tencent Beauty Effect
+ * SDK](https://www.tencentcloud.com/document/product/1143/53942)) in effect.
+ * @param eyeLightenLevel Strength of the eye brightening filter. Value range: [0, 9]. `0` indicates to disable the filter, and `9` indicates the most obvious effect.
+ * @return 0: Success; -5: feature of license not supported.
  */
 #if TARGET_OS_IPHONE
 - (int)setEyeLightenLevel:(float)eyeLightenLevel;
 #endif
 
 /**
- * 设置牙齿美白级别。
+ * Sets the strength of the teeth whitening filter.
  *
- * 该接口仅在 企业版 SDK（旧版已下线，新版本SDK如需使用高级美颜功能请参见[腾讯美颜特效SDK](https://cloud.tencent.com/document/product/647/68504)）中生效。
- * @param toothWhitenLevel 白牙级别，取值范围 [0, 9]；0表示关闭，9 表示效果最明显。
- * @return 0：成功；-5：当前 License 对应 feature 不支持。
+ * This interface is only available in the enterprise version SDK (the old version has been offline, if you need to use the advanced beauty function in the new version SDK, please refer to [Tencent Beauty Effect
+ * SDK](https://www.tencentcloud.com/document/product/1143/53942)) in effect.
+ * @param toothWhitenLevel Strength of the teeth whitening filter. Value range: [0, 9]. `0` indicates to disable the filter, and `9` indicates the most obvious effect.
+ * @return 0: Success; -5: feature of license not supported.
  */
 #if TARGET_OS_IPHONE
 - (int)setToothWhitenLevel:(float)toothWhitenLevel;
 #endif
 
 /**
- * 设置祛皱级别。
+ * Sets the strength of the wrinkle removal filter.
  *
- * 该接口仅在 企业版 SDK（旧版已下线，新版本SDK如需使用高级美颜功能请参见[腾讯美颜特效SDK](https://cloud.tencent.com/document/product/647/68504)）中生效。
- * @param wrinkleRemoveLevel 祛皱级别，取值范围 [0, 9]；0 表示关闭，9 表示效果最明显。
- * @return 0：成功；-5：当前 License 对应 feature 不支持。
+ * This interface is only available in the enterprise version SDK (the old version has been offline, if you need to use the advanced beauty function in the new version SDK, please refer to [Tencent Beauty Effect
+ * SDK](https://www.tencentcloud.com/document/product/1143/53942)) in effect.
+ * @param wrinkleRemoveLevel Strength of the wrinkle removal filter. Value range: [0, 9]. `0` indicates to disable the filter, and `9` indicates the most obvious effect.
+ * @return 0: Success; -5: feature of license not supported.
  */
 #if TARGET_OS_IPHONE
 - (int)setWrinkleRemoveLevel:(float)wrinkleRemoveLevel;
 #endif
 
 /**
- * 设置祛眼袋级别。
+ * Sets the strength of the eye bag removal filter.
  *
- * 该接口仅在 企业版 SDK（旧版已下线，新版本SDK如需使用高级美颜功能请参见[腾讯美颜特效SDK](https://cloud.tencent.com/document/product/647/68504)）中生效。
- * @param pounchRemoveLevel 祛眼袋级别，取值范围 [0, 9]；0 表示关闭，9 表示效果最明显。
- * @return 0：成功；-5：当前 License 对应 feature 不支持。
+ * This interface is only available in the enterprise version SDK (the old version has been offline, if you need to use the advanced beauty function in the new version SDK, please refer to [Tencent Beauty Effect
+ * SDK](https://www.tencentcloud.com/document/product/1143/53942)) in effect.
+ * @param pounchRemoveLevel Strength of the eye bag removal filter. Value range: [0, 9]. `0` indicates to disable the filter, and `9` indicates the most obvious effect.
+ * @return 0: Success; -5: feature of license not supported.
  */
 #if TARGET_OS_IPHONE
 - (int)setPounchRemoveLevel:(float)pounchRemoveLevel;
 #endif
 
 /**
- * 设置法令纹去除级别。
+ * Sets the strength of the smile line removal filter.
  *
- * 该接口仅在 企业版 SDK（旧版已下线，新版本SDK如需使用高级美颜功能请参见[腾讯美颜特效SDK](https://cloud.tencent.com/document/product/647/68504)）中生效。
- * @param smileLinesRemoveLevel 法令纹级别，取值范围 [0, 9]；0表示关闭，9 表示效果最明显。
- * @return 0：成功；-5：当前 License 对应 feature 不支持。
+ * This interface is only available in the enterprise version SDK (the old version has been offline, if you need to use the advanced beauty function in the new version SDK, please refer to [Tencent Beauty Effect
+ * SDK](https://www.tencentcloud.com/document/product/1143/53942)) in effect.
+ * @param smileLinesRemoveLevel Strength of the smile line removal filter. Value range: [0, 9]. `0` indicates to disable the filter, and `9` indicates the most obvious effect.
+ * @return 0: Success; -5: feature of license not supported.
  */
 #if TARGET_OS_IPHONE
 - (int)setSmileLinesRemoveLevel:(float)smileLinesRemoveLevel;
 #endif
 
 /**
- * 设置发际线调整级别。
+ * Sets the strength of the hairline adjustment filter.
  *
- * 该接口仅在 企业版 SDK（旧版已下线，新版本SDK如需使用高级美颜功能请参见[腾讯美颜特效SDK](https://cloud.tencent.com/document/product/647/68504)）中生效。
- * @param foreheadLevel 发际线级别，取值范围 [-9, 9]；0表示关闭，9表示效果最明显。
- * @return 0：成功；-5：当前 License 对应 feature 不支持。
+ * This interface is only available in the enterprise version SDK (the old version has been offline, if you need to use the advanced beauty function in the new version SDK, please refer to [Tencent Beauty Effect
+ * SDK](https://www.tencentcloud.com/document/product/1143/53942)) in effect.
+ * @param foreheadLevel Strength of the hairline adjustment filter. Value range: [-9, 9]. `0` indicates to disable the filter, and `9` indicates the most obvious effect.
+ * @return 0: Success; -5: feature of license not supported.
  */
 #if TARGET_OS_IPHONE
 - (int)setForeheadLevel:(float)foreheadLevel;
 #endif
 
 /**
- * 设置眼距。
+ * Sets the strength of the eye distance adjustment filter.
  *
- * 该接口仅在 企业版 SDK（旧版已下线，新版本SDK如需使用高级美颜功能请参见[腾讯美颜特效SDK](https://cloud.tencent.com/document/product/647/68504)）中生效。
- * @param eyeDistanceLevel 眼距级别，取值范围 -9 - 9；0 表示关闭，小于 0 表示拉伸，大于 0 表示收缩。
- * @return 0：成功；-5：当前 License 对应 feature 不支持。
+ * This interface is only available in the enterprise version SDK (the old version has been offline, if you need to use the advanced beauty function in the new version SDK, please refer to [Tencent Beauty Effect
+ * SDK](https://www.tencentcloud.com/document/product/1143/53942)) in effect.
+ * @param eyeDistanceLevel Strength of the eye distance adjustment filter. Value range: [-9, 9]. `0` indicates to disable the filter, a value smaller than 0 indicates to widen, and a value greater than 0 indicates to narrow.
+ * @return 0: Success; -5: feature of license not supported.
  */
 #if TARGET_OS_IPHONE
 - (int)setEyeDistanceLevel:(float)eyeDistanceLevel;
 #endif
 
 /**
- * 设置眼角调整级别。
+ * Sets the strength of the eye corner adjustment filter.
  *
- * 该接口仅在 企业版 SDK（旧版已下线，新版本SDK如需使用高级美颜功能请参见[腾讯美颜特效SDK](https://cloud.tencent.com/document/product/647/68504)）中生效。
- * @param eyeAngleLevel 眼角调整级别，取值范围 [-9, 9]；0表示关闭，9表示效果最明显。
- * @return 0：成功；-5：当前 License 对应 feature 不支持。
+ * This interface is only available in the enterprise version SDK (the old version has been offline, if you need to use the advanced beauty function in the new version SDK, please refer to [Tencent Beauty Effect
+ * SDK](https://www.tencentcloud.com/document/product/1143/53942)) in effect.
+ * @param eyeAngleLevel Strength of the eye corner adjustment filter. Value range: [-9, 9]. `0` indicates to disable the filter, and `9` indicates the most obvious effect.
+ * @return 0: Success; -5: feature of license not supported.
  */
 #if TARGET_OS_IPHONE
 - (int)setEyeAngleLevel:(float)eyeAngleLevel;
 #endif
 
 /**
- * 设置嘴型调整级别。
+ * Sets the strength of the mouth shape adjustment filter.
  *
- * 该接口仅在 企业版 SDK（旧版已下线，新版本SDK如需使用高级美颜功能请参见[腾讯美颜特效SDK](https://cloud.tencent.com/document/product/647/68504)）中生效。
- * @param mouthShapeLevel 嘴型级别，取值范围 [-9, 9]；0 表示关闭，小于 0 表示拉伸，大于 0 表示收缩。
- * @return 0：成功；-5：当前 License 对应 feature 不支持。
+ * This interface is only available in the enterprise version SDK (the old version has been offline, if you need to use the advanced beauty function in the new version SDK, please refer to [Tencent Beauty Effect
+ * SDK](https://www.tencentcloud.com/document/product/1143/53942)) in effect.
+ * @param mouthShapeLevel Strength of the mouth shape adjustment filter. Value range: [-9, 9]. `0` indicates to disable the filter, a value smaller than 0 indicates to widen, and a value greater than 0 indicates to narrow.
+ * @return 0: Success; -5: feature of license not supported.
  */
 #if TARGET_OS_IPHONE
 - (int)setMouthShapeLevel:(float)mouthShapeLevel;
 #endif
 
 /**
- * 设置鼻翼调整级别。
+ * Sets the strength of the nose wing narrowing filter.
  *
- * 该接口仅在 企业版 SDK（旧版已下线，新版本SDK如需使用高级美颜功能请参见[腾讯美颜特效SDK](https://cloud.tencent.com/document/product/647/68504)）中生效。
- * @param noseWingLevel 鼻翼调整级别，取值范围 [-9, 9]；0 表示关闭，小于 0 表示拉伸，大于 0 表示收缩。
- * @return 0：成功；-5：当前 License 对应 feature 不支持。
+ * This interface is only available in the enterprise version SDK (the old version has been offline, if you need to use the advanced beauty function in the new version SDK, please refer to [Tencent Beauty Effect
+ * SDK](https://www.tencentcloud.com/document/product/1143/53942)) in effect.
+ * @param noseWingLevel Strength of the nose wing adjustment filter. Value range: [-9, 9]. `0` indicates to disable the filter, a value smaller than 0 indicates to widen, and a value greater than 0 indicates to narrow.
+ * @return 0: Success; -5: feature of license not supported.
  */
 #if TARGET_OS_IPHONE
 - (int)setNoseWingLevel:(float)noseWingLevel;
 #endif
 
 /**
- * 设置鼻子位置。
+ * Sets the strength of the nose position adjustment filter.
  *
- * 该接口仅在 企业版 SDK（旧版已下线，新版本SDK如需使用高级美颜功能请参见[腾讯美颜特效SDK](https://cloud.tencent.com/document/product/647/68504)）中生效。
- * @param nosePositionLevel 鼻子位置级别，取值范围 [-9, 9]；0 表示关闭，小于 0 表示抬高，大于 0 表示降低。
- * @return 0：成功；-5：当前 License 对应 feature 不支持。
+ * This interface is only available in the enterprise version SDK (the old version has been offline, if you need to use the advanced beauty function in the new version SDK, please refer to [Tencent Beauty Effect
+ * SDK](https://www.tencentcloud.com/document/product/1143/53942)) in effect.
+ * @param nosePositionLevel Strength of the nose position adjustment filter. Value range: [-9, 9]. `0` indicates to disable the filter, a value smaller than 0 indicates to lift, and a value greater than 0 indicates to lower.
+ * @return 0: Success; -5: feature of license not supported.
  */
 #if TARGET_OS_IPHONE
 - (int)setNosePositionLevel:(float)nosePositionLevel;
 #endif
 
 /**
- * 设置嘴唇厚度。
+ * Sets the strength of the lip thickness adjustment filter.
  *
- * 该接口仅在 企业版 SDK（旧版已下线，新版本SDK如需使用高级美颜功能请参见[腾讯美颜特效SDK](https://cloud.tencent.com/document/product/647/68504)）中生效。
- * @param lipsThicknessLevel 嘴唇厚度级别，取值范围 [-9, 9]；0 表示关闭，小于 0 表示拉伸，大于 0 表示收缩。
- * @return 0：成功；-5：当前 License 对应 feature 不支持。
+ * This interface is only available in the enterprise version SDK (the old version has been offline, if you need to use the advanced beauty function in the new version SDK, please refer to [Tencent Beauty Effect
+ * SDK](https://www.tencentcloud.com/document/product/1143/53942)) in effect.
+ * @param lipsThicknessLevel Strength of the lip thickness adjustment filter. Value range: [-9, 9]. `0` indicates to disable the filter, a value smaller than 0 indicates to thicken, and a value greater than 0 indicates to thin.
+ * @return 0: Success; -5: feature of license not supported.
  */
 #if TARGET_OS_IPHONE
 - (int)setLipsThicknessLevel:(float)lipsThicknessLevel;
 #endif
 
 /**
- * 设置脸型。
+ * Sets the strength of the face shape adjustment filter.
  *
- * 该接口仅在 企业版 SDK（旧版已下线，新版本SDK如需使用高级美颜功能请参见[腾讯美颜特效SDK](https://cloud.tencent.com/document/product/647/68504)）中生效。
- * @param   faceBeautyLevel 美型级别，取值范围 [0, 9]；0 表示关闭，1 - 9 值越大，效果越明显。
- * @return 0：成功；-5：当前 License 对应 feature 不支持。
+ * This interface is only available in the enterprise version SDK (the old version has been offline, if you need to use the advanced beauty function in the new version SDK, please refer to [Tencent Beauty Effect
+ * SDK](https://www.tencentcloud.com/document/product/1143/53942)) in effect.
+ * @param   faceBeautyLevel Strength of the face shape adjustment filter. Value range: [0, 9]. `0` indicates to disable the filter, and the greater the value, the more obvious the effect.
+ * @return 0: Success; -5: feature of license not supported.
  */
 #if TARGET_OS_IPHONE
 - (int)setFaceBeautyLevel:(float)faceBeautyLevel;
 #endif
 
 /**
- * 选择 AI 动效挂件。
+ * Selects the AI animated effect pendant.
  *
- * 该接口仅在 企业版 SDK（旧版已下线，新版本SDK如需使用高级美颜功能请参见[腾讯美颜特效SDK](https://cloud.tencent.com/document/product/647/68504)）中生效。
- * @param tmplName 动效挂件名称。
- * @param tmplDir 动效素材文件所在目录。
+ * This interface is only available in the enterprise version SDK (the old version has been offline, if you need to use the advanced beauty function in the new version SDK, please refer to [Tencent Beauty Effect
+ * SDK](https://www.tencentcloud.com/document/product/1143/53942)) in effect.
+ * @param tmplName Animated effect pendant name
+ * @param tmplDir Directory of the animated effect material file
  */
 #if TARGET_OS_IPHONE
 - (void)setMotionTmpl:(nullable NSString *)tmplName inDir:(nullable NSString *)tmplDir;
 #endif
 
 /**
- * 是否在动效素材播放时静音。
+ * Sets whether to mute during animated effect playback.
  *
- * 该接口仅在 企业版 SDK（旧版已下线，新版本SDK如需使用高级美颜功能请参见[腾讯美颜特效SDK](https://cloud.tencent.com/document/product/647/68504)）中生效。
- * 有些挂件本身会有声音特效，通过此 API 可以关闭这些特效播放时所带的声音效果。
- * @param motionMute YES：静音；NO：不静音。
+ * This interface is only available in the enterprise version SDK (the old version has been offline, if you need to use the advanced beauty function in the new version SDK, please refer to [Tencent Beauty Effect
+ * SDK](https://www.tencentcloud.com/document/product/1143/53942)) in effect. Some animated effects have audio effects, which can be disabled through this API when they are played back.
+ * @param motionMute `$YES$`: mute; `$NO$`: unmute
  */
 #if TARGET_OS_IPHONE
 - (void)setMotionMute:(BOOL)motionMute;
 #endif
 
 @end
-
 NS_ASSUME_NONNULL_END

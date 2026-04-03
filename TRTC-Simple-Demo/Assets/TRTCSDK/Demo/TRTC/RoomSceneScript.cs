@@ -94,9 +94,9 @@ namespace TRTCCUnityDemo {
                                  .gameObject.GetComponent<Toggle>();
       toggleSetting.onValueChanged.AddListener(this.OnToggleSetting);
 
-      Toggle toggleSendSEIMsg = transform.Find("PanelTest/Viewport/Content/ToggleSendSEIMsg")
+      Toggle toggleSnapshot = transform.Find("PanelTest/Viewport/Content/ToggleSnapshot")
                                     .gameObject.GetComponent<Toggle>();
-      toggleSendSEIMsg.onValueChanged.AddListener(this.OnToggleSendSEIMsg);
+      toggleSnapshot.onValueChanged.AddListener(this.OnToggleSnapshot);
 
       Toggle toggleSwitchCamera = transform.Find("PanelTest/Viewport/Content/ToggleSwitchCamera")
                                       .gameObject.GetComponent<Toggle>();
@@ -238,7 +238,8 @@ namespace TRTCCUnityDemo {
       }
 
       if (captureVideo) {
-        mTRTCCloud.startLocalPreview(true, null);
+        GameObject videoView = userTableView.GetVideoView("", TRTCVideoStreamType.TRTCVideoStreamTypeBig);
+        mTRTCCloud.startLocalPreview(true, videoView);
         userTableView.UpdateVideoAvailable("", TRTCVideoStreamType.TRTCVideoStreamTypeBig, true);
       } else {
         mTRTCCloud.stopLocalPreview();
@@ -405,31 +406,8 @@ namespace TRTCCUnityDemo {
       }
     }
 
-    void OnToggleSendSEIMsg(bool value) {
-      if (value) {
-        // byte[] seiMsg = new byte[] {2, 0, 0, 0, 0, 0,1,1, 0, 0,1,1};
-        byte[] seiMsg = new byte[] { 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-
-        // byte[] seiMsg = m_byteFacialData.ToArray();
-
-        string strInfo = "";
-        for (int i = 0; i < seiMsg.Length; i++) {
-          strInfo += seiMsg[i].ToString() + ", ";
-        }
-
-        LogManager.Log("seiMsg.Length: " + seiMsg.Length);
-        LogManager.Log("seiMsg strInfo: " + strInfo);
-
-        var result = mTRTCCloud.sendSEIMsg(seiMsg, seiMsg.Length, 1);
-
-        // string seiMsg = "test sei messagetest sei messagetest sei messagetest sei messagetest sei
-        // messagetest sei message"; int msgSize = System.Text.Encoding.UTF8.GetByteCount(seiMsg);
-        // LogManager.Log(String.Format("----> sendSEIMsg seiMsg= {0}, msgSize = {1}", seiMsg,
-        // msgSize)); mTRTCCloud.sendSEIMsg(System.Text.Encoding.UTF8.GetBytes(seiMsg), msgSize,
-        // 30);
-      }
+    void OnToggleSnapshot(bool value) {
+      transform.Find("SnapshoView").gameObject.SetActive(value);
     }
 
     void OnToggleSwitchCamera(bool value) {
@@ -771,6 +749,8 @@ namespace TRTCCUnityDemo {
             remote.jitterBufferDelay);
         userTableView.updateUserStatistics(remote.userId, remote.streamType, remoteStatisText);
       }
+      LogManager.Log(
+          $"onStatistics appCpu = {statis.appCpu}, systemCpu = {statis.systemCpu}, systemMemoryInMB = {statis.systemMemoryInMB}, systemMemoryUsageInMB = {statis.systemMemoryUsageInMB}, appMemoryUsageInMB = {statis.appMemoryUsageInMB}");
     }
 
     public void onConnectionLost() {
@@ -937,14 +917,131 @@ namespace TRTCCUnityDemo {
       LogManager.Log($"onMissCustomCmdMsg {userId}, {cmdID}");
     }
 
-    public void onSnapshotComplete(string userId,
-                                   TRTCVideoStreamType type,
-                                   byte[] data,
-                                   int length,
-                                   int width,
-                                   int height,
-                                   TRTCVideoPixelFormat format) {
-      LogManager.Log($"onSnapshotComplete {userId} , {type}");
+    public void onSnapshotComplete(string userId, TRTCVideoStreamType type, byte[] data, UInt32 length, UInt32 width, UInt32 height, TRTCVideoPixelFormat format) {
+      LogManager.Log($"onSnapshotComplete {userId} , {type} , {length} , {width} , {height} , {format}");
+      if (data == null || length == 0) {
+        LogManager.Log($"Snapshot data is empty");
+        return;
+      }
+      Texture2D texture = null;
+
+      switch (format) {
+        case TRTCVideoPixelFormat.TRTCVideoPixelFormat_I420:
+          texture = ConvertI420ToRGB32(data, (int)width, (int)height);
+          break;
+
+        case TRTCVideoPixelFormat.TRTCVideoPixelFormat_BGRA32:
+          texture = new Texture2D((int)width, (int)height, TextureFormat.BGRA32, false);
+          texture.LoadRawTextureData(data);
+          texture.Apply();
+          texture = FlipTextureVertical(texture);
+          break;
+
+        case TRTCVideoPixelFormat.TRTCVideoPixelFormat_RGBA32:
+          texture = new Texture2D((int)width, (int)height, TextureFormat.RGBA32, false);
+          texture.LoadRawTextureData(data);
+          texture.Apply();
+          texture = FlipTextureVertical(texture);
+          break;
+
+        default:
+          Debug.LogWarning($"Unsupported pixel format: {format}");
+          texture = new Texture2D((int)width, (int)height, TextureFormat.RGBA32, false);
+          texture.LoadRawTextureData(data);
+          texture.Apply();
+          break;
+      }
+
+      if (texture != null) {
+        byte[] pngData = texture.EncodeToPNG();
+        string timestamp = System.DateTime.Now.ToString("yyyyMMdd_HHmmss_fff");
+        string filename = $"snapshot_{userId}_{type}_{timestamp}.png";
+        string filePath = System.IO.Path.Combine(Application.persistentDataPath, filename);
+        System.IO.File.WriteAllBytes(filePath, pngData);
+        LogManager.Log($"Snapshot saved to: {filePath}");
+        UnityEngine.Object.Destroy(texture);
+      }
+    }
+
+    // Flip texture vertically
+    private Texture2D FlipTextureVertical(Texture2D original) {
+      Texture2D flipped = new Texture2D(original.width, original.height, original.format, false);
+      Color32[] pixels = original.GetPixels32();
+      Color32[] flippedPixels = new Color32[pixels.Length];
+      int width = original.width;
+      int height = original.height;
+
+      for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+          // Flip vertically: top row becomes bottom row
+          int srcIndex = y * width + x;
+          int dstIndex = (height - 1 - y) * width + x;
+          flippedPixels[dstIndex] = pixels[srcIndex];
+        }
+      }
+
+      flipped.SetPixels32(flippedPixels);
+      flipped.Apply();
+      UnityEngine.Object.Destroy(original);
+      return flipped;
+    }
+
+    // Convert I420 (YUV420) to RGB32
+    private Texture2D ConvertI420ToRGB32(byte[] data, int width, int height) {
+      // I420 format: Y plane + U plane (1/4) + V plane (1/4)
+      int ySize = width * height;
+      int uvSize = ySize / 4;
+
+      Texture2D texture = new Texture2D(width, height, TextureFormat.RGBA32, false);
+      Color32[] colors = new Color32[width * height];
+
+      for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+          int yIndex = y * width + x;
+          int uIndex = ySize + (y / 2) * (width / 2) + (x / 2);
+          int vIndex = ySize + uvSize + (y / 2) * (width / 2) + (x / 2);
+
+          byte Y = data[yIndex];
+          byte U = data[uIndex];
+          byte V = data[vIndex];
+
+          // YUV to RGB conversion
+          int R = (int)(Y + 1.402 * (V - 128));
+          int G = (int)(Y - 0.344 * (U - 128) - 0.714 * (V - 128));
+          int B = (int)(Y + 1.772 * (U - 128));
+
+          R = Mathf.Clamp(R, 0, 255);
+          G = Mathf.Clamp(G, 0, 255);
+          B = Mathf.Clamp(B, 0, 255);
+
+          colors[yIndex] = new Color32((byte)R, (byte)G, (byte)B, 255);
+        }
+      }
+
+      texture.SetPixels32(colors);
+      texture.Apply();
+      return texture;
+    }
+
+    // Convert BGRA to RGBA
+    private Texture2D ConvertBGRAToRGBA(Texture2D bgraTexture) {
+      int width = bgraTexture.width;
+      int height = bgraTexture.height;
+
+      Texture2D rgbaTexture = new Texture2D(width, height, TextureFormat.RGBA32, false);
+      Color32[] bgraColors = bgraTexture.GetPixels32();
+      Color32[] rgbaColors = new Color32[bgraColors.Length];
+
+      for (int i = 0; i < bgraColors.Length; i++) {
+        Color32 c = bgraColors[i];
+        rgbaColors[i] = new Color32(c.b, c.g, c.r, c.a);
+      }
+
+      rgbaTexture.SetPixels32(rgbaColors);
+      rgbaTexture.Apply();
+
+      UnityEngine.Object.Destroy(bgraTexture);
+      return rgbaTexture;
     }
 
     public void onSetMixTranscodingConfig(int errCode, String errMsg) {

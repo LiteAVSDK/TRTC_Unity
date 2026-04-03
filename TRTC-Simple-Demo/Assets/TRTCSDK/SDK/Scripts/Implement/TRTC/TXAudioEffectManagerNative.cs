@@ -68,7 +68,7 @@ namespace trtc {
     // 2.1
     [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
     public static extern void tx_audio_effect_manager_start_play_music(IntPtr instance,
-                                                                       AudioMusicParam musicParam);
+                                                                       AudioMusicParamInner musicParam);
 
     // 2.2
     [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
@@ -121,7 +121,7 @@ namespace trtc {
     // 2.11
     [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
     public static extern long tx_audio_effect_manager_get_music_duration_in_ms(IntPtr instance,
-                                                                               string path);
+                                                                               IntPtr path);
 
     // 2.12
     [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
@@ -165,7 +165,7 @@ namespace trtc {
     [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
     public static extern void tx_audio_effect_manager_preload_music(
         IntPtr instance,
-        AudioMusicParam preloadMusicParam);
+        AudioMusicParamInner preloadMusicParam);
 
     // 2.16
     [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]

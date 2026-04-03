@@ -9,10 +9,10 @@ namespace liteav {
     protected const string V2TXLiveLibName = "liteavsdk";
 #elif (UNITY_IPHONE || UNITY_WEBGL) && !UNITY_EDITOR
     protected const string V2TXLiveLibName = "__Internal";
-#elif UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
-    protected const string V2TXLiveLibName = "liteav";
-#else
+#elif UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
     protected const string V2TXLiveLibName = "TXLiteAVSDK_TRTC_Mac";
+#else
+    protected const string V2TXLiveLibName = "liteav";
 #endif
   }
 }

@@ -3,8 +3,9 @@
 
 using System;
 using System.Runtime.InteropServices;
-using System.Text;
-using UnityEngine;
+#if !(UNITY_EDITOR || UNITY_STANDALONE || UNITY_ANDROID || UNITY_IOS || UNITY_OPENHARMONY || UNITY_WEBGL)
+using System.Windows;
+#endif
 
 namespace trtc {
 #if UNITY_IOS
@@ -26,7 +27,7 @@ namespace trtc {
     // 2.1
     [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
     public static extern void trtc_cloud_enter_room(IntPtr context,
-                                                    TRTCParams param,
+                                                    TRTCParamsInner param,
                                                     TRTCAppScene scene);
 
     // 2.2
@@ -188,6 +189,12 @@ namespace trtc {
         IntPtr instance,
         [MarshalAs(UnmanagedType.LPStr)] string userId,
         TRTCVideoStreamType type);
+
+    // 4.22
+    [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void trtc_cloud_snapshot_video(IntPtr instance,
+        IntPtr userId,
+        TRTCVideoStreamType streamType, TRTCSnapshotSourceType sourceType);
 
     // 5.1
     [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
@@ -353,6 +360,34 @@ namespace trtc {
         uint minVideoBitrate,
         bool enableAdjustRes);
 
+    // 9.8
+    [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void trtc_cloud_set_sub_stream_mix_volume(IntPtr instance, uint volume);
+
+    // 9.9
+    [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void trtc_cloud_add_excluded_share_window(IntPtr instance, IntPtr windowID);
+
+    // 9.10
+    [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void trtc_cloud_remove_excluded_share_window(IntPtr instance, IntPtr windowID);
+
+    // 9.11
+    [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void trtc_cloud_remove_all_excluded_share_windows(IntPtr instance);
+
+    // 9.12
+    [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void trtc_cloud_add_included_share_window(IntPtr instance, IntPtr windowID);
+
+    // 9.13
+    [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void trtc_cloud_remove_included_share_window(IntPtr instance, IntPtr windowID);
+
+    // 9.14
+    [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void trtc_cloud_remove_all_included_share_windows(IntPtr instance);
+
     // 10.1
     [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
     public static extern void trtc_cloud_enable_custom_video_capture(IntPtr instance, TRTCVideoStreamType streamType, bool enable);
@@ -431,6 +466,10 @@ namespace trtc {
         TRTCVideoBufferType bufferType,
         IntPtr callback);
 
+    // 10.12
+    [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern int trtc_cloud_set_audio_frame_callback(IntPtr instance, IntPtr callback);
+
     // 10.13
     [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
     public static extern int trtc_cloud_set_captured_audio_frame_callback_format(IntPtr instance,
@@ -461,10 +500,6 @@ namespace trtc {
 
     [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
     public static extern void trtc_cloud_destroy_audio_frame_callback(IntPtr callback);
-
-    // 10.12
-    [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
-    public static extern int trtc_cloud_set_audio_frame_callback(IntPtr instance, IntPtr callback);
 
     // 11.1
     [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]

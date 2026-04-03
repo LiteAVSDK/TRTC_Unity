@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2025 Tencent. All Rights Reserved.
+ *  Copyright (c) 2026 Tencent. All Rights Reserved.
  *
  */
 
@@ -34,3 +34,4 @@
 #import <TXLiteAVSDK_TRTC/TXAudioEffectManager.h>
 #import <TXLiteAVSDK_TRTC/TXBeautyManager.h>
 #import <TXLiteAVSDK_TRTC/TXLiveSDKEventDef.h>
+#import <TXLiteAVSDK_TRTC/AITranscriberManager.h>

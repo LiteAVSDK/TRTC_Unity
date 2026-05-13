@@ -32,7 +32,7 @@ namespace TRTCSDK.Editor {
         proj.AddFrameworkToProject(frameTarget, Utf8string("IOSurface.framework"), true);
         proj.AddFrameworkToProject(frameTarget, Utf8string("Accelerate.framework"), true);
         proj.AddFrameworkToProject(frameTarget, Utf8string("AVFoundation.framework"), true);
-        proj.AddFrameworkToProject(frameTarget, Utf8string("VideoToolBox.framework"), true);
+        proj.AddFrameworkToProject(frameTarget, Utf8string("VideoToolbox.framework"), true);
         proj.AddFrameworkToProject(frameTarget, Utf8string("Metal.framework"), true);
         proj.AddFrameworkToProject(frameTarget, Utf8string("MetalKit.framework"), true);
         proj.AddFrameworkToProject(frameTarget, Utf8string("SystemConfiguration.framework"), true);
@@ -59,7 +59,7 @@ namespace TRTCSDK.Editor {
         proj.AddBuildProperty(mainTarget, "DEFINES_MODULE", "YES");
 
         proj.AddFrameworkToProject(mainTarget, Utf8string("Accelerate.framework"), true);
-        proj.AddFrameworkToProject(mainTarget, Utf8string("VideoToolBox.framework"), true);
+        proj.AddFrameworkToProject(mainTarget, Utf8string("VideoToolbox.framework"), true);
         proj.AddFrameworkToProject(mainTarget, Utf8string("Metal.framework"), true);
         proj.AddFrameworkToProject(mainTarget, Utf8string("MetalKit.framework"), true);
         proj.AddFrameworkToProject(mainTarget, Utf8string("SystemConfiguration.framework"), true);

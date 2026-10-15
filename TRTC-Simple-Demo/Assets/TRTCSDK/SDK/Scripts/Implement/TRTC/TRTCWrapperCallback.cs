@@ -1205,19 +1205,68 @@ namespace trtc {
     public static readonly TRTCVideoFrameCallbackNative.OnGLContextCreatedHandler _OnGLContextCreatedRef = OnGLContextCreatedHandler;
     public static readonly TRTCVideoFrameCallbackNative.OnProcessVideoFrameHandler _OnProcessVideoFrameRef = OnProcessVideoFrameHandler;
     public static readonly TRTCVideoFrameCallbackNative.OnGLContextDestroyHandler _OnGLContextDestroyRef = OnGLContextDestroyHandler;
-    //  todo 老版本未用到，暂不实现
+
+    private static ITRTCVideoFrameCallback QueryCallback(IntPtr instance) {
+      if (instance == IntPtr.Zero) {
+        return null;
+      }
+
+      var cloudImpl = CloudManager.FindCloudImplement(instance);
+      return cloudImpl?.GetCallback()?.GetAppVideoFrameCallback();
+    }
+
     [MonoPInvokeCallback(typeof(TRTCVideoFrameCallbackNative.OnGLContextCreatedHandler))]
-    public static void OnGLContextCreatedHandler(IntPtr instance) { }
+    public static void OnGLContextCreatedHandler(IntPtr instance) {
+      var callback = QueryCallback(instance);
+      if (callback == null) {
+        return;
+      }
+      try {
+        callback.onGLContextCreated();
+      }
+      catch (System.Exception exception) {
+        TRTCLogger.Error("OnGLContextCreated callback threw an exception: " + exception.ToString());
+      }
+    }
 
     [MonoPInvokeCallback(typeof(TRTCVideoFrameCallbackNative.OnProcessVideoFrameHandler))]
     public static int OnProcessVideoFrameHandler(IntPtr instance,
                                                  ref VideoFrame src_frame,
                                                  ref VideoFrame dst_frame) {
-      return 0;
+      var callback = QueryCallback(instance);
+      if (callback == null) {
+        return -1;
+      }
+
+      var srcFrame = TRTCTypeConverter.ConvertToTRTCVideoFrame(src_frame);
+      var dstFrame = TRTCTypeConverter.ConvertToTRTCVideoFrame(dst_frame);
+      int result = 0;
+      try {
+        result = callback.onProcessVideoFrame(srcFrame, ref dstFrame);
+        if (result == 0) {
+          TRTCTypeConverter.ConvertToVideoFrame(dstFrame, ref dst_frame);
+        }
+      }
+      catch (System.Exception exception) {
+        TRTCLogger.Error("OnProcessVideoFrame callback threw an exception: " + exception.ToString());
+        result = -1;
+      }
+      return result;
     }
 
     [MonoPInvokeCallback(typeof(TRTCVideoFrameCallbackNative.OnGLContextDestroyHandler))]
-    public static void OnGLContextDestroyHandler(IntPtr instance) { }
+    public static void OnGLContextDestroyHandler(IntPtr instance) {
+      var callback = QueryCallback(instance);
+      if (callback == null) {
+        return;
+      }
+      try {
+        callback.onGLContextDestroy();
+      }
+      catch (System.Exception exception) {
+        TRTCLogger.Error("OnGLContextDestroy callback threw an exception: " + exception.ToString());
+      }
+    }
   }
 
   public static class VideoRenderCallback {

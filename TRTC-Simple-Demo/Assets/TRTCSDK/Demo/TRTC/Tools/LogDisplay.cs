@@ -9,6 +9,7 @@ namespace TRTCCUnityDemo
         private static LogManager sharedInstance;
         private static readonly System.Object sLock = new System.Object();
         private string logText;
+        private const int MAX_LOG_LENGTH = 10000;
 
         private LogManager()
         {
@@ -35,6 +36,10 @@ namespace TRTCCUnityDemo
         private void LogI(string message)
         {
             logText = logText + "\n" + message;
+            if (logText.Length > MAX_LOG_LENGTH)
+            {
+                logText = logText.Substring(logText.Length - MAX_LOG_LENGTH);
+            }
         }
 
         public string getLogText()

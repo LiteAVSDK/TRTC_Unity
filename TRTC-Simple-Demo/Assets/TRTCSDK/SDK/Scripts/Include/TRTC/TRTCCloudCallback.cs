@@ -218,11 +218,10 @@ namespace trtc {
         /**
          * 4.1 网络质量的实时统计回调。
          *
-         * 该统计回调每间隔2秒抛出一次，用于通知 SDK 感知到的当前网络的上行和下行质量。
+         * 该统计回调每间隔2秒抛出一次，用于通知 SDK 感知到的本端用户与远端用户的上行质量。
          * SDK 会使用一组内嵌的自研算法对当前网络的延迟高低、带宽大小以及稳定情况进行评估，并计算出一个评估结果：如果评估结果为 1（Excellent） 代表当前的网络情况非常好，如果评估结果为 6（Down）代表当前网络无法支撑 TRTC 的正常通话。
-         * @param localQuality 上行网络质量。
-         * @param remoteQuality 下行网络质量，代表数据流历经“远端->云端->本端”这样一条完整的传输链路后，最终在本端统计到的数据质量。因此，这里的下行网络质量代表的是远端上行链路与本端下行链路共同影响的结果。
-         * @note 暂时无法通过该接口单独判定远端用户的上行质量。
+         * @param localQuality 本端用户的上行网络质量。
+         * @param remoteQuality 远端用户的上行网络质量。
          */
         void onNetworkQuality(TRTCQualityInfo localQuality, TRTCQualityInfo[] remoteQuality, UInt32 remoteQualityCount);
 
@@ -543,12 +542,12 @@ namespace trtc {
          * 9.2 屏幕分享暂停的事件回调。
          *
          * 当您通过 {@link pauseScreenCapture} 暂停屏幕分享时，SDK 便会抛出此事件回调。
-         * @param reason 原因。
+         * @param reason 暂停原因：
          * - 0：用户主动暂停。
-         * - 1：注意此字段的含义在 MAC 和 Windows 平台有稍微差异。屏幕窗口不可见暂停（Mac）。表示设置屏幕分享参数导致的暂停（Windows）。
-         * - 2：表示屏幕分享窗口被最小化导致的暂停（仅 Windows）。
-         * - 3：表示屏幕分享窗口被隐藏导致的暂停（仅 Windows）。
-         * - 4：表示屏幕共享因系统操作而暂停（仅 iOS）。
+         * - 1：屏幕窗口不可见导致的暂停（macOS）/ 屏幕分享参数设置导致的暂停（Windows）。
+         * - 2：屏幕分享窗口被最小化导致的暂停（仅 Windows）。
+         * - 3：屏幕分享窗口被隐藏导致的暂停（仅 Windows）。
+         * - 4：系统操作导致屏幕分享暂停（仅 iOS）。
          */
         void onScreenCapturePaused(int reason);
 
@@ -556,12 +555,12 @@ namespace trtc {
          * 9.3 屏幕分享恢复的事件回调。
          *
          * 当您通过 {@link resumeScreenCapture} 恢复屏幕分享时，SDK 便会抛出此事件回调。
-         * @param reason 恢复原因。
+         * @param reason 恢复原因：
          * - 0：用户主动恢复。
-         * - 1：注意此字段的含义在 MAC 和 Windows 平台有稍微差异。屏幕窗口恢复可见从而恢复分享（Mac）。屏幕分享参数设置完毕后自动恢复（Windows）。
-         * - 2：表示屏幕分享窗口从最小化被恢复（仅 Windows）。
-         * - 3：表示屏幕分享窗口从隐藏被恢复（仅 Windows）。
-         * - 4：表示屏幕共享因系统操作而恢复（仅 iOS）。
+         * - 1：屏幕窗口恢复可见导致的分享恢复（macOS）/ 屏幕分享参数设置完毕后自动恢复（Windows）。
+         * - 2：屏幕分享窗口从最小化状态恢复（仅 Windows）。
+         * - 3：屏幕分享窗口从隐藏状态恢复（仅 Windows）。
+         * - 4：系统操作导致屏幕分享恢复（仅 iOS）。
          */
         void onScreenCaptureResumed(int reason);
 
@@ -639,20 +638,20 @@ namespace trtc {
          * 情况一：美颜组件自身会产生新的纹理。
          * 如果您使用的美颜组件会在处理图像的过程中产生一帧全新的纹理（用于承载处理后的图像），那请您在回调函数中将 dstFrame.textureId 设置为新纹理的 ID：
          * <pre>
-         * int onProcessVideoFrame(TRTCVideoFrame srcFrame, TRTCVideoFrame dstFrame);
+         * int onProcessVideoFrame(TRTCVideoFrame srcFrame,  ref TRTCVideoFrame dstFrame);
          * </pre>
          *
          * 情况二：美颜组件需要您提供目标纹理。
          * 如果您使用的第三方美颜模块并不生成新的纹理，而是需要您设置给该模块一个输入纹理和一个输出纹理，则可以考虑如下方案：
          * <pre>
-         * int onProcessVideoFrame(TRTCVideoFrame srcFrame, TRTCVideoFrame dstFrame);
+         * int onProcessVideoFrame(TRTCVideoFrame srcFrame, ref TRTCVideoFrame dstFrame);
          * </pre>
          *
          * @param srcFrame 用于承载 TRTC 采集到的摄像头画面。
          * @param dstFrame 用于接收第三方美颜处理过的视频画面。
          * @note 目前仅支持 OpenGL 纹理方案（ PC 仅支持 TRTCVideoBufferType_Buffer 格式）。
          */
-        int onProcessVideoFrame(TRTCVideoFrame srcFrame, TRTCVideoFrame dstFrame);
+        int onProcessVideoFrame(TRTCVideoFrame srcFrame, ref TRTCVideoFrame dstFrame);
 
         /**
          * SDK 内部 OpenGL 环境被销毁的通知。

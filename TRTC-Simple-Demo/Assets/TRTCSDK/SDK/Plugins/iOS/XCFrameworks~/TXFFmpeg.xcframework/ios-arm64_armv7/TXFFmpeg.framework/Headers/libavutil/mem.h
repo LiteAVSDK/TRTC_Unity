@@ -340,7 +340,7 @@ av_alloc_size(2, 3) void *liteav_av_realloc_array(void *ptr, size_t nmemb, size_
  * @warning Unlike liteav_av_malloc(), the allocated memory is not guaranteed to be
  *          correctly aligned.
  */
-av_alloc_size(2, 3) int liteav_av_reallocp_array(void *ptr, size_t nmemb, size_t size);
+int liteav_av_reallocp_array(void *ptr, size_t nmemb, size_t size);
 
 /**
  * Reallocate the given buffer if it is not large enough, otherwise do nothing.

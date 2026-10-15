@@ -1,6 +1,8 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System;
+using System.Threading;
+using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.UI;
 using LitJson;
@@ -16,9 +18,6 @@ namespace TRTCCUnityDemo {
 
     public Toggle preferSmoothToggle;
     public Toggle preferClearToggle;
-
-    public Toggle ctrlClientToggle;
-    public Toggle ctrlServerToggle;
     public Toggle enableAIDenoiseToggle;
     public Dropdown voiceChangerDropDown;
     public Dropdown audioQualityDropDown;
@@ -33,14 +32,20 @@ namespace TRTCCUnityDemo {
     public Dropdown rotationDropDown;
     public Dropdown fillModeDropDown;
     public Dropdown mirrorTypeDropDown;
-    public Dropdown streamTypeDropDown;
     private ITRTCCloud mTRTCCloud;
     private TRTCVideoStreamType mStreamType;
-    private Dropdown mLocalVideoStreamTypeDropDown;
-    private Toggle mEnableLocalVideoCustomToggle;
+    public Dropdown enableLocalVideoCustomDropDown;
+    public Dropdown enableCustomVideoCaptureDropDown;
+
+    public Dropdown mCameraCaptureModeDropDown;
+    public InputField mCameraCaptureWidthInputField;
+    public InputField mCameraCaptureHeightInputField;
+    public Button mSetCameraCapturerParamTestButton;
 
     private TRTCRenderParams mRenderParam = new TRTCRenderParams();
     private DataManager.TRTCRenderIndex mRenderIndex = new DataManager.TRTCRenderIndex(0, 0, 0, 0);
+
+    public System.Action OnClose;
 
     void Start() {
       mTRTCCloud = ITRTCCloud.getTRTCShareInstance();
@@ -55,14 +60,165 @@ namespace TRTCCUnityDemo {
       SetUpDirection();
       SetUpBitrate();
       SetupRemoteVideoSetting();
-      SetupLocalVideoStream();
       SetupEnableLocalVideoCustom();
+      SetupCameraCapturerParamTest();
+      SetupEnableCustomVideoCapture();
+    }
+
+    public void Show() {
+      gameObject.SetActive(true);
+    }
+
+    public void Hide() {
+      gameObject.SetActive(false);
+    }
+
+    private void SetupEnableCustomVideoCapture() {
+      if (enableCustomVideoCaptureDropDown != null) {
+        List<string> options = new List<string>();
+        // Option 0: Disable custom video capture (all platforms)
+        options.Add("关闭自定义视频数据");
+
+#if UNITY_STANDALONE_WIN || UNITY_ANDROID
+        // Android / Windows: texture mode + buffer mode
+        options.Add("纹理传输");
+        options.Add("数据Buffer传输");
+#else
+        // iOS / macOS: buffer mode only (texture not supported on these platforms)
+        options.Add("数据Buffer传输");
+#endif
+
+        enableCustomVideoCaptureDropDown.ClearOptions();
+        enableCustomVideoCaptureDropDown.AddOptions(options);
+        int savedMode = DataManager.GetInstance().GetCustomVideoCaptureMode();
+        enableCustomVideoCaptureDropDown.SetValueWithoutNotify(savedMode);
+        enableCustomVideoCaptureDropDown.RefreshShownValue();
+        enableCustomVideoCaptureDropDown.onValueChanged.AddListener(OnEnableCustomVideoCaptureValueChanged);
+      }
+    }
+
+    private void OnEnableCustomVideoCaptureValueChanged(int value) {
+      if (mTRTCCloud == null) return;
+
+#if UNITY_STANDALONE_WIN || UNITY_ANDROID
+      // Android / Windows: 0=关闭, 1=纹理传输, 2=数据Buffer传输
+      switch (value) {
+        case 0:
+          Debug.Log("[Setting] Custom video capture: Disabled");
+          CustomVideoCaptureHelper.Instance.StopCapture();
+          break;
+        case 1:
+          Debug.Log("[Setting] Custom video capture: Texture mode");
+          CustomVideoCaptureHelper.Instance.StopCapture();
+          CustomVideoCaptureHelper.Instance.StartCapture(mTRTCCloud, useTexture: true);
+          break;
+        case 2:
+          Debug.Log("[Setting] Custom video capture: Buffer mode");
+          CustomVideoCaptureHelper.Instance.StopCapture();
+          CustomVideoCaptureHelper.Instance.StartCapture(mTRTCCloud, useTexture: false);
+          break;
+      }
+#else
+      // iOS / macOS: 0=关闭, 1=数据Buffer传输
+      switch (value) {
+        case 0:
+          Debug.Log("[Setting] Custom video capture: Disabled");
+          CustomVideoCaptureHelper.Instance.StopCapture();
+          break;
+        case 1:
+          Debug.Log("[Setting] Custom video capture: Buffer mode");
+          CustomVideoCaptureHelper.Instance.StopCapture();
+          CustomVideoCaptureHelper.Instance.StartCapture(mTRTCCloud, useTexture: false);
+          break;
+      }
+#endif
+      DataManager.GetInstance().SetCustomVideoCaptureMode(value);
+    }
+
+    public void StopCustomVideoCapture() {
+      if (!CustomVideoCaptureHelper.Instance.IsCapturing) return;
+      CustomVideoCaptureHelper.Instance.StopCapture();
+      DataManager.GetInstance().SetCustomVideoCaptureMode(0);
+      if (enableCustomVideoCaptureDropDown != null) {
+        enableCustomVideoCaptureDropDown.SetValueWithoutNotify(0);
+        enableCustomVideoCaptureDropDown.RefreshShownValue();
+      }
+    }
+
+    private void SetupCameraCapturerParamTest() {
+      if (mCameraCaptureModeDropDown != null) {
+        mCameraCaptureModeDropDown.value = DataManager.GetInstance().GetCameraCaptureModeIndex();
+      }
+
+      if (mCameraCaptureWidthInputField != null) {
+        mCameraCaptureWidthInputField.text = DataManager.GetInstance().GetCameraCaptureWidth().ToString();
+      }
+
+      if (mCameraCaptureHeightInputField != null) {
+        mCameraCaptureHeightInputField.text = DataManager.GetInstance().GetCameraCaptureHeight().ToString();
+      }
+
+      if (mSetCameraCapturerParamTestButton != null) {
+        mSetCameraCapturerParamTestButton.onClick.AddListener(OnClickTestSetCameraCapturerParam);
+      }
+    }
+
+    private void OnClickTestSetCameraCapturerParam() {
+      if (mTRTCCloud == null) {
+        Debug.Log("[Setting] TRTCCloud is null, cannot call setCameraCapturerParam");
+        return;
+      }
+
+      TXCameraCaptureParam param = new TXCameraCaptureParam();
+
+      int modeIndex = 0;
+      if (mCameraCaptureModeDropDown != null) {
+        modeIndex = mCameraCaptureModeDropDown.value;
+      }
+
+      switch (modeIndex) {
+        case 0:
+          param.mode = TXCameraCaptureMode.TXCameraResolutionStrategyAuto;
+          break;
+        case 1:
+          param.mode = TXCameraCaptureMode.TXCameraResolutionStrategyPerformance;
+          break;
+        case 2:
+          param.mode = TXCameraCaptureMode.TXCameraResolutionStrategyHighQuality;
+          break;
+        case 3:
+          param.mode = TXCameraCaptureMode.TXCameraCaptureManual;
+          break;
+        default:
+          param.mode = TXCameraCaptureMode.TXCameraResolutionStrategyAuto;
+          break;
+      }
+      int width = 0;
+      int height = 0;
+
+      if (mCameraCaptureWidthInputField != null) {
+        int.TryParse(mCameraCaptureWidthInputField.text, out width);
+      }
+
+      if (mCameraCaptureHeightInputField != null) {
+        int.TryParse(mCameraCaptureHeightInputField.text, out height);
+      }
+
+      // Guard against negative input.
+      param.width = Mathf.Max(0, width);
+      param.height = Mathf.Max(0, height);
+
+      DataManager.GetInstance().SetCameraCaptureParam(modeIndex, param.width, param.height);
+
+      Debug.Log($"[Setting] Call setCameraCapturerParam: mode={param.mode}, width={param.width}, height={param.height}");
+      mTRTCCloud.getDeviceManager().setCameraCapturerParam(param);
     }
 
     private void SetUpScene() {
       if (DataManager.GetInstance().appScene == TRTCAppScene.TRTCAppSceneVideoCall) {
         sceneVideoCallToggle.isOn = true;
-      } else {
+      }
+      else {
         sceneLiveToggle.isOn = true;
       }
       sceneVideoCallToggle.onValueChanged.AddListener(this.SceneVideoCallToggleValueChanged);
@@ -72,7 +228,8 @@ namespace TRTCCUnityDemo {
     private void SetUpRole() {
       if (DataManager.GetInstance().roleType == TRTCRoleType.TRTCRoleAnchor) {
         roleAnchorToggle.isOn = true;
-      } else {
+      }
+      else {
         roleAudienceToggle.isOn = true;
       }
       roleAnchorToggle.onValueChanged.AddListener(this.RoleAnchorToggleValueChanged);
@@ -86,23 +243,13 @@ namespace TRTCCUnityDemo {
 
       if (param.preference == TRTCVideoQosPreference.TRTCVideoQosPreferenceSmooth) {
         preferSmoothToggle.isOn = true;
-      } else {
+      }
+      else {
         preferClearToggle.isOn = true;
       }
 
-      // if (param.controlMode == TRTCQosControlMode.TRTCQosControlModeClient)
-      //{
-      //     ctrlClientToggle.isOn = true;
-      // }
-      // else
-      //{
-      //     ctrlServerToggle.isOn = true;
-      // }
-
       preferSmoothToggle.onValueChanged.AddListener(this.PreferSmoothToggleValueChanged);
       preferClearToggle.onValueChanged.AddListener(this.PreferClearToggleValueChanged);
-      ctrlClientToggle.onValueChanged.AddListener(this.CtrlClientToggleValueChanged);
-      ctrlServerToggle.onValueChanged.AddListener(this.CtrlServerToggleValueChanged);
       enableAIDenoiseToggle.onValueChanged.AddListener(this.EnableAIDenoiseToggleValueChanged);
     }
     private void SetUpVoiceChanger() {
@@ -266,7 +413,8 @@ namespace TRTCCUnityDemo {
       if (DataManager.GetInstance().videoEncParam.resMode ==
           TRTCVideoResolutionMode.TRTCVideoResolutionModeLandscape) {
         curIndex = 0;
-      } else {
+      }
+      else {
         curIndex = 1;
       }
       directionDropDown.value = curIndex;
@@ -275,12 +423,14 @@ namespace TRTCCUnityDemo {
 
     private void SetUpBitrate() {
       TRTCVideoEncParam param = DataManager.GetInstance().videoEncParam;
-      bitrateSlider.minValue = param.minVideoBitrate;
-      bitrateSlider.value = param.videoBitrate;
 
       DataManager.VideoResBitrateTable bitrateInfo =
           DataManager.GetInstance().GetBitrateInfo((int)param.videoResolution);
+
+      // Set min/max range before value to prevent Unity Slider from clamping the value.
+      bitrateSlider.minValue = param.minVideoBitrate;
       bitrateSlider.maxValue = bitrateInfo.maxBitrate;
+      bitrateSlider.value = param.videoBitrate;
 
       bitrateSlider.onValueChanged.AddListener(this.BitrateSliderValueChanged);
 
@@ -317,14 +467,6 @@ namespace TRTCCUnityDemo {
         mirrorTypeDropDown = mirrorTypeObj.GetComponent<Dropdown>();
         mirrorTypeDropDown.value = mRenderIndex.mirrorTypeIndex;
         mirrorTypeDropDown.onValueChanged.AddListener(this.mirrorTypeDropDownValueChanged);
-      }
-
-      GameObject streamTypeObj =
-          transform.Find("remoteVideoPanel/streamTypePanel/streamTypeDropdown").gameObject;
-      if (streamTypeObj != null) {
-        streamTypeDropDown = streamTypeObj.GetComponent<Dropdown>();
-        streamTypeDropDown.value = mRenderIndex.streamTypeIndex;
-        streamTypeDropDown.onValueChanged.AddListener(this.streamTypeDropDownValueChanged);
       }
     }
 
@@ -387,79 +529,58 @@ namespace TRTCCUnityDemo {
       DataManager.GetInstance().SetTRTCRenderIndex(mRenderIndex);
       mTRTCCloud.setRemoteRenderParams("345", mStreamType, ref mRenderParam);
     }
-
-    private void streamTypeDropDownValueChanged(int value) {
-      switch (value) {
-        case 0:
-          mStreamType = TRTCVideoStreamType.TRTCVideoStreamTypeBig;
-          break;
-        case 1:
-          mStreamType = TRTCVideoStreamType.TRTCVideoStreamTypeSmall;
-          break;
-        case 2:
-          mStreamType = TRTCVideoStreamType.TRTCVideoStreamTypeSub;
-          break;
-        default:
-          mStreamType = TRTCVideoStreamType.TRTCVideoStreamTypeBig;
-          break;
-      }
-      mRenderIndex.streamTypeIndex = value;
-      DataManager.GetInstance().SetTRTCRenderIndex(mRenderIndex);
-      mTRTCCloud.setRemoteRenderParams("345", mStreamType, ref mRenderParam);
-    }
-
     private void SetupEnableLocalVideoCustom() {
-      GameObject enableLocalVideoCustomToggleObj =
-          transform.Find("videoPanel/enableLocalVideoCustomToggle").gameObject;
-
-      if (enableLocalVideoCustomToggleObj != null) {
-        mEnableLocalVideoCustomToggle = enableLocalVideoCustomToggleObj.GetComponent<Toggle>();
-        mEnableLocalVideoCustomToggle.isOn =
-            DataManager.GetInstance().GetBitrateInfoEnableLocalVideoCustomProcess();
-        mEnableLocalVideoCustomToggle.onValueChanged.AddListener(delegate(bool value) {
-          mTRTCCloud.enableLocalVideoCustomProcess(value,
-                                                   TRTCVideoPixelFormat.TRTCVideoPixelFormat_I420,
-                                                   TRTCVideoBufferType.TRTCVideoBufferType_Buffer);
-          DataManager.GetInstance().SetEnableLocalVideoCustomProcess(value);
+      if (enableLocalVideoCustomDropDown != null) {
+        // 三种模式：0 = 关闭，1 = 纹理路径，2 = Buffer 路径
+        List<string> options = new List<string>(new string[] {
+          "Disable Custom Beauty",
+          "Enable via Texture",
+          "Enable via Buffer",
         });
+        enableLocalVideoCustomDropDown.ClearOptions();
+        enableLocalVideoCustomDropDown.AddOptions(options);
+
+        int savedMode = DataManager.GetInstance().GetCustomVideoProcessMode();
+        enableLocalVideoCustomDropDown.SetValueWithoutNotify(savedMode);
+        enableLocalVideoCustomDropDown.RefreshShownValue();
+
+        enableLocalVideoCustomDropDown.onValueChanged.AddListener(this.EnableLocalVideoCustomDropDownValueChanged);
       }
     }
 
-    private void SetupLocalVideoStream() {
-      GameObject videoStreamTypeObj =
-          transform.Find("videoPanel/streamTypePanel/streamTypeDropdown").gameObject;
+    private void EnableLocalVideoCustomDropDownValueChanged(int value) {
+      if (mTRTCCloud == null) return;
 
-      if (videoStreamTypeObj != null) {
-        mLocalVideoStreamTypeDropDown = videoStreamTypeObj.GetComponent<Dropdown>();
-      }
-
-      mLocalVideoStreamTypeDropDown.value =
-          DataManager.GetInstance().GetLocalVideostreamTypeIndex();
-
-      mLocalVideoStreamTypeDropDown.onValueChanged.AddListener(
-          this.localVideoStreamDropDownValueChanged);
-    }
-
-    private void localVideoStreamDropDownValueChanged(int value) {
-      TRTCVideoStreamType streamType;
       switch (value) {
         case 0:
-          streamType = TRTCVideoStreamType.TRTCVideoStreamTypeBig;
+          // 关闭：参数 enable=false 时 SDK 不读 format/bufferType
+          mTRTCCloud.enableLocalVideoCustomProcess(false,
+                                                    TRTCVideoPixelFormat.TRTCVideoPixelFormat_Texture_2D,
+                                                    TRTCVideoBufferType.TRTCVideoBufferType_Texture);
+          Debug.Log("[Setting] Custom beauty disabled");
           break;
+
         case 1:
-          streamType = TRTCVideoStreamType.TRTCVideoStreamTypeSmall;
+          // 开启 - OpenGL ES 纹理路径（iOS / Android 真机有效）
+          mTRTCCloud.muteLocalVideo(false);
+          mTRTCCloud.enableLocalVideoCustomProcess(true,
+                                                    TRTCVideoPixelFormat.TRTCVideoPixelFormat_Texture_2D,
+                                                    TRTCVideoBufferType.TRTCVideoBufferType_Texture);
+          Debug.Log("[Setting] Custom beauty enabled via Texture");
           break;
+
         case 2:
-          streamType = TRTCVideoStreamType.TRTCVideoStreamTypeSub;
-          break;
-        default:
-          streamType = TRTCVideoStreamType.TRTCVideoStreamTypeBig;
+          // 开启 - CPU Buffer 路径（BGRA32）
+          mTRTCCloud.muteLocalVideo(false);
+          mTRTCCloud.enableLocalVideoCustomProcess(true,
+                                                    TRTCVideoPixelFormat.TRTCVideoPixelFormat_BGRA32,
+                                                    TRTCVideoBufferType.TRTCVideoBufferType_Buffer);
+          Debug.Log("[Setting] Custom beauty enabled via Buffer");
           break;
       }
 
-      DataManager.GetInstance().SetLocalVideostreamTypeIndex(value);
-
-      mTRTCCloud.setRemoteVideoStreamType("345", streamType);
+      // 持久化下拉框值，下次打开 Setting 页可恢复
+      DataManager.GetInstance().SetCustomVideoProcessMode(value);
     }
 
     private void SceneVideoCallToggleValueChanged(bool value) {
@@ -500,18 +621,6 @@ namespace TRTCCUnityDemo {
     private void PreferClearToggleValueChanged(bool value) {
       TRTCNetworkQosParam param = DataManager.GetInstance().qosParams;
       param.preference = TRTCVideoQosPreference.TRTCVideoQosPreferenceClear;
-      DataManager.GetInstance().qosParams = param;
-    }
-
-    private void CtrlClientToggleValueChanged(bool value) {
-      TRTCNetworkQosParam param = DataManager.GetInstance().qosParams;
-      // param.controlMode = TRTCQosControlMode.TRTCQosControlModeClient;
-      DataManager.GetInstance().qosParams = param;
-    }
-
-    private void CtrlServerToggleValueChanged(bool value) {
-      TRTCNetworkQosParam param = DataManager.GetInstance().qosParams;
-      // param.controlMode = TRTCQosControlMode.TRTCQosControlModeServer;
       DataManager.GetInstance().qosParams = param;
     }
 
@@ -569,7 +678,7 @@ namespace TRTCCUnityDemo {
     }
 
     private void AudioQualityDropDownValueChanged(int value) {
-       DataManager.GetInstance().audioQuality = (TRTCAudioQuality)Enum.ToObject(typeof(TRTCAudioQuality), value + 1);
+      DataManager.GetInstance().audioQuality = (TRTCAudioQuality)Enum.ToObject(typeof(TRTCAudioQuality), value + 1);
     }
 
     private void EarMonitorVolumeSliderValueChanged(float value) {
@@ -689,6 +798,9 @@ namespace TRTCCUnityDemo {
       curBitrateText.text = param.videoBitrate.ToString() + "kps";
     }
 
-    public void OnBackClick() { Destroy(this.gameObject); }
+    public void OnBackClick() {
+      Hide();
+      OnClose?.Invoke();
+    }
   }
 }

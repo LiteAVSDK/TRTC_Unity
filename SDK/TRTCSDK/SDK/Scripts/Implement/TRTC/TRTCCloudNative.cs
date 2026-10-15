@@ -264,6 +264,30 @@ namespace trtc {
     public static extern void trtc_cloud_set_gravity_sensor_adaptive_mode(IntPtr instance,
                                                                TRTCGravitySensorAdaptiveMode mode);
 
+    // 5.19
+    [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern int trtc_cloud_enable_3d_spatial_audio_effect(IntPtr instance, [MarshalAs(UnmanagedType.I1)] bool enabled);
+
+    // 5.20
+    [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern int trtc_cloud_update_self_3d_spatial_position(IntPtr instance,
+                                                                    [MarshalAs(UnmanagedType.LPArray, SizeConst = 3)] int[] position,
+                                                                    [MarshalAs(UnmanagedType.LPArray, SizeConst = 3)] float[] axisForward,
+                                                                    [MarshalAs(UnmanagedType.LPArray, SizeConst = 3)] float[] axisRight,
+                                                                    [MarshalAs(UnmanagedType.LPArray, SizeConst = 3)] float[] axisUp);
+
+    // 5.21
+    [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern int trtc_cloud_update_remote_3d_spatial_position(IntPtr instance,
+                                                                          [MarshalAs(UnmanagedType.LPStr)] string userId,
+                                                                          [MarshalAs(UnmanagedType.LPArray, SizeConst = 3)] int[] position);
+
+    // 5.22
+    [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern int trtc_cloud_set_3d_spatial_receiving_range(IntPtr instance,
+                                                                       [MarshalAs(UnmanagedType.LPStr)] string userId,
+                                                                       int range);
+
     // 6.1
     [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
     public static extern IntPtr trtc_cloud_get_device_manager(IntPtr instance);
@@ -412,6 +436,10 @@ namespace trtc {
                                                                          bool enablePublish,
                                                                          bool enablePlayout);
 
+    // 10.8
+    [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt64 trtc_cloud_generate_custom_pts(IntPtr instance);
+
     // 10.9.1
     [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
     public static extern int trtc_cloud_enable_local_video_custom_process(
@@ -552,7 +580,7 @@ namespace trtc {
 
     // 13.9
     [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
-    public static extern void trtc_cloud_call_experimental_api(IntPtr instance, [
+    public static extern IntPtr trtc_cloud_call_experimental_api(IntPtr instance, [
       MarshalAs(UnmanagedType.LPStr)
     ] string jsonStr);
 

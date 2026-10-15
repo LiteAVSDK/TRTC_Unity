@@ -17,6 +17,7 @@ namespace trtc {
     private static TRTCCloudImplement _sInstance;
     // 实例指针
     private IntPtr _nativeObj;
+    internal IntPtr GetNativePtr() { return _nativeObj; }
     // 共享的主实例指
     private IntPtr _shareNativeObj;
     private TRTCWrapperCallback _wrapperCallback;
@@ -607,6 +608,26 @@ namespace trtc {
       TRTCCloudNative.trtc_cloud_stop_local_recording(_nativeObj);
     }
 
+    // 5.19
+    public override void enable3DSpatialAudioEffect(bool enabled) {
+      TRTCCloudNative.trtc_cloud_enable_3d_spatial_audio_effect(_nativeObj, enabled);
+    }
+
+    // 5.20
+    public override void updateSelf3DSpatialPosition(int[] position, float[] axisForward, float[] axisRight, float[] axisUp) {
+      TRTCCloudNative.trtc_cloud_update_self_3d_spatial_position(_nativeObj, position, axisForward, axisRight, axisUp);
+    }
+
+    // 5.21
+    public override void updateRemote3DSpatialPosition(string userId, int[] position) {
+      TRTCCloudNative.trtc_cloud_update_remote_3d_spatial_position(_nativeObj, userId, position);
+    }
+
+    // 5.22
+    public override void set3DSpatialReceivingRange(string userId, int range) {
+      TRTCCloudNative.trtc_cloud_set_3d_spatial_receiving_range(_nativeObj, userId, range);
+    }
+
     public override ITXDeviceManager getDeviceManager() {
       return _deviceManager;
     }
@@ -841,44 +862,37 @@ namespace trtc {
     }
 
     // 9.8
-    public override void setSubStreamMixVolume(uint volume)
-    {
+    public override void setSubStreamMixVolume(uint volume) {
       TRTCCloudNative.trtc_cloud_set_sub_stream_mix_volume(_nativeObj, volume);
     }
 
     // 9.9
-    public override void addExcludedShareWindow(IntPtr windowID)
-    {
+    public override void addExcludedShareWindow(IntPtr windowID) {
       TRTCCloudNative.trtc_cloud_add_excluded_share_window(_nativeObj, windowID);
     }
 
     // 9.10
-    public override void removeExcludedShareWindow(IntPtr windowID)
-    {
+    public override void removeExcludedShareWindow(IntPtr windowID) {
       TRTCCloudNative.trtc_cloud_remove_excluded_share_window(_nativeObj, windowID);
     }
 
     // 9.11
-    public override void removeAllExcludedShareWindows()
-    {
+    public override void removeAllExcludedShareWindows() {
       TRTCCloudNative.trtc_cloud_remove_all_excluded_share_windows(_nativeObj);
     }
 
     // 9.12
-    public override void addIncludedShareWindow(IntPtr windowID)
-    {
+    public override void addIncludedShareWindow(IntPtr windowID) {
       TRTCCloudNative.trtc_cloud_add_included_share_window(_nativeObj, windowID);
     }
 
     // 9.13
-    public override void removeIncludedShareWindow(IntPtr windowID)
-    {
+    public override void removeIncludedShareWindow(IntPtr windowID) {
       TRTCCloudNative.trtc_cloud_remove_included_share_window(_nativeObj, windowID);
     }
 
     // 9.14
-    public override void removeAllIncludedShareWindows()
-    {
+    public override void removeAllIncludedShareWindows() {
       TRTCCloudNative.trtc_cloud_remove_all_included_share_windows(_nativeObj);
     }
 
@@ -892,7 +906,6 @@ namespace trtc {
       VideoFrame inner_param = new VideoFrame();
       inner_param.videoFormat = frame.videoFormat;
       inner_param.bufferType = frame.bufferType;
-      // inner_param.texture = frame.texture;
       inner_param.data = frame.data;
 
       inner_param.length = frame.length;
@@ -900,9 +913,26 @@ namespace trtc {
       inner_param.height = frame.height;
       inner_param.timestamp = frame.timestamp;
       inner_param.rotation = frame.rotation;
-      TRTCCloudNative.trtc_cloud_send_custom_video_data(_nativeObj, streamType, inner_param);
-      if (inner_param.data != null) {
-        Marshal.FreeHGlobal(inner_param.data);
+
+      IntPtr texturePtr = IntPtr.Zero;
+      try {
+        if (frame.bufferType == TRTCVideoBufferType.TRTCVideoBufferType_Texture || frame.bufferType == TRTCVideoBufferType.TRTCVideoBufferType_TextureD3D11) {
+          Texture inner_texture = new Texture();
+          inner_texture.glTextureId = frame.texture.glTextureId;
+          inner_texture.glContext = frame.texture.glContext;
+          inner_texture.d3d11TextureId = frame.texture.d3d11TextureId;
+
+          texturePtr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(Texture)));
+          Marshal.StructureToPtr(inner_texture, texturePtr, false);
+          inner_param.texture = texturePtr;
+        }
+
+        TRTCCloudNative.trtc_cloud_send_custom_video_data(_nativeObj, streamType, inner_param);
+      }
+      finally {
+        if (texturePtr != IntPtr.Zero) {
+          Marshal.FreeHGlobal(texturePtr);
+        }
       }
     }
 
@@ -943,6 +973,11 @@ namespace trtc {
     public override void enableMixExternalAudioFrame(bool enablePublish, bool enablePlayout) {
       TRTCCloudNative.trtc_cloud_enable_mix_external_audio_frame(_nativeObj, enablePublish,
                                                                  enablePlayout);
+    }
+
+    // 10.8
+    public override UInt64 generateCustomPTS() {
+      return TRTCCloudNative.trtc_cloud_generate_custom_pts(_nativeObj);
     }
 
     // 10.9.1
@@ -1103,8 +1138,11 @@ namespace trtc {
     }
 
     // 13.9
-    public override void callExperimentalAPI(string jsonStr) {
-      TRTCCloudNative.trtc_cloud_call_experimental_api(_nativeObj, jsonStr);
+    public override string callExperimentalAPI(string jsonStr) {
+      IntPtr resultPtr = TRTCCloudNative.trtc_cloud_call_experimental_api(_nativeObj, jsonStr);
+      using (var resultMarshaler = new Utf8StringMarshaler(resultPtr)) {
+        return resultMarshaler.GetString();
+      }
     }
 
     [Obsolete]

@@ -17,8 +17,8 @@ namespace TRTCCUnityDemo {
                                ITRTCVideoRenderCallback,
                                ITRTCAudioFrameCallback,
                                ITXMusicPreloadObserver,
-                               ITXCopyrightedMediaCallback 
-                               {
+                               ITXCopyrightedMediaCallback,
+                               IChorusPlayerEventCallback {
     // 主线程上下文
     SynchronizationContext mainSyncContext;
 
@@ -31,7 +31,7 @@ namespace TRTCCUnityDemo {
     private bool bModifyCapturedAudioFrame = false;
     private bool bModifylocalProcessedAudioFrame = false;
     private bool bModifyMixedPlayAudioFrame = false;
-#region ITRTCCloudCallback
+    #region ITRTCCloudCallback
 
     public void onRecvCustomCmdMsg(string userId,
                                    int cmdID,
@@ -80,7 +80,8 @@ namespace TRTCCUnityDemo {
       if (available) {
         getTRTCCloudInstance()?.startRemoteView(userId, TRTCVideoStreamType.TRTCVideoStreamTypeBig,
                                                 null);
-      } else {
+      }
+      else {
         getTRTCCloudInstance()?.stopRemoteView(userId, TRTCVideoStreamType.TRTCVideoStreamTypeBig);
       }
     }
@@ -162,7 +163,7 @@ namespace TRTCCUnityDemo {
     }
 
     public void onAudioRouteChanged(TRTCAudioRoute newRoute, TRTCAudioRoute oldRoute) {
-       AppLogToCallback($"onAudioRouteChanged newRoute: " + newRoute + ", oldRoute: " + oldRoute);
+      AppLogToCallback($"onAudioRouteChanged newRoute: " + newRoute + ", oldRoute: " + oldRoute);
     }
 
 
@@ -250,7 +251,7 @@ namespace TRTCCUnityDemo {
     }
 
     [Obsolete("use onSpeedTestResult(TRTCSpeedTestResult)")]
-    public void onSpeedTest(TRTCSpeedTestResult currentResult, int finishedCount, int totalCount) {}
+    public void onSpeedTest(TRTCSpeedTestResult currentResult, int finishedCount, int totalCount) { }
 
     public void onTestMicVolume(int volume) {
       AppLogToCallback($"onTestMicVolume {volume}");
@@ -295,21 +296,21 @@ namespace TRTCCUnityDemo {
       AppLogToCallback($"onSnapshotComplete {userId} , {type} , {length} , {width} , {height} , {format}");
     }
 
-#endregion
+    #endregion
 
-#region ITRTCAudioFrameCallback
+    #region ITRTCAudioFrameCallback
     public byte[] modifyPcmVolume(byte[] pcmData) {
       if (pcmData == null || pcmData.Length == 0) {
         return null;
       }
       if (pcmData.Length % 2 != 0) {
         return null;
-      }  
+      }
 
       short[] samples = new short[pcmData.Length / 2];
       Buffer.BlockCopy(pcmData, 0, samples, 0, pcmData.Length);
       for (int i = 0; i < samples.Length; i++) {
-          samples[i] = (short)(samples[i] / 3);
+        samples[i] = (short)(samples[i] / 3);
       }
 
       byte[] result = new byte[pcmData.Length];
@@ -319,13 +320,13 @@ namespace TRTCCUnityDemo {
     }
 
     public void onCapturedRawAudioFrame(TRTCAudioFrame frame) {
-      if(mApplicationPause) {
+      if (mApplicationPause) {
         return;
       }
 
-      if(bModifyCapturedAudioFrame) {
+      if (bModifyCapturedAudioFrame) {
         byte[] pcmData = modifyPcmVolume(frame.data);
-        if(pcmData != null && pcmData.Length > 0) {
+        if (pcmData != null && pcmData.Length > 0) {
           Array.Copy(pcmData, frame.data, frame.length);
         }
       }
@@ -338,14 +339,14 @@ namespace TRTCCUnityDemo {
     }
 
     public void onLocalProcessedAudioFrame(TRTCAudioFrame frame) {
-      if(bModifylocalProcessedAudioFrame) {
+      if (bModifylocalProcessedAudioFrame) {
         byte[] pcmData = modifyPcmVolume(frame.data);
-        if(pcmData != null && pcmData.Length > 0) {
+        if (pcmData != null && pcmData.Length > 0) {
           Array.Copy(pcmData, frame.data, frame.length);
         }
       }
 
-      if(mApplicationPause) {
+      if (mApplicationPause) {
         return;
       }
       mainSyncContext.Post((object state) => {
@@ -356,14 +357,14 @@ namespace TRTCCUnityDemo {
     }
 
     public void onMixedPlayAudioFrame(TRTCAudioFrame frame) {
-      if(bModifyMixedPlayAudioFrame) {
+      if (bModifyMixedPlayAudioFrame) {
         byte[] pcmData = modifyPcmVolume(frame.data);
-        if(pcmData != null && pcmData.Length > 0) {
+        if (pcmData != null && pcmData.Length > 0) {
           Array.Copy(pcmData, frame.data, frame.length);
         }
       }
-      
-      if(mApplicationPause) {
+
+      if (mApplicationPause) {
         return;
       }
       mainSyncContext.Post((object state) => {
@@ -374,14 +375,14 @@ namespace TRTCCUnityDemo {
     }
 
     public void onPlayAudioFrame(TRTCAudioFrame frame, string userId) {
-      if(bModifyRemoteUserAudioFrame) {
+      if (bModifyRemoteUserAudioFrame) {
         byte[] pcmData = modifyPcmVolume(frame.data);
-        if(pcmData != null && pcmData.Length > 0) {
+        if (pcmData != null && pcmData.Length > 0) {
           Array.Copy(pcmData, frame.data, frame.length);
         }
       }
 
-      if(mApplicationPause) {
+      if (mApplicationPause) {
         return;
       }
       mainSyncContext.Post((object state) => {
@@ -392,7 +393,7 @@ namespace TRTCCUnityDemo {
     }
 
     public void onLoadProgress(int id, int progress) {
-      if(mApplicationPause) {
+      if (mApplicationPause) {
         return;
       }
       mainSyncContext.Post((object state) => {
@@ -401,7 +402,7 @@ namespace TRTCCUnityDemo {
     }
 
     public void onLoadError(int id, int errorCode) {
-      if(mApplicationPause) {
+      if (mApplicationPause) {
         return;
       }
       mainSyncContext.Post((object state) => {
@@ -413,38 +414,96 @@ namespace TRTCCUnityDemo {
       mApplicationPause = pauseStatus;
     }
 
-#endregion
+    #endregion
 
-#region ITXCopyrightedMediaCallback
+    #region ITXCopyrightedMediaCallback
     public void onPreloadStart(string musicId, string bitrateDefinition) {
-      if(mApplicationPause) {
+      if (mApplicationPause) {
         return;
       }
-       mainSyncContext.Post((object state) => {
-          AppLogToCallback($"onPreloadStart musicId={musicId}, bitrateDefinition={bitrateDefinition}");
-        }, "");
+      mainSyncContext.Post((object state) => {
+        AppLogToCallback($"onPreloadStart musicId={musicId}, bitrateDefinition={bitrateDefinition}");
+      }, "");
     }
 
     public void onPreloadProgress(string musicId, string bitrateDefinition, float progress) {
-      if(mApplicationPause) {
+      if (mApplicationPause) {
         return;
       }
       mainSyncContext.Post((object state) => {
-          AppLogToCallback($"onPreloadProgress musicId={musicId}, bitrateDefinition={bitrateDefinition}, progress={progress}");
-        }, "");
-      
+        AppLogToCallback($"onPreloadProgress musicId={musicId}, bitrateDefinition={bitrateDefinition}, progress={progress}");
+      }, "");
+
     }
     public void onPreloadComplete(string musicId, string bitrateDefinition, int errorCode, string msg) {
-      if(mApplicationPause) {
+      if (mApplicationPause) {
         return;
       }
       mainSyncContext.Post((object state) => {
-          AppLogToCallback($"onPreloadComplete musicId={musicId}, bitrateDefinition={bitrateDefinition}, errorCode={errorCode}");
-        }, "");
+        AppLogToCallback($"onPreloadComplete musicId={musicId}, bitrateDefinition={bitrateDefinition}, errorCode={errorCode}");
+      }, "");
     }
-#endregion
+    #endregion
 
-#region UI
+    #region IChorusPlayerEventCallback
+
+    public void onChorusError(ChorusError errCode, string errMsg) {
+      mainSyncContext.Post((object state) => {
+        AppLogToCallback($"onChorusError errCode={errCode}, errMsg={errMsg}");
+      }, "");
+    }
+
+    public void onChorusRequireLoadMusic(string musicId) {
+      mainSyncContext.Post((object state) => {
+        AppLogToCallback($"onChorusRequireLoadMusic musicId={musicId}");
+      }, "");
+    }
+
+    public void onChorusMusicLoadProgress(string musicId, float progress) {
+      mainSyncContext.Post((object state) => {
+        AppLogToCallback($"onChorusMusicLoadProgress musicId={musicId}, progress={progress}");
+      }, "");
+    }
+
+    public void onChorusMusicLoadSucceed(string musicId) {
+      mainSyncContext.Post((object state) => {
+        AppLogToCallback($"onChorusMusicLoadSucceed musicId={musicId}");
+      }, "");
+    }
+
+    public void onChorusStarted() {
+      mainSyncContext.Post((object state) => {
+        AppLogToCallback($"onChorusStarted");
+      }, "");
+    }
+
+    public void onChorusPaused() {
+      mainSyncContext.Post((object state) => {
+        AppLogToCallback($"onChorusPaused");
+      }, "");
+    }
+
+    public void onChorusResumed() {
+      mainSyncContext.Post((object state) => {
+        AppLogToCallback($"onChorusResumed");
+      }, "");
+    }
+
+    public void onChorusStopped(ChorusStopReason reason) {
+      mainSyncContext.Post((object state) => {
+        AppLogToCallback($"onChorusStopped reason={reason}");
+      }, "");
+    }
+
+    public void onMusicProgressUpdated(long progressMs, long durationMs) {
+      mainSyncContext.Post((object state) => {
+        AppLogToCallback($"onMusicProgressUpdated progressMs={progressMs}, durationMs={durationMs}");
+      }, "");
+    }
+
+    #endregion
+
+    #region UI
 
     [SerializeField]
     private InputField inputRoomID;
@@ -489,7 +548,7 @@ namespace TRTCCUnityDemo {
     private string logStringForCallback = "";
 
     private void AppLogToCallback(string log) {
-      if(lblCallBackLog == null) {
+      if (lblCallBackLog == null) {
         return;
       }
 
@@ -503,7 +562,7 @@ namespace TRTCCUnityDemo {
       lblCallBackLog.text = logStringForCallback;
     }
 
-#endregion
+    #endregion
 
     class MusicPlayObserver : ITXMusicPlayObserver {
       private ApiTestScript _testScript;
@@ -561,7 +620,7 @@ namespace TRTCCUnityDemo {
       }
     }
 
-#region trtc
+    #region trtc
 
     private ITRTCCloud mTRTCCloud;
     private ITRTCCloud mTRTCSubCloud;
@@ -569,24 +628,32 @@ namespace TRTCCUnityDemo {
     private ITXDeviceManager mTXDeviceManager;
     private ITXCopyrightedMedia mTXCopyrightedMedia;
 
+    private IChorusMusicPlayer mChorusMusicPlayer;
+    private string mChorusMusicId = "test_chorus_music_001";
+    private string mChorusMusicUrl;
+    private string mAccompanyUrl;
+    private string mChorusRoomId = "chorus_test_room";
+
     private TRTCVideoStreamType _streamType = TRTCVideoStreamType.TRTCVideoStreamTypeBig;
     private bool _enable = true;
 
     private VideoRenderType _videoRenderType = VideoRenderType.None;
     private TRTCVideoPixelFormat _videoFormat = TRTCVideoPixelFormat.TRTCVideoPixelFormat_BGRA32;
-    private List<int> mAudioChannelList = new List<int> { 16000, 32000, 44100, 48000};
+    private List<int> mAudioChannelList = new List<int> { 16000, 32000, 44100, 48000 };
     private Dropdown mTrtcCloudDropdown;
     private Dropdown mSampleRateDropdown;
     private Dropdown mAudioChannelDropdown;
     private Dropdown mAudioOnlyReadDropdown;
-    
 
 
-#endregion
+
+    #endregion
 
     void Start() {
       // 获取主线程上下文
       mainSyncContext = SynchronizationContext.Current;
+      mChorusMusicUrl = Application.persistentDataPath + "/" + "shinian_origin.mp3";
+      mAccompanyUrl = Application.persistentDataPath + "/" + "shinian_accompany.mp3";
       createBtns();
       initTrtc();
       CopyResources();
@@ -600,9 +667,8 @@ namespace TRTCCUnityDemo {
       GameObject sampleRateObj = transform.Find("Left/roomPanel/dropdownSampleRate").gameObject;
       if (sampleRateObj != null) {
         mSampleRateDropdown = sampleRateObj.GetComponent<Dropdown>();
-        foreach (int value in mAudioChannelList)
-        {
-          mSampleRateDropdown.options.Add(new Dropdown.OptionData(value.ToString())); 
+        foreach (int value in mAudioChannelList) {
+          mSampleRateDropdown.options.Add(new Dropdown.OptionData(value.ToString()));
         }
       }
       GameObject audioChannelObj = transform.Find("Left/roomPanel/dropdownAudioChannel").gameObject;
@@ -617,7 +683,7 @@ namespace TRTCCUnityDemo {
     }
 
     private int getAudioSampleRate() {
-      if(mSampleRateDropdown) {
+      if (mSampleRateDropdown) {
         return mAudioChannelList[mSampleRateDropdown.value];
       }
 
@@ -625,7 +691,7 @@ namespace TRTCCUnityDemo {
     }
 
     private int getAudioChannel() {
-      if(mAudioChannelDropdown) {
+      if (mAudioChannelDropdown) {
         return mAudioChannelDropdown.value + 1;
       }
 
@@ -633,10 +699,11 @@ namespace TRTCCUnityDemo {
     }
 
     private TRTCAudioFrameOperationMode getAudioDataOperationmode() {
-      if(mAudioOnlyReadDropdown) {
-        if(mAudioOnlyReadDropdown.value == 0) {
+      if (mAudioOnlyReadDropdown) {
+        if (mAudioOnlyReadDropdown.value == 0) {
           return TRTCAudioFrameOperationMode.TRTCAudioFrameOperationModeReadWrite;
-        } else {
+        }
+        else {
           return TRTCAudioFrameOperationMode.TRTCAudioFrameOperationModeReadOnly;
         }
       }
@@ -704,6 +771,8 @@ namespace TRTCCUnityDemo {
       StartCoroutine(CopyFileFromAssetsToPersistent("48_1_audio.pcm"));
       StartCoroutine(CopyFileFromAssetsToPersistent("click.mp3"));
       StartCoroutine(CopyFileFromAssetsToPersistent("deviceTest.mp3"));
+      StartCoroutine(CopyFileFromAssetsToPersistent("shinian_accompany.mp3"));
+      StartCoroutine(CopyFileFromAssetsToPersistent("shinian_origin.mp3"));
     }
 
     private IEnumerator CopyFileFromAssetsToPersistent(string fileName) {
@@ -731,6 +800,10 @@ namespace TRTCCUnityDemo {
     }
 
     void OnDestroy() {
+      if (mChorusMusicPlayer != null) {
+        IChorusMusicPlayer.destroy(mChorusMusicPlayer);
+        mChorusMusicPlayer = null;
+      }
       mTXCopyrightedMedia?.destroyCopyRightMedia();
       mTRTCCloud?.removeCallback(this);
       ITRTCCloud.destroyTRTCShareInstance();
@@ -738,11 +811,11 @@ namespace TRTCCUnityDemo {
       Marshal.FreeHGlobal(mNativeTextureData);
     }
 
-#region btn click
+    #region btn click
 
     public void onRenderVideoFrame(string userId,
                                    TRTCVideoStreamType streamType,
-                                   TRTCVideoFrame frame) {}
+                                   TRTCVideoFrame frame) { }
 
     public void GetVideoRenderDataClick() {
       int width = 0;
@@ -820,6 +893,7 @@ namespace TRTCCUnityDemo {
       getTRTCCloudInstance()?.enterRoom(ref trtcParams, scene);
       TRTCNetworkQosParam qosParams = DataManager.GetInstance().qosParams;  // 网络流控相关参数设置
       getTRTCCloudInstance()?.setNetworkQosParam(ref qosParams);
+      mChorusRoomId = trtcParams.strRoomId;
       // AppLogToBtnClick($"Scene:{scene}, Role:{trtcParams.role}, " +
       //                  $"Qos-Prefer:{qosParams.preference},
       //                  Qos-CtrlMode:{qosParams.controlMode}");
@@ -914,9 +988,11 @@ namespace TRTCCUnityDemo {
 
     public void switchRoomClick() {
       TRTCSwitchRoomConfig mConfig =
-          new TRTCSwitchRoomConfig { roomId = 1907,
-                                     userSig = GenerateTestUserSig.GetInstance().GenTestUserSig(
-                                         DataManager.GetInstance().GetUserID()) };
+          new TRTCSwitchRoomConfig {
+            roomId = 1907,
+            userSig = GenerateTestUserSig.GetInstance().GenTestUserSig(
+                                         DataManager.GetInstance().GetUserID())
+          };
       // mConfig.privateMapKey = "";
       getTRTCCloudInstance()?.switchRoom(mConfig);
       AppLogToBtnClick($"switchRoom 1907");
@@ -945,10 +1021,10 @@ namespace TRTCCUnityDemo {
       var mStreamMixingConfig = new TRTCStreamMixingConfig();
       getTRTCCloudInstance()?.startPublishMediaStream(ref mTarget, ref mStreamEncoderParam,
                                                       ref mStreamMixingConfig);
-      
+
       AppLogToBtnClick($"TRTCPublishBigStreamToCdnClick");
     }
-    
+
     public void TRTCPublishMixStreamToRoomClick() {
       var mTarget =
            new TRTCPublishTarget { cdnUrlListSize = 1, cdnUrlList = new TRTCPublishCdnUrl[1] };
@@ -1018,7 +1094,7 @@ namespace TRTCCUnityDemo {
         AppLogToBtnClick($"updatePublishMediaStreamClick fail,mTaskId is empty");
         return;
       }
-     var mTarget = new TRTCPublishTarget { cdnUrlListSize = 1, cdnUrlList = new TRTCPublishCdnUrl[1] };
+      var mTarget = new TRTCPublishTarget { cdnUrlListSize = 1, cdnUrlList = new TRTCPublishCdnUrl[1] };
       mTarget.mode = TRTCPublishMode.TRTCPublishMixStreamToRoom;
       mTarget.mixStreamIdentity.strRoomId = "";
       mTarget.mixStreamIdentity.userId = "600000";
@@ -1066,7 +1142,7 @@ namespace TRTCCUnityDemo {
       getTRTCCloudInstance()?.updatePublishMediaStream(mTaskId, ref mTarget, ref mStreamEncoderParam,
                                                       ref mStreamMixingConfig);
       AppLogToBtnClick($"updatePublishMediaStreamClick");
-      
+
     }
 
 
@@ -1206,12 +1282,13 @@ namespace TRTCCUnityDemo {
       audioFormat.channel = getAudioChannel();
       audioFormat.samplesPerCall = 20 * getAudioSampleRate() / 1000;
       audioFormat.mode = getAudioDataOperationmode();
-      if(audioFormat.mode == TRTCAudioFrameOperationMode.TRTCAudioFrameOperationModeReadWrite) {
+      if (audioFormat.mode == TRTCAudioFrameOperationMode.TRTCAudioFrameOperationModeReadWrite) {
         bModifyCapturedAudioFrame = true;
-      } else {
+      }
+      else {
         bModifyCapturedAudioFrame = false;
       }
-      
+
       getTRTCCloudInstance()?.setCapturedAudioFrameCallbackFormat(audioFormat);
       AppLogToBtnClick($"setCapturedAudioFrameCallbackFormat");
     }
@@ -1222,10 +1299,11 @@ namespace TRTCCUnityDemo {
       audioFormat.channel = getAudioChannel();
       audioFormat.samplesPerCall = 20 * getAudioSampleRate() / 1000;
       audioFormat.mode = getAudioDataOperationmode();
-       audioFormat.mode = getAudioDataOperationmode();
-      if(audioFormat.mode == TRTCAudioFrameOperationMode.TRTCAudioFrameOperationModeReadWrite) {
+      audioFormat.mode = getAudioDataOperationmode();
+      if (audioFormat.mode == TRTCAudioFrameOperationMode.TRTCAudioFrameOperationModeReadWrite) {
         bModifylocalProcessedAudioFrame = true;
-      } else {
+      }
+      else {
         bModifylocalProcessedAudioFrame = false;
       }
       getTRTCCloudInstance()?.setLocalProcessedAudioFrameCallbackFormat(audioFormat);
@@ -1238,10 +1316,11 @@ namespace TRTCCUnityDemo {
       audioFormat.channel = getAudioChannel();
       audioFormat.samplesPerCall = 20 * getAudioSampleRate() / 1000;
       audioFormat.mode = getAudioDataOperationmode();
-       audioFormat.mode = getAudioDataOperationmode();
-      if(audioFormat.mode == TRTCAudioFrameOperationMode.TRTCAudioFrameOperationModeReadWrite) {
+      audioFormat.mode = getAudioDataOperationmode();
+      if (audioFormat.mode == TRTCAudioFrameOperationMode.TRTCAudioFrameOperationModeReadWrite) {
         bModifyMixedPlayAudioFrame = true;
-      } else {
+      }
+      else {
         bModifyMixedPlayAudioFrame = false;
       }
       getTRTCCloudInstance()?.setMixedPlayAudioFrameCallbackFormat(audioFormat);
@@ -1253,7 +1332,7 @@ namespace TRTCCUnityDemo {
       getTRTCCloudInstance()?.setAudioFrameCallback(this);
     }
 
-    public void openSetRemoteUserAudioFrameCallbackFormatClick () {
+    public void openSetRemoteUserAudioFrameCallbackFormatClick() {
       AppLogToBtnClick($"openSetRemoteUserAudioFrameCallbackFormatClick");
       bModifyRemoteUserAudioFrame = true;
       var data = new JsonData { ["api"] = "setRemoteUserAudioFrameCallbackFormat" };
@@ -1265,7 +1344,7 @@ namespace TRTCCUnityDemo {
       getTRTCCloudInstance()?.callExperimentalAPI(api);
     }
 
-    public void closeSetRemoteUserAudioFrameCallbackFormatClick () {
+    public void closeSetRemoteUserAudioFrameCallbackFormatClick() {
       AppLogToBtnClick($"closeSetRemoteUserAudioFrameCallbackFormatClick");
       bModifyRemoteUserAudioFrame = false;
       var data = new JsonData { ["api"] = "setRemoteUserAudioFrameCallbackFormat" };
@@ -1277,7 +1356,7 @@ namespace TRTCCUnityDemo {
       getTRTCCloudInstance()?.callExperimentalAPI(api);
     }
 
-    public void startMicDeviceTest100Click () {
+    public void startMicDeviceTest100Click() {
       if (getDeviceManager() == null) {
         return;
       }
@@ -1285,7 +1364,7 @@ namespace TRTCCUnityDemo {
       AppLogToBtnClick($"startMicDeviceTest100Click ");
     }
 
-    public void startMicDeviceTest50Click () {
+    public void startMicDeviceTest50Click() {
       if (getDeviceManager() == null) {
         return;
       }
@@ -1293,7 +1372,7 @@ namespace TRTCCUnityDemo {
       AppLogToBtnClick($"startMicDeviceTest50Click ");
     }
 
-    public void startMicDeviceForPlaybackFalseTestClick () {
+    public void startMicDeviceForPlaybackFalseTestClick() {
       if (getDeviceManager() == null) {
         return;
       }
@@ -1301,15 +1380,15 @@ namespace TRTCCUnityDemo {
       AppLogToBtnClick($"startMicDeviceForPlaybackFalseTestClick Playback : false");
     }
 
-    public void startMicDeviceForPlaybackTrueTestClick () {
-       if (getDeviceManager() == null) {
+    public void startMicDeviceForPlaybackTrueTestClick() {
+      if (getDeviceManager() == null) {
         return;
       }
       getDeviceManager().startMicDeviceTest(100, true);
       AppLogToBtnClick($"startMicDeviceForPlaybackTrueTestClick Playback : true");
     }
 
-    public void stopMicDeviceTestClick () {
+    public void stopMicDeviceTestClick() {
       if (getDeviceManager() == null) {
         return;
       }
@@ -1317,15 +1396,15 @@ namespace TRTCCUnityDemo {
       AppLogToBtnClick($"stopMicDeviceTestClick");
     }
 
-    public void startSpeakerDeviceTestClick () {
+    public void startSpeakerDeviceTestClick() {
       if (getDeviceManager() == null) {
         return;
       }
       getDeviceManager().startSpeakerDeviceTest(inputParam.text);
       AppLogToBtnClick($"startSpeakerDeviceTestClick");
-    }        
-    
-    public void stopSpeakerDeviceTestClick () {
+    }
+
+    public void stopSpeakerDeviceTestClick() {
       if (getDeviceManager() == null) {
         return;
       }
@@ -1351,8 +1430,11 @@ namespace TRTCCUnityDemo {
     public void startPlayShortMusicClick() {
       getAudioEffectManager()?.setMusicObserver(11, new MusicPlayObserver(this, mainSyncContext));
       var musicParam =
-          new AudioMusicParam { id = 11, publish = true,
-                                path = Application.persistentDataPath + "/" + "click.mp3" };
+          new AudioMusicParam {
+            id = 11,
+            publish = true,
+            path = Application.persistentDataPath + "/" + "click.mp3"
+          };
       getAudioEffectManager()?.startPlayMusic(musicParam);
       AppLogToBtnClick($"startPlayMusic click.mp3");
     }
@@ -1655,6 +1737,16 @@ namespace TRTCCUnityDemo {
       AppLogToBtnClick($"setSystemVolumeType TXSystemVolumeTypeMedia = {result}");
     }
 
+    public void setBluetoothHeadsetModeA2DP() {
+      AppLogToBtnClick($"setBluetoothHeadsetMode A2DP");
+      getTRTCCloudInstance()?.callExperimentalAPI("{\"api\":\"enableBluetoothA2DP\",\"params\":{\"enable\":1}}");
+    }
+
+    public void setBluetoothHeadsetModeHFP() {
+      AppLogToBtnClick($"setBluetoothHeadsetMode HFP");
+      getTRTCCloudInstance()?.callExperimentalAPI("{\"api\":\"enableBluetoothA2DP\",\"params\":{\"enable\":0}}");
+    }
+
     public void setSystemVolumeTypeVOIP() {
       if (getDeviceManager() == null) {
         return;
@@ -1868,7 +1960,7 @@ namespace TRTCCUnityDemo {
 
     //  曲库相关接口函数测试
     public void setCopyrightedLicenseClick() {
-      if(mTXCopyrightedMedia == null) {
+      if (mTXCopyrightedMedia == null) {
         AppLogToBtnClick($"setCopyrightedLicense mTXCopyrightedMedia is null");
         return;
       }
@@ -1876,7 +1968,7 @@ namespace TRTCCUnityDemo {
       AppLogToBtnClick($"setCopyrightedLicense ret = {ret}");
     }
     public void genMusicURIClick() {
-       if(mTXCopyrightedMedia == null) {
+      if (mTXCopyrightedMedia == null) {
         AppLogToBtnClick($"genMusicURIClick mTXCopyrightedMedia is null");
         return;
       }
@@ -1889,12 +1981,12 @@ namespace TRTCCUnityDemo {
 
       bool ret = false;
       int bgmType = 0;
-      if(!int.TryParse(inputBgmType.text, out bgmType) || bgmType < 0) {
+      if (!int.TryParse(inputBgmType.text, out bgmType) || bgmType < 0) {
         bgmType = 0;
       }
 
       Debug.Log($"genMusicURIClick bgmType = {bgmType}");
-      ret = mTXCopyrightedMedia.genMusicURI(inputMusicID.text, bgmType, inputBitrate.text, outData,  len);
+      ret = mTXCopyrightedMedia.genMusicURI(inputMusicID.text, bgmType, inputBitrate.text, outData, len);
       string outDataResult = Marshal.PtrToStringAnsi(outData);
 
       StringBuilder musicUrlBuilder = new StringBuilder();
@@ -1902,15 +1994,15 @@ namespace TRTCCUnityDemo {
       musicUrlBuilder.Append("&ptoken=");
       musicUrlBuilder.Append(inputParam.text);
 
-      musicPath = musicUrlBuilder.ToString(); 
+      musicPath = musicUrlBuilder.ToString();
       AppLogToBtnClick($"genMusicURIClick ret={ret}");
       AppLogToBtnClick($"genMusicURI outDataResult={outDataResult}");
-      
+
       Marshal.FreeHGlobal(outData);
     }
 
     public void setMusicPreloadCallbackClick() {
-      if(mTXCopyrightedMedia == null) {
+      if (mTXCopyrightedMedia == null) {
         AppLogToBtnClick($"setMusicPreloadCallbackClick mTXCopyrightedMedia is null");
         return;
       }
@@ -1919,7 +2011,7 @@ namespace TRTCCUnityDemo {
     }
 
     public void preloadCopyrightedMediaMusicClick() {
-      if(mTXCopyrightedMedia == null) {
+      if (mTXCopyrightedMedia == null) {
         AppLogToBtnClick($"preloadCopyrightedMediaMusicClick mTXCopyrightedMedia is null");
         return;
       }
@@ -1928,7 +2020,7 @@ namespace TRTCCUnityDemo {
     }
 
     public void cancelPreloadMusicClick() {
-      if(mTXCopyrightedMedia == null) {
+      if (mTXCopyrightedMedia == null) {
         AppLogToBtnClick($"cancelPreloadMusicClick mTXCopyrightedMedia is null");
         return;
       }
@@ -1937,7 +2029,7 @@ namespace TRTCCUnityDemo {
     }
 
     public void isMusicPreloadClick() {
-      if(mTXCopyrightedMedia == null) {
+      if (mTXCopyrightedMedia == null) {
         AppLogToBtnClick($"isMusicPreloadClick mTXCopyrightedMedia is null");
         return;
       }
@@ -1946,7 +2038,7 @@ namespace TRTCCUnityDemo {
     }
 
     public void clearMusicCacheClick() {
-      if(mTXCopyrightedMedia == null) {
+      if (mTXCopyrightedMedia == null) {
         AppLogToBtnClick($"clearMusicCacheClick mTXCopyrightedMedia is null");
         return;
       }
@@ -1956,7 +2048,7 @@ namespace TRTCCUnityDemo {
     }
 
     public void setMusicCacheMaxCountClick() {
-      if(mTXCopyrightedMedia == null) {
+      if (mTXCopyrightedMedia == null) {
         AppLogToBtnClick($"setMusicCacheMaxCountClick mTXCopyrightedMedia is null");
         return;
       }
@@ -1999,8 +2091,10 @@ namespace TRTCCUnityDemo {
     public void enableSmallVideoStreamClick() {
       TRTCVideoEncParam smallVideoEncParam = new TRTCVideoEncParam() {
         videoResolution = TRTCVideoResolution.TRTCVideoResolution_240_180,
-        resMode = TRTCVideoResolutionMode.TRTCVideoResolutionModeLandscape, videoFps = 15,
-        videoBitrate = 400, minVideoBitrate = 200
+        resMode = TRTCVideoResolutionMode.TRTCVideoResolutionModeLandscape,
+        videoFps = 15,
+        videoBitrate = 400,
+        minVideoBitrate = 200
       };
       getTRTCCloudInstance()?.enableSmallVideoStream(true, ref smallVideoEncParam);
       AppLogToBtnClick($"enableSmallVideoStream true");
@@ -2009,8 +2103,10 @@ namespace TRTCCUnityDemo {
     public void disEnableSmallVideoStreamClick() {
       TRTCVideoEncParam smallVideoEncParam = new TRTCVideoEncParam() {
         videoResolution = TRTCVideoResolution.TRTCVideoResolution_240_180,
-        resMode = TRTCVideoResolutionMode.TRTCVideoResolutionModeLandscape, videoFps = 15,
-        videoBitrate = 400, minVideoBitrate = 200
+        resMode = TRTCVideoResolutionMode.TRTCVideoResolutionModeLandscape,
+        videoFps = 15,
+        videoBitrate = 400,
+        minVideoBitrate = 200
       };
       getTRTCCloudInstance()?.enableSmallVideoStream(false, ref smallVideoEncParam);
       AppLogToBtnClick($"enableSmallVideoStream false");
@@ -2026,6 +2122,252 @@ namespace TRTCCUnityDemo {
       AppLogToBtnClick($"setDefaultStreamRecvMode false");
     }
 
-#endregion
+    private Spatial3DAudioPanel spatial3DAudioPanel = null;
+
+    public void enable3DSpatialAudioEffectTrueClick() {
+      getTRTCCloudInstance()?.enable3DSpatialAudioEffect(true);
+      if (spatial3DAudioPanel == null && canvas != null) {
+        spatial3DAudioPanel = Spatial3DAudioPanel.Show(canvas, font, getTRTCCloudInstance(), AppLogToBtnClick);
+      }
+      AppLogToBtnClick($"enable3DSpatialAudioEffect true");
+    }
+
+    public void enable3DSpatialAudioEffectFalseClick() {
+      getTRTCCloudInstance()?.enable3DSpatialAudioEffect(false);
+      if (spatial3DAudioPanel != null) {
+        spatial3DAudioPanel.Close();
+        spatial3DAudioPanel = null;
+      }
+      AppLogToBtnClick($"enable3DSpatialAudioEffect false");
+    }
+
+    // 合唱相关接口函数
+    public void createChorusPlayerClick() {
+      if (mChorusMusicPlayer != null) {
+        AppLogToBtnClick("ChorusPlayer already created, destroy first");
+        return;
+      }
+      if (getTRTCCloudInstance() == null) {
+        AppLogToBtnClick("createChorusPlayer fail, TRTCCloud is null");
+        return;
+      }
+      mChorusMusicPlayer = IChorusMusicPlayer.create(getTRTCCloudInstance(), mChorusRoomId, this);
+      AppLogToBtnClick($"createChorusPlayer roomId={mChorusRoomId}");
+    }
+
+    public void destroyChorusPlayerClick() {
+      if (mChorusMusicPlayer == null) {
+        AppLogToBtnClick("destroyChorusPlayer fail, ChorusPlayer is null");
+        return;
+      }
+      IChorusMusicPlayer.destroy(mChorusMusicPlayer);
+      mChorusMusicPlayer = null;
+      AppLogToBtnClick("destroyChorusPlayer success");
+    }
+
+    public void setChorusRoleLeadSingerClick() {
+      if (mChorusMusicPlayer == null) {
+        AppLogToBtnClick("setChorusRole fail, ChorusPlayer is null");
+        return;
+      }
+      TRTCParams trtcParams = new TRTCParams();
+      trtcParams.sdkAppId = GenerateTestUserSig.SDKAPPID;
+      trtcParams.roomId = uint.Parse(DataManager.GetInstance().GetRoomID());
+      trtcParams.strRoomId = DataManager.GetInstance().GetRoomID();
+      trtcParams.userId = "65343445";
+      trtcParams.userSig =
+          GenerateTestUserSig.GetInstance().GenTestUserSig(trtcParams.userId);
+      trtcParams.privateMapKey = "";
+      trtcParams.businessInfo = "";
+      trtcParams.role = TRTCRoleType.TRTCRoleAnchor;
+      mChorusMusicPlayer.setChorusRole(ChorusRole.LeadSinger, trtcParams);
+      AppLogToBtnClick("setChorusRole LeadSinger");
+    }
+
+    public void setChorusRoleBackSingerClick() {
+      if (mChorusMusicPlayer == null) {
+        AppLogToBtnClick("setChorusRole fail, ChorusPlayer is null");
+        return;
+      }
+      mChorusMusicPlayer.setChorusRole(ChorusRole.BackSinger, null);
+      AppLogToBtnClick("setChorusRole BackSinger");
+    }
+
+    public void setChorusRoleAnchorClick() {
+      if (mChorusMusicPlayer == null) {
+        AppLogToBtnClick("setChorusRole fail, ChorusPlayer is null");
+        return;
+      }
+      mChorusMusicPlayer.setChorusRole(ChorusRole.Anchor, null);
+      AppLogToBtnClick("setChorusRole Anchor");
+    }
+
+    public void setChorusRoleAudienceClick() {
+      if (mChorusMusicPlayer == null) {
+        AppLogToBtnClick("setChorusRole fail, ChorusPlayer is null");
+        return;
+      }
+      mChorusMusicPlayer.setChorusRole(ChorusRole.Audience, null);
+      AppLogToBtnClick("setChorusRole Audience");
+    }
+
+    public void loadExternalMusicClick() {
+      if (mChorusMusicPlayer == null) {
+        AppLogToBtnClick("loadExternalMusic fail, ChorusPlayer is null");
+        return;
+      }
+      var param = new ChorusExternalMusicParams {
+        musicId = mChorusMusicId,
+        musicUrl = mChorusMusicUrl,
+        accompanyUrl = mAccompanyUrl
+      };
+      mChorusMusicPlayer.loadExternalMusic(param);
+      AppLogToBtnClick($"loadExternalMusic musicId={mChorusMusicId}");
+    }
+
+    public void startChorusClick() {
+      if (mChorusMusicPlayer == null) {
+        AppLogToBtnClick("startChorus fail, ChorusPlayer is null");
+        return;
+      }
+      mChorusMusicPlayer.start();
+      AppLogToBtnClick("startChorus");
+    }
+
+    public void stopChorusClick() {
+      if (mChorusMusicPlayer == null) {
+        AppLogToBtnClick("stopChorus fail, ChorusPlayer is null");
+        return;
+      }
+      mChorusMusicPlayer.stop();
+      AppLogToBtnClick("stopChorus");
+    }
+
+    public void pauseChorusClick() {
+      if (mChorusMusicPlayer == null) {
+        AppLogToBtnClick("pauseChorus fail, ChorusPlayer is null");
+        return;
+      }
+      mChorusMusicPlayer.pause();
+      AppLogToBtnClick("pauseChorus");
+    }
+
+    public void resumeChorusClick() {
+      if (mChorusMusicPlayer == null) {
+        AppLogToBtnClick("resumeChorus fail, ChorusPlayer is null");
+        return;
+      }
+      mChorusMusicPlayer.resume();
+      AppLogToBtnClick("resumeChorus");
+    }
+
+    public void seekChorusClick() {
+      if (mChorusMusicPlayer == null) {
+        AppLogToBtnClick("seekChorus fail, ChorusPlayer is null");
+        return;
+      }
+      mChorusMusicPlayer.seek(30000);
+      AppLogToBtnClick("seekChorus 30000ms");
+    }
+
+    public void switchMusicTrackAccompanimentClick() {
+      if (mChorusMusicPlayer == null) {
+        AppLogToBtnClick("switchMusicTrack fail, ChorusPlayer is null");
+        return;
+      }
+      mChorusMusicPlayer.switchMusicTrack(ChorusMusicTrack.Accompaniment);
+      AppLogToBtnClick("switchMusicTrack Accompaniment");
+    }
+
+    public void switchMusicTrackOriginalSongClick() {
+      if (mChorusMusicPlayer == null) {
+        AppLogToBtnClick("switchMusicTrack fail, ChorusPlayer is null");
+        return;
+      }
+      mChorusMusicPlayer.switchMusicTrack(ChorusMusicTrack.OriginalSong);
+      AppLogToBtnClick("switchMusicTrack OriginalSong");
+    }
+
+    public void setChorusPlayoutVolume0Click() {
+      if (mChorusMusicPlayer == null) {
+        AppLogToBtnClick("setPlayoutVolume fail, ChorusPlayer is null");
+        return;
+      }
+      mChorusMusicPlayer.setPlayoutVolume(0);
+      AppLogToBtnClick("setPlayoutVolume 0");
+    }
+
+    public void setChorusPlayoutVolume100Click() {
+      if (mChorusMusicPlayer == null) {
+        AppLogToBtnClick("setPlayoutVolume fail, ChorusPlayer is null");
+        return;
+      }
+      mChorusMusicPlayer.setPlayoutVolume(100);
+      AppLogToBtnClick("setPlayoutVolume 100");
+    }
+
+    public void setChorusPublishVolume0Click() {
+      if (mChorusMusicPlayer == null) {
+        AppLogToBtnClick("setPublishVolume fail, ChorusPlayer is null");
+        return;
+      }
+      mChorusMusicPlayer.setPublishVolume(0);
+      AppLogToBtnClick("setPublishVolume 0");
+    }
+
+    public void setChorusPublishVolume100Click() {
+      if (mChorusMusicPlayer == null) {
+        AppLogToBtnClick("setPublishVolume fail, ChorusPlayer is null");
+        return;
+      }
+      mChorusMusicPlayer.setPublishVolume(100);
+      AppLogToBtnClick("setPublishVolume 100");
+    }
+
+    public void setMusicPitchPositiveClick() {
+      if (mChorusMusicPlayer == null) {
+        AppLogToBtnClick("setMusicPitch fail, ChorusPlayer is null");
+        return;
+      }
+      mChorusMusicPlayer.setMusicPitch(2.0f);
+      AppLogToBtnClick("setMusicPitch 2.0");
+    }
+
+    public void setMusicPitchNegativeClick() {
+      if (mChorusMusicPlayer == null) {
+        AppLogToBtnClick("setMusicPitch fail, ChorusPlayer is null");
+        return;
+      }
+      mChorusMusicPlayer.setMusicPitch(-2.0f);
+      AppLogToBtnClick("setMusicPitch -2.0");
+    }
+
+    public void setMusicPitchZeroClick() {
+      if (mChorusMusicPlayer == null) {
+        AppLogToBtnClick("setMusicPitch fail, ChorusPlayer is null");
+        return;
+      }
+      mChorusMusicPlayer.setMusicPitch(0.0f);
+      AppLogToBtnClick("setMusicPitch 0.0 (原调)");
+    }
+
+    public void chorusCallExperimentalAPIClick() {
+      if (mChorusMusicPlayer == null) {
+        AppLogToBtnClick("callExperimentalAPI fail, ChorusPlayer is null");
+        return;
+      }
+      string filePath = Application.persistentDataPath + "/chorus_record.mp3";
+      var data = new JsonData { ["api"] = "enableLocalRecord" };
+      var param = new JsonData {
+        ["enable"] = true,
+        ["localPath"] = filePath,
+      };
+      data["params"] = param;
+      var api = data.ToJson();
+      mChorusMusicPlayer.callExperimentalAPI(api);
+      AppLogToBtnClick($"callExperimentalAPI enableLocalRecord, localPath={filePath}");
+    }
+
+    #endregion
   }
 }

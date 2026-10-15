@@ -23,7 +23,7 @@ namespace trtc {
     }
 
     [MonoPInvokeCallback(typeof(TXAudioEffectManagerNative.TRTCUnityAEMMusicPlayOnStart))]
-    public static void TRTCUnityAEMMusicPlayOnStartHandler(IntPtr instance, int musicId, int errCode) {
+    public static void TRTCUnityAEMMusicPlayOnStartHandler(IntPtr instance, int musicId, int errCode, IntPtr userData) {
       ITXMusicPlayObserver observer;
       var effectManagerInstance = getAudioEffectManagerInstance(instance);
       if (effectManagerInstance != null && effectManagerInstance._playObserverDic.TryGetValue(musicId, out observer) && null != observer) {
@@ -35,7 +35,8 @@ namespace trtc {
     public static void TRTCUnityAEMMusicPlayOnPlayProgressHandler(IntPtr instance,
                                                            int musicId,
                                                            long curPtsMS,
-                                                           long durationMS) {
+                                                           long durationMS,
+                                                           IntPtr userData) {
       ITXMusicPlayObserver observer;
       var effectManagerInstance = getAudioEffectManagerInstance(instance);
       if (effectManagerInstance != null && effectManagerInstance._playObserverDic.TryGetValue(musicId, out observer) && null != observer) {
@@ -44,7 +45,7 @@ namespace trtc {
     }
 
     [MonoPInvokeCallback(typeof(TXAudioEffectManagerNative.TRTCUnityAEMMusicPlayOnComplete))]
-    public static void TRTCUnityAEMMusicPlayOnCompleteHandler(IntPtr instance, int musicId, int errCode) {
+    public static void TRTCUnityAEMMusicPlayOnCompleteHandler(IntPtr instance, int musicId, int errCode, IntPtr userData) {
       ITXMusicPlayObserver observer;
       var effectManagerInstance = getAudioEffectManagerInstance(instance);
       if (effectManagerInstance != null && effectManagerInstance._playObserverDic.TryGetValue(musicId, out observer) && null != observer) {
@@ -57,14 +58,16 @@ namespace trtc {
     [MonoPInvokeCallback(typeof(TXAudioEffectManagerNative.TRTCUnityAEMMusicPreloadOnLoadProgress))]
     public static void TRTCUnityAEMMusicPreloadOnLoadProgressHandler(IntPtr instance,
                                                               int musicId,
-                                                              int progress) {
+                                                              int progress,
+                                                              IntPtr userData) {
       getAudioEffectManagerInstance(instance)?._preloadObserver?.onLoadProgress(musicId, progress);
     }
 
     [MonoPInvokeCallback(typeof(TXAudioEffectManagerNative.TRTCUnityAEMMusicPreloadOnLoadError))]
     public static void TRTCUnityAEMMusicPreloadOnLoadErrorHandler(IntPtr instance,
                                                            int musicId,
-                                                           int errCode) {
+                                                           int errCode,
+                                                           IntPtr userData) {
       getAudioEffectManagerInstance(instance)?._preloadObserver?.onLoadError(musicId, errCode);
     }
     #endregion
@@ -84,12 +87,12 @@ namespace trtc {
       _globalMusicObserver =
           TXAudioEffectManagerNative.tx_audio_effect_manager_create_music_play_observer(
               nativeObj, TRTCUnityAEMMusicPlayOnStart, TRTCUnityAEMMusicPlayOnPlayProgress,
-              TRTCUnityAEMMusicPlayOnComplete);
+              TRTCUnityAEMMusicPlayOnComplete, IntPtr.Zero);
 
       _globalPreloadObserver =
           TXAudioEffectManagerNative.tx_audio_effect_manager_create_music_preload_observer(
               nativeObj, TRTCUnityAEMMusicPreloadOnLoadProgress,
-              TRTCUnityAEMMusicPreloadOnLoadError);
+              TRTCUnityAEMMusicPreloadOnLoadError, IntPtr.Zero);
       TXAudioEffectManagerNative.tx_audio_effect_manager_set_preload_observer(
           nativeObj, _globalPreloadObserver);
 

@@ -227,6 +227,12 @@ namespace trtc {
         /// 使用 OpengGL 纹理传递视频数据。
         TRTCVideoBufferType_Texture = 3,
 
+        /// 使用 D3D11 纹理传递视频数据。
+        TRTCVideoBufferType_TextureD3D11 = 4,
+
+        /// 使用 PixelBuffer 传递视频数据，仅 iOS 平台有效。
+        TRTCVideoBufferType_PixelBuffer = 5,
+
     }
 
     /**
@@ -1064,6 +1070,20 @@ namespace trtc {
     }
 
     /**
+     * 5.9 视频纹理数据。
+     */
+    public struct TRTCTexture {
+        /// 【字段含义】视频纹理 ID。
+        public int glTextureId;
+
+        /// 【字段含义】纹理所在的 OpenGL 上下文环境，Windows和Android平台有效
+        public IntPtr glContext;
+
+        /// 【字段含义】D3D11纹理，即ID3D11Texture2D的指针，仅Windows平台有效。
+        public IntPtr d3d11TextureId;
+    }
+
+    /**
      * 5.10 视频帧信息。
      *
      * TRTCVideoFrame 用来描述一帧视频画面的裸数据，也就是编码前或者解码后的视频画面数据。
@@ -1076,7 +1096,7 @@ namespace trtc {
         public TRTCVideoBufferType bufferType;
 
         /// 【字段含义】bufferType 为 {@link TRTCVideoBufferType_Texture} 时的视频数据，承载用于 OpenGL 渲染的纹理数据。
-        public int textureId;
+        public TRTCTexture texture;
 
         /// 【字段含义】视频数据。
         ///  - 当 bufferType 为 {@link TRTCVideoBufferType_Buffer} 时的视频数据，承载用于 C++ 层的内存数据块。
@@ -1167,6 +1187,12 @@ namespace trtc {
         /// 【推荐取值】默认值：视频流默认为0。0为裁剪，1为缩放，2为缩放并显示黑底。
         /// 【特别说明】水印图和占位图暂时不支持设置 renderMode，默认强制拉伸处理。
         public UInt32 renderMode;
+
+        /// 【字段含义】视频画面圆角半径（单位：像素）。上行视频流在按照 renderMode 渲染后，对其最终画面进行圆角裁剪。
+        /// 【默认取值】0，即不进行圆角处理。
+        /// 【取值范围】[0, min(width, height) / 2]，即最大不超过画面短边的一半。
+        /// 【特别说明】该参数仅在 renderMode 为 0（裁剪模式）时生效。
+        public UInt32 cornerRadius;
 
         /// 【字段含义】该路音频参与混音时的音量等级（取值范围：[0, 100]）。
         /// 【默认取值】默认值：100。
@@ -1583,6 +1609,11 @@ namespace trtc {
         /// 【字段含义】画面填充模式。
         /// 【推荐取值】填充（画面可能会被拉伸裁剪）或适应（画面可能会有黑边），默认值：{@link TRTCVideoFillMode_Fill}。
         public TRTCVideoFillMode fillMode;
+
+        /// 【字段含义】视频画面圆角半径（单位：像素）。上行视频流在按照 fillMode 渲染后，对其最终画面进行圆角裁剪。
+        /// 【默认取值】0，即不进行圆角处理。
+        /// 【取值范围】[0, min(width, height) / 2]，即最大不超过画面短边的一半。
+        public UInt32 cornerRadius;
 
         /// 【字段含义】指定混合画面的底色颜色。
         /// 【推荐取值】默认值：0x000000 代表黑色。格式为十六进制数字，例如：“0x61B9F1” 代表 RGB 分别为 (97,158,241)。

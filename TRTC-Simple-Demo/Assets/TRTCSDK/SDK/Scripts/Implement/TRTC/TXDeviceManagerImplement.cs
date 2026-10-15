@@ -124,5 +124,10 @@ namespace trtc {
 #endif
       return -1;
     }
+
+    // 2.22
+    public override void setCameraCapturerParam(TXCameraCaptureParam param) {
+      TXDeviceManagerNative.tx_device_manager_set_camera_capture_param(_nativeObj, param);
+    }
   }
 }

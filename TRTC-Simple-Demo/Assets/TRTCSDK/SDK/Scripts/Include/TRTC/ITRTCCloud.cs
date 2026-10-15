@@ -15,7 +15,7 @@ using System.Windows.Controls;
 namespace trtc {
 
     public abstract class ITRTCCloud : IDeprecatedTRTCCloud {
-        public static string PLUGIN_VERSION = "13.2.0.20652_397";
+        public static string PLUGIN_VERSION = "13.5.0.21368_429";
 
         /////////////////////////////////////////////////////////////////////////////////
         //
@@ -558,6 +558,49 @@ namespace trtc {
          */
         public abstract void stopLocalRecording();
 
+        /**
+         * 5.19 启用 3D 音效。
+         *
+         * 启用 3D 音效。注意需使用流畅音质 {@link TRTCAudioQualitySpeech} 或默认音质 {@link TRTCAudioQualityDefault}。
+         * @param enabled 是否启用 3D 音效，默认为关闭状态。
+         */
+        public abstract void enable3DSpatialAudioEffect(bool enabled);
+
+        /**
+         * 5.20 设置 3D 音效中自身坐标及朝向信息。
+         *
+         * 更新自身在世界坐标系中的位置和朝向， SDK 会根据该方法参数计算自身和远端用户之间的相对位置，进而渲染出空间音效。
+         * @param position 自身在世界坐标系中的坐标，三个值依次表示前、右、上坐标值。
+         * @param axisForward 自身坐标系前轴在世界坐标系中的单位向量，三个值依次表示前、右、上坐标值。
+         * @param axisRight 自身坐标系右轴在世界坐标系中的单位向量，三个值依次表示前、右、上坐标值。
+         * @param axisUp 自身坐标系上轴在世界坐标系中的单位向量，三个值依次表示前、右、上坐标值。
+         * @note
+         * 1. 各参数应分别传入长度为 3 的数组。
+         * 2. 请适当限制调用频率，推荐两次坐标设置至少间隔 100ms。
+         */
+        public abstract void updateSelf3DSpatialPosition(int[] position, float[] axisForward, float[] axisRight, float[] axisUp);
+
+        /**
+         * 5.21 设置 3D 音效中远端用户坐标信息。
+         *
+         * 更新远端用户在世界坐标系中的位置，SDK 会根据自身和远端用户之间的相对位置，进而渲染出空间音效。
+         * @param userId 指定远端用户的 ID。
+         * @param position 该远端用户在世界坐标系中的坐标，三个值依次表示前、右、上坐标值。
+         * @note
+         * 1. 各参数应分别传入长度为 3 的数组。
+         * 2. 请适当限制调用频率，推荐同一远端用户两次坐标设置至少间隔 100ms。
+         */
+        public abstract void updateRemote3DSpatialPosition(string userId, int[] position);
+
+        /**
+         * 5.22 设置指定用户所发出声音的可被接收范围。
+         *
+         * 设置该范围大小之后，该指定用户的声音将在该范围内可被听见，超出该范围将被衰减为 0。
+         * @param userId 指定远端用户的 ID。
+         * @param range 声音最大可被接收范围。
+         */
+        public abstract void set3DSpatialReceivingRange(string userId, int range);
+
         /////////////////////////////////////////////////////////////////////////////////
         //
         //                    设备管理相关接口
@@ -881,6 +924,19 @@ namespace trtc {
         public abstract void enableMixExternalAudioFrame(bool enablePublish, bool enablePlayout);
 
         /**
+         * 11.8 生成自定义采集时的时间戳。
+         *
+         * 本接口仅适用于自定义采集模式，用于解决音视频帧的采集时间（capture time）和投送时间（send time）不一致所导致的音画不同步问题。
+         * 当您通过 {@link sendCustomVideoData} 或 {@link sendCustomAudioData} 等接口进行自定义视频或音频采集时，请按照如下操作使用该接口：
+         *  1. 首先，在采集到一帧视频或音频帧时，通过调用本接口获得当时的 PTS 时间戳。
+         *  2. 之后可以将该视频或音频帧送入您使用的前处理模块（如第三方美颜组件，或第三方音效组件）。
+         *  3. 在真正调用 {@link sendCustomVideoData} 或 {@link sendCustomAudioData} 进行投送时，请将该帧在采集时记录的 PTS 时间戳赋值给 {@link TRTCVideoFrame} 或 {@link TRTCAudioFrame} 中的 timestamp 字段。
+         *
+         * @return 时间戳（单位：ms）
+         */
+        public abstract UInt64 generateCustomPTS();
+
+        /**
          * 11.9.1 开启视频第三方美颜。
          *
          * 开启后，您可以通过 {@link ITRTCVideoFrameCallback} 获取到指定像素格式和视频数据结构类型的图像帧。
@@ -1121,7 +1177,7 @@ namespace trtc {
         /**
          * 14.9 调用实验性接口。
          */
-        public abstract void callExperimentalAPI(string jsonStr);
+        public abstract string callExperimentalAPI(string jsonStr);
 
         /////////////////////////////////////////////////////////////////////////////////
         //

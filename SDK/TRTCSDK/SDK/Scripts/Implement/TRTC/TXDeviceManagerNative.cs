@@ -96,8 +96,9 @@ namespace trtc {
     [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
     public static extern int tx_device_manager_stop_speaker_device_test(IntPtr instance);
 
-
-
+    // 2.22
+    [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern int tx_device_manager_set_camera_capture_param(IntPtr instance, TXCameraCaptureParam param);
 
   }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Threading;
+using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -15,7 +16,7 @@ using UnityEngine.OpenHarmony;
 #endif
 
 namespace TRTCCUnityDemo {
-  public class RoomSceneScript : MonoBehaviour, ITRTCCloudCallback {
+  public class RoomSceneScript : MonoBehaviour, ITRTCCloudCallback, ITRTCVideoFrameCallback {
     public RectTransform mainCanvas;
     public UserTableView userTableView;
 
@@ -23,6 +24,7 @@ namespace TRTCCUnityDemo {
     public GameObject customCapturePrefab;
     private SettingScript settingScript = null;
     private CustomCaptureScript customCaptureScript = null;
+    private ScreenShareSettingScript screenShareSettingScript = null;
 
     private Toggle captureVideoToggle;
     private Toggle captureAudioToggle;
@@ -82,7 +84,7 @@ namespace TRTCCUnityDemo {
       toggleShowConsole.onValueChanged.AddListener(this.OnToggleShowConsole);
 
       Toggle toggleShowUserVolume =
-          transform.Find("PanelTest/Viewport/Content/ToggleShowUserVolume")
+          transform.Find("PanelOperate/Viewport/Content/ToggleShowUserVolume")
               .gameObject.GetComponent<Toggle>();
       toggleShowUserVolume.onValueChanged.AddListener(this.OnToggleShowUserVolume);
 
@@ -98,11 +100,11 @@ namespace TRTCCUnityDemo {
                                     .gameObject.GetComponent<Toggle>();
       toggleSnapshot.onValueChanged.AddListener(this.OnToggleSnapshot);
 
-      Toggle toggleSwitchCamera = transform.Find("PanelTest/Viewport/Content/ToggleSwitchCamera")
+      Toggle toggleSwitchCamera = transform.Find("PanelOperate/Viewport/Content/ToggleSwitchCamera")
                                       .gameObject.GetComponent<Toggle>();
       toggleSwitchCamera.onValueChanged.AddListener(this.OnToggleSwitchCamera);
 
-      Toggle beautySet = transform.Find("PanelTest/Viewport/Content/ToggleBeauty")
+      Toggle beautySet = transform.Find("PanelOperate/Viewport/Content/ToggleBeauty")
                              .gameObject.GetComponent<Toggle>();
       beautySet.onValueChanged.AddListener(this.OnToggleBeauty);
 
@@ -115,6 +117,13 @@ namespace TRTCCUnityDemo {
       Toggle toggleSetGSensorMode = transform.Find("PanelTest/Viewport/Content/ToggleGSensorMode")
                                         .gameObject.GetComponent<Toggle>();
       toggleSetGSensorMode.onValueChanged.AddListener(this.OnToggleSetGSensorMode);
+
+      // Screen share window settings toggle (optional UI element)
+      Transform screenShareSettingTransform = transform.Find("PanelTest/Viewport/Content/ToggleScreenShareSetting");
+      if (screenShareSettingTransform != null) {
+        Toggle toggleScreenShareSetting = screenShareSettingTransform.gameObject.GetComponent<Toggle>();
+        toggleScreenShareSetting.onValueChanged.AddListener(this.OnToggleScreenShareSetting);
+      }
 
       // Toggle toggleStartPublishing =
       // transform.Find("PanelTest/Viewport/Content/ToggleStartPublishing").gameObject.GetComponent<Toggle>();
@@ -137,10 +146,12 @@ namespace TRTCCUnityDemo {
       var version = mTRTCCloud.getSDKVersion();
       LogManager.Log("trtc sdk version is : " + version);
 
-      var trtcParams = new TRTCParams();
-      trtcParams.sdkAppId = GenerateTestUserSig.SDKAPPID;
-      trtcParams.roomId = uint.Parse(DataManager.GetInstance().GetRoomID());  // If your business's roomid is a numeric type, please use this.
-      // trtcParams.strRoomId = DataManager.GetInstance().GetRoomID();   // If your business's roomid is a string type, please use this.
+      var trtcParams =
+          new TRTCParams {
+            sdkAppId = GenerateTestUserSig.SDKAPPID,
+            roomId = uint.Parse(DataManager.GetInstance().GetRoomID())
+          };
+      trtcParams.strRoomId = trtcParams.roomId.ToString();
       trtcParams.userId = DataManager.GetInstance().GetUserID();
       trtcParams.userSig =
           GenerateTestUserSig.GetInstance().GenTestUserSig(DataManager.GetInstance().GetUserID());
@@ -154,9 +165,6 @@ namespace TRTCCUnityDemo {
       var videoEncParams = DataManager.GetInstance().videoEncParam;
       mTRTCCloud.setVideoEncoderParam(ref videoEncParams);
       var videoRotation = TRTCVideoRotation.TRTCVideoRotation0;
-#if UNITY_IOS && !UNITY_EDITOR
-      videoRotation = TRTCVideoRotation.TRTCVideoRotation270;
-#endif
       mTRTCCloud.setVideoEncoderRotation(videoRotation);
 
       var qosParams = DataManager.GetInstance().qosParams;  // 网络流控相关参数设置
@@ -164,11 +172,14 @@ namespace TRTCCUnityDemo {
 
       var videoEncParam = new TRTCVideoEncParam {
         videoResolution = TRTCVideoResolution.TRTCVideoResolution_1280_720,
-        resMode = TRTCVideoResolutionMode.TRTCVideoResolutionModeLandscape, videoFps = 10,
-        videoBitrate = 1600, minVideoBitrate = 1000
+        resMode = TRTCVideoResolutionMode.TRTCVideoResolutionModeLandscape,
+        videoFps = 10,
+        videoBitrate = 1600,
+        minVideoBitrate = 1000
       };
       //  设置屏幕分享编码参数
       mTRTCCloud.setSubStreamEncoderParam(ref videoEncParam);
+      mTRTCCloud.setLocalVideoCustomProcessCallback(this);
       LogManager.Log("setSubStreamEncoderParam ");
       // LogManager.Log(
       //     $"Scene:{scene}, Role:{trtcParams.role}, Qos-Prefer:{qosParams.preference},
@@ -176,8 +187,8 @@ namespace TRTCCUnityDemo {
 
       LogManager.Log($"Scene:{scene}, Role:{trtcParams.role}, Qos-Prefer:{qosParams.preference}");
 
-      userTableView.DoMuteAudio += OnMuteRemoteAudio;
-      userTableView.DoMuteVideo += OnMuteRemoteVideo;
+      userTableView.DoMuteAudio += OnMuteAudio;
+      userTableView.DoMuteVideo += OnMuteVideo;
       DataManager.GetInstance().DoRoleChange += OnRoleChanged;
       DataManager.GetInstance().DoVoiceChange += OnVoiceChangeChanged;
       DataManager.GetInstance().DoEarMonitorVolumeChange += OnEarMonitorVolumeChanged;
@@ -203,9 +214,9 @@ namespace TRTCCUnityDemo {
       DataManager.GetInstance().DoEarMonitorVolumeChange -= OnEarMonitorVolumeChanged;
       DataManager.GetInstance().DoVideoEncParamChange -= OnVideoEncParamChanged;
       DataManager.GetInstance().DoQosParamChange -= OnQosParamChanged;
-      userTableView.DoMuteAudio -= OnMuteRemoteAudio;
-      userTableView.DoMuteVideo -= OnMuteRemoteVideo;
-
+      userTableView.DoMuteAudio -= OnMuteAudio;
+      userTableView.DoMuteVideo -= OnMuteVideo;
+      mTRTCCloud.setLocalVideoCustomProcessCallback(null);
       mTRTCCloud.removeCallback(this);
       ITRTCCloud.destroyTRTCShareInstance();
       DataManager.GetInstance().ResetLocalAVFlag();
@@ -220,7 +231,8 @@ namespace TRTCCUnityDemo {
     void OnToggleVideoMirror(bool value) {
       if (value) {
         mTRTCCloud.setVideoEncoderMirror(true);
-      } else {
+      }
+      else {
         mTRTCCloud.setVideoEncoderMirror(false);
       }
     }
@@ -241,7 +253,8 @@ namespace TRTCCUnityDemo {
         GameObject videoView = userTableView.GetVideoView("", TRTCVideoStreamType.TRTCVideoStreamTypeBig);
         mTRTCCloud.startLocalPreview(true, videoView);
         userTableView.UpdateVideoAvailable("", TRTCVideoStreamType.TRTCVideoStreamTypeBig, true);
-      } else {
+      }
+      else {
         mTRTCCloud.stopLocalPreview();
         userTableView.UpdateVideoAvailable("", TRTCVideoStreamType.TRTCVideoStreamTypeBig, false);
       }
@@ -250,11 +263,16 @@ namespace TRTCCUnityDemo {
 
       if (captureAudio) {
         mTRTCCloud.startLocalAudio(DataManager.GetInstance().audioQuality);
-      } else {
+      }
+      else {
         mTRTCCloud.stopLocalAudio();
       }
 
       mTRTCCloud.muteLocalAudio(muteLocalAudio);
+
+      userTableView.UpdateAudioAvailable("", TRTCVideoStreamType.TRTCVideoStreamTypeBig,
+                                        captureAudio);
+
       captureVideoToggle.interactable = !isAudience;
       captureVideoToggle.SetIsOnWithoutNotify(captureVideo);
       captureAudioToggle.interactable = !isAudience;
@@ -265,13 +283,14 @@ namespace TRTCCUnityDemo {
       // muteLocalAudioToggle.SetIsOnWithoutNotify(muteLocalAudio);
     }
 
-#region UI Oper
+    #region UI Oper
 
     void OnToggleMic(bool value) {
       LogManager.Log("OnToggleMic: " + value);
       if (value) {
         mTRTCCloud.startLocalAudio(DataManager.GetInstance().audioQuality);
-      } else {
+      }
+      else {
         mTRTCCloud.stopLocalAudio();
       }
 
@@ -283,7 +302,8 @@ namespace TRTCCUnityDemo {
       if (value) {
         GameObject videoView = userTableView.GetVideoView("", TRTCVideoStreamType.TRTCVideoStreamTypeBig);
         mTRTCCloud.startLocalPreview(true, videoView);
-      } else {
+      }
+      else {
         mTRTCCloud.stopLocalPreview();
       }
       userTableView.UpdateVideoAvailable("", TRTCVideoStreamType.TRTCVideoStreamTypeBig, value);
@@ -327,8 +347,10 @@ namespace TRTCCUnityDemo {
       if (value) {
         var videoEncParam = new TRTCVideoEncParam {
           videoResolution = TRTCVideoResolution.TRTCVideoResolution_1280_720,
-          resMode = TRTCVideoResolutionMode.TRTCVideoResolutionModeLandscape, videoFps = 10,
-          videoBitrate = 1600, minVideoBitrate = 1000
+          resMode = TRTCVideoResolutionMode.TRTCVideoResolutionModeLandscape,
+          videoFps = 10,
+          videoBitrate = 1600,
+          minVideoBitrate = 1000
         };
 #if UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX
         SIZE thumbnail = new SIZE();
@@ -342,15 +364,15 @@ namespace TRTCCUnityDemo {
         if (sources.Length > 0) {
           mTRTCCloud.selectScreenCaptureTarget(sources[0], new Rect(0, 0, 0, 0),
                                                new TRTCScreenCaptureProperty());
-          userTableView.AddUser("", TRTCVideoStreamType.TRTCVideoStreamTypeSub);
-          userTableView.UpdateVideoAvailable("", TRTCVideoStreamType.TRTCVideoStreamTypeSub, true);
+          userTableView.AddUser("me_screen", TRTCVideoStreamType.TRTCVideoStreamTypeSub);
+          userTableView.UpdateVideoAvailable("me_screen", TRTCVideoStreamType.TRTCVideoStreamTypeSub, true);
           mTRTCCloud.startScreenCapture(
-            userTableView.GetVideoView("", TRTCVideoStreamType.TRTCVideoStreamTypeSub),
+            userTableView.GetVideoView("me_screen", TRTCVideoStreamType.TRTCVideoStreamTypeSub),
             TRTCVideoStreamType.TRTCVideoStreamTypeSub, ref videoEncParam);
         }
 #elif UNITY_ANDROID || UNITY_OPENHARMONY || UNITY_IOS
         mTRTCCloud.startScreenCapture(
-          userTableView.GetVideoView("", TRTCVideoStreamType.TRTCVideoStreamTypeSub),
+          userTableView.GetVideoView("me_screen", TRTCVideoStreamType.TRTCVideoStreamTypeSub),
           TRTCVideoStreamType.TRTCVideoStreamTypeSub,
           ref videoEncParam);
 #endif
@@ -358,7 +380,8 @@ namespace TRTCCUnityDemo {
 #if UNITY_IOS && !UNITY_EDITOR
         IosExtensionLauncher.TRTCUnityExtensionLauncher();
 #endif
-      } else {
+      }
+      else {
         mTRTCCloud.stopScreenCapture();
 #if UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX
         userTableView.UpdateVideoAvailable("", TRTCVideoStreamType.TRTCVideoStreamTypeSub, false);
@@ -372,7 +395,8 @@ namespace TRTCCUnityDemo {
         if (audio && !audio.isPlaying) {
           audio.Play();
         }
-      } else {
+      }
+      else {
         if (audio && audio.isPlaying) {
           audio.Stop();
         }
@@ -398,7 +422,8 @@ namespace TRTCCUnityDemo {
         var setting = Instantiate(settingPrefab, new Vector3(0, 0, 0), Quaternion.identity);
         setting.transform.SetParent(mainCanvas.transform, false);
         settingScript = setting.GetComponent<SettingScript>();
-      } else {
+      }
+      else {
         if (settingScript != null) {
           Transform.Destroy(settingScript.gameObject);
           settingScript = null;
@@ -412,20 +437,14 @@ namespace TRTCCUnityDemo {
 
     void OnToggleSwitchCamera(bool value) {
       LogManager.Log("OnToggleSwitchCamera: " + value);
-#if UNITY_IOS && !UNITY_EDITOR
-      if (value) {
-        mTRTCCloud.setVideoEncoderRotation(TRTCVideoRotation.TRTCVideoRotation90);
-      } else {
-        mTRTCCloud.setVideoEncoderRotation(TRTCVideoRotation.TRTCVideoRotation270);
-      }
-#endif
       mTRTCCloud.getDeviceManager().switchCamera(!value);
     }
 
     void OnToggleBeauty(bool value) {
       if (value) {
         mTRTCCloud.setBeautyStyle(TRTCBeautyStyle.TRTCBeautyStyleSmooth, 9, 9, 9);
-      } else {
+      }
+      else {
         mTRTCCloud.setBeautyStyle(TRTCBeautyStyle.TRTCBeautyStyleSmooth, 0, 0, 0);
       }
     }
@@ -478,23 +497,64 @@ namespace TRTCCUnityDemo {
     void OnToggleSetGSensorMode(bool value) {
       if (value) {
         mTRTCCloud.setGravitySensorAdaptiveMode(TRTCGravitySensorAdaptiveMode.TRTCGravitySensorAdaptiveMode_FillByCenterCrop);
-      } else {
+      }
+      else {
         mTRTCCloud.setGravitySensorAdaptiveMode(TRTCGravitySensorAdaptiveMode.TRTCGravitySensorAdaptiveMode_Disable);
       }
     }
 
-#endregion
-
-#region Setting UI Callback
-
-    void OnMuteRemoteAudio(string userId, bool mute) {
-      LogManager.Log("MuteRemoteAudio: " + userId + "-" + mute);
-      mTRTCCloud.muteRemoteAudio(userId, mute);
+    void OnToggleScreenShareSetting(bool value) {
+      if (value) {
+        screenShareSettingScript = ScreenShareSettingScript.Show(mainCanvas.transform);
+      }
+      else {
+        if (screenShareSettingScript != null) {
+          Destroy(screenShareSettingScript.gameObject);
+          screenShareSettingScript = null;
+        }
+      }
     }
 
-    void OnMuteRemoteVideo(string userId, bool mute) {
-      LogManager.Log("MuteRemoteVideo: " + userId + "-" + mute);
-      // mTRTCCloud.muteRemoteVideoStream(userId, mute);
+    #endregion
+
+    #region Setting UI Callback
+
+    void OnMuteAudio(string userId, bool mute) {
+      LogManager.Log("MuteRemoteAudio: " + userId + "-" + mute);
+      if (userId == "") {
+        mTRTCCloud.muteLocalAudio(mute);
+        if (mute) {
+          mTRTCCloud.stopLocalAudio();
+        }
+        else {
+          mTRTCCloud.startLocalAudio(DataManager.GetInstance().audioQuality);
+        }
+        DataManager.GetInstance().captureAudio = !mute;
+      }
+      else {
+        mTRTCCloud.muteRemoteAudio(userId, mute);
+      }
+    }
+
+    void OnMuteVideo(string userId, TRTCVideoStreamType streamType, bool mute) {
+      LogManager.Log("MuteRemoteVideo: " + userId + "-" + streamType + "-" + mute);
+      if (userId == "") {
+        if (mute) {
+          mTRTCCloud.stopLocalPreview();
+        }
+        else {
+          CustomVideoCaptureHelper.Instance.StopCapture();
+          DataManager.GetInstance().SetCustomVideoCaptureMode(0);
+          GameObject videoView = userTableView.GetVideoView("", TRTCVideoStreamType.TRTCVideoStreamTypeBig);
+          mTRTCCloud.startLocalPreview(true, videoView);
+        }
+        userTableView.UpdateVideoAvailable("", TRTCVideoStreamType.TRTCVideoStreamTypeBig, !mute, true);
+        DataManager.GetInstance().captureVideo = !mute;
+        mTRTCCloud.muteLocalVideo(mute);
+      }
+      else {
+        mTRTCCloud.muteRemoteVideoStream(userId, streamType, mute);
+      }
     }
 
     void OnTogglePublishing(bool value) {
@@ -518,7 +578,8 @@ namespace TRTCCUnityDemo {
         customCaptureScript = customCapture.GetComponent<CustomCaptureScript>();
         customCaptureScript.AudioCallback += CustomCaptureAudioCallback;
         customCaptureScript.VideoCallback += CustomCaptureVideoCallback;
-      } else {
+      }
+      else {
         if (customCaptureScript != null) {
           Transform.Destroy(customCaptureScript.gameObject);
           customCaptureScript = null;
@@ -556,7 +617,8 @@ namespace TRTCCUnityDemo {
     void CustomCaptureAudioCallback(bool stop) {
       if (!stop) {
         mTRTCCloud.stopLocalAudio();
-      } else {
+      }
+      else {
         Toggle toggleMic = transform.Find("PanelOperate/Viewport/Content/ToggleMic")
                                .gameObject.GetComponent<Toggle>();
         if (!toggleMic.isOn) {
@@ -569,7 +631,8 @@ namespace TRTCCUnityDemo {
                 .gameObject.GetComponent<Toggle>();
         if (toggleMuteLocalAudio.isOn) {
           mTRTCCloud.muteLocalAudio(true);
-        } else {
+        }
+        else {
           mTRTCCloud.muteLocalAudio(false);
         }
       }
@@ -578,7 +641,8 @@ namespace TRTCCUnityDemo {
     void CustomCaptureVideoCallback(bool stop) {
       if (!stop) {
         mTRTCCloud.stopLocalPreview();
-      } else {
+      }
+      else {
         Toggle toggelCamera = transform.Find("PanelOperate/Viewport/Content/ToggleCamera")
                                   .gameObject.GetComponent<Toggle>();
         if (!toggelCamera.isOn) {
@@ -592,15 +656,16 @@ namespace TRTCCUnityDemo {
                 .gameObject.GetComponent<Toggle>();
         if (toggleMuteLocalVideo.isOn) {
           mTRTCCloud.muteLocalVideo(true);
-        } else {
+        }
+        else {
           mTRTCCloud.muteLocalVideo(false);
         }
       }
     }
 
-#endregion
+    #endregion
 
-#region ITRTCCloudCallback
+    #region ITRTCCloudCallback
 
     public void onError(TXLiteAVError errCode, String errMsg, IntPtr arg) {
       LogManager.Log($"onError {errCode}, {errMsg}");
@@ -666,7 +731,8 @@ namespace TRTCCUnityDemo {
         userTableView.AddUser(userId, TRTCVideoStreamType.TRTCVideoStreamTypeBig);
         var videoView = userTableView.GetVideoView(userId, TRTCVideoStreamType.TRTCVideoStreamTypeBig);
         mTRTCCloud.startRemoteView(userId, TRTCVideoStreamType.TRTCVideoStreamTypeBig, videoView);
-      } else {
+      }
+      else {
         mTRTCCloud.stopRemoteView(userId, TRTCVideoStreamType.TRTCVideoStreamTypeBig);
       }
 
@@ -683,7 +749,8 @@ namespace TRTCCUnityDemo {
                                            true);
         var videoView = userTableView.GetVideoView(userId, TRTCVideoStreamType.TRTCVideoStreamTypeSub);
         mTRTCCloud.startRemoteView(userId, TRTCVideoStreamType.TRTCVideoStreamTypeSub, videoView);
-      } else {
+      }
+      else {
         mTRTCCloud.stopRemoteView(userId, TRTCVideoStreamType.TRTCVideoStreamTypeSub);
         userTableView.RemoveUser(userId, TRTCVideoStreamType.TRTCVideoStreamTypeSub);
       }
@@ -773,8 +840,8 @@ namespace TRTCCUnityDemo {
       LogManager.Log("onMicDidReady");
     }
 
-     public void onAudioRouteChanged(TRTCAudioRoute newRoute, TRTCAudioRoute oldRoute) {
-       LogManager.Log($"onAudioRouteChanged newRoute: " + newRoute + ", oldRoute: " + oldRoute);
+    public void onAudioRouteChanged(TRTCAudioRoute newRoute, TRTCAudioRoute oldRoute) {
+      LogManager.Log($"onAudioRouteChanged newRoute: " + newRoute + ", oldRoute: " + oldRoute);
     }
 
     public void onUserVoiceVolume(TRTCVolumeInfo[] userVolumes,
@@ -1048,6 +1115,18 @@ namespace TRTCCUnityDemo {
       LogManager.Log($"onSetMixTranscodingConfig {errCode} , {errMsg}");
     }
 
-#endregion
+    #endregion
+
+    public void onGLContextCreated() {
+      CustomBeautyProcessor.OnGLContextCreated();
+    }
+
+    public int onProcessVideoFrame(TRTCVideoFrame srcFrame, ref TRTCVideoFrame dstFrame) {
+      return CustomBeautyProcessor.OnProcessVideoFrame(srcFrame, ref dstFrame);
+    }
+
+    public void onGLContextDestroy() {
+      CustomBeautyProcessor.OnGLContextDestroy();
+    }
   }
 }

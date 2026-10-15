@@ -38,23 +38,31 @@ namespace trtc {
                                                                       double pitch);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void TRTCUnityAEMMusicPlayOnStart(IntPtr instance, int musicId, int errCode);
+    public delegate void TRTCUnityAEMMusicPlayOnStart(IntPtr instance,
+                                                      int musicId,
+                                                      int errCode,
+                                                      IntPtr userData);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate void TRTCUnityAEMMusicPlayOnPlayProgress(IntPtr instance,
                                                              int musicId,
                                                              long curPtsMS,
-                                                             long durationMS);
+                                                             long durationMS,
+                                                             IntPtr userData);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void TRTCUnityAEMMusicPlayOnComplete(IntPtr instance, int musicId, int errCode);
+    public delegate void TRTCUnityAEMMusicPlayOnComplete(IntPtr instance,
+                                                         int musicId,
+                                                         int errCode,
+                                                         IntPtr userData);
 
     [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
     public static extern IntPtr tx_audio_effect_manager_create_music_play_observer(
         IntPtr instance,
         TRTCUnityAEMMusicPlayOnStart onStart,
         TRTCUnityAEMMusicPlayOnPlayProgress onPlayProgress,
-        TRTCUnityAEMMusicPlayOnComplete onComplete);
+        TRTCUnityAEMMusicPlayOnComplete onComplete,
+        IntPtr userData);
 
     [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
     public static extern void tx_audio_effect_manager_destroy_music_play_observer(IntPtr observer);
@@ -139,18 +147,21 @@ namespace trtc {
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate void TRTCUnityAEMMusicPreloadOnLoadProgress(IntPtr instance,
                                                                 int musicId,
-                                                                int progress);
+                                                                int progress,
+                                                                IntPtr userData);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate void TRTCUnityAEMMusicPreloadOnLoadError(IntPtr instance,
                                                              int musicId,
-                                                             int errorCode);
+                                                             int errorCode,
+                                                             IntPtr userData);
 
     [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
     public static extern IntPtr tx_audio_effect_manager_create_music_preload_observer(
         IntPtr instance,
         TRTCUnityAEMMusicPreloadOnLoadProgress onLoadProgress,
-        TRTCUnityAEMMusicPreloadOnLoadError onLoadError);
+        TRTCUnityAEMMusicPreloadOnLoadError onLoadError,
+        IntPtr userData);
 
     [DllImport(TRTCLibName, CallingConvention = CallingConvention.Cdecl)]
     public static extern void tx_audio_effect_manager_destroy_music_preload_observer(

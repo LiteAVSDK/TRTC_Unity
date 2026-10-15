@@ -1,6 +1,6 @@
-OHOS-trtc:13.2.0.8725
-iOS-trtc:13.2.0.20652
-Win:13.2.0.17749
-Android-trtc:13.2.0.20058
-Mac:13.2.0.20652
-Unity SDK:13.2.0.20652_397
+Android-professional:13.5.0.20683
+Mac:13.5.0.21368
+OHOS-trtc:13.5.0.9132
+iOS-professional:13.5.0.21368
+Win:13.5.0.18472
+Unity SDK:13.5.0.21368_429

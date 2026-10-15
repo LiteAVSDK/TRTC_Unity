@@ -167,6 +167,22 @@ enum AVFrameSideDataType {
      * function in libavutil/timecode.c.
      */
     AV_FRAME_DATA_S12M_TIMECODE,
+
+    /**
+     * Audio Vivid(av3a) static metadata associated with a audio frame.
+     * The payload is an AVS3AUDIO_STATIC_METADATA type and contains audio
+     * data related information data （Including but not limited to information
+     * such as spatial displacement coordinates）- T/UWA 009.1-2022
+     */
+    AV_FRAME_DATA_STATIC_AV3A_VIVID,
+
+    /**
+     * Audio Vivid(av3a) dynamic metadata associated with a audio frame.
+     * The payload is an AVS3AUDIO_DYNAMIC_METADATA type and contains audio
+     * data related information data（Including but not limited to information
+     * such as spatial displacement coordinates） - T/UWA 009.1-2022
+     */
+    AV_FRAME_DATA_DYNAMIC_AV3A_VIVID,
 };
 
 enum AVActiveFormatDescription {

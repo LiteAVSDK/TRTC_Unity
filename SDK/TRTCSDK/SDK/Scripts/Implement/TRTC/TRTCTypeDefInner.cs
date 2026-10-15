@@ -20,6 +20,14 @@ namespace trtc {
     public IntPtr businessInfo;
   }
 
+  // 5.9
+  [StructLayout(LayoutKind.Sequential)]
+  public struct Texture {
+    public int glTextureId;
+    public IntPtr glContext;
+    public IntPtr d3d11TextureId;
+  }
+
   // 5.10
   [StructLayout(LayoutKind.Sequential)]
   public struct VideoFrame {
@@ -128,6 +136,7 @@ namespace trtc {
     public RECT rect;
     public int zOrder;
     public TRTCVideoFillMode fillMode;
+    public UInt32 cornerRadius;
     public UInt32 backgroundColor;
     public string placeHolderImage;
     public IntPtr fixedVideoUser;

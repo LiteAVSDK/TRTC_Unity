@@ -64,7 +64,7 @@ namespace TRTCCUnityDemo {
       playBackground.onValueChanged.AddListener(this.OnTogglePlayBackground);
     }
 
-    void OnDestroy() {}
+    void OnDestroy() { }
 
     private void OnEnterRoomClick() {
       var userID = transform.Find("UserID/editUserID").GetComponent<InputField>().text;
@@ -76,7 +76,8 @@ namespace TRTCCUnityDemo {
       if (GenerateTestUserSig.SDKAPPID != 0 &&
           !string.IsNullOrEmpty(GenerateTestUserSig.SECRETKEY)) {
         SceneManager.LoadScene("RoomScene", LoadSceneMode.Single);
-      } else {
+      }
+      else {
         Debug.Assert(false, "Please fill in your sdkappid && secretkey first");
       }
     }
@@ -105,17 +106,18 @@ namespace TRTCCUnityDemo {
     private void OnShowAutoTestClick() {
       SceneManager.LoadScene("AutoTestScene", LoadSceneMode.Single);
     }
-	
+
     private void OnShowLiveTestClick() {
       SceneManager.LoadScene("LivePlayerScene", LoadSceneMode.Single);
     }
-	
+
     void OnTogglePlayBackground(bool value) {
       if (value) {
         if (audio && !audio.isPlaying) {
           audio.Play();
         }
-      } else {
+      }
+      else {
         if (audio && audio.isPlaying) {
           audio.Stop();
         }

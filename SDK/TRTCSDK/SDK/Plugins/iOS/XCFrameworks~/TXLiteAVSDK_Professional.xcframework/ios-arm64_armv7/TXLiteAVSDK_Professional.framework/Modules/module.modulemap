@@ -1,0 +1,6 @@
+framework module TXLiteAVSDK_Professional {
+  umbrella header "TXLiteAVSDK.h"
+
+  export *
+  module * { export * }
+}

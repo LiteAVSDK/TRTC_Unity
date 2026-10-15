@@ -45,16 +45,16 @@ namespace TRTCCUnityDemo {
     }
 
     public void Update() {
-      if(mIsTest == false) {
+      if (mIsTest == false) {
         return;
       }
 
-      if(mIsEnterRoom && ((Int64)(DateTime.UtcNow - mEnterRoomTime).TotalSeconds) >= 20) {
+      if (mIsEnterRoom && ((Int64)(DateTime.UtcNow - mEnterRoomTime).TotalSeconds) >= 20) {
         StopTest();
       }
 
-      if(!mIsEnterRoom && mExitRoomTime != DateTime.MinValue && ((Int64)(DateTime.UtcNow - mExitRoomTime).TotalSeconds) >= 2) {
-       StartTest();
+      if (!mIsEnterRoom && mExitRoomTime != DateTime.MinValue && ((Int64)(DateTime.UtcNow - mExitRoomTime).TotalSeconds) >= 2) {
+        StartTest();
       }
     }
 
@@ -101,13 +101,14 @@ namespace TRTCCUnityDemo {
         mTRTCCloud?.enableAudioVolumeEvaluation(100);
         PrintfTestApiLog($"setAudioFrameCallback test");
         mTRTCCloud?.setAudioFrameCallback(this);
-      } else {
+      }
+      else {
         PrintfTestApiLog($"disenableAudioVolumeEvaluation");
         mTRTCCloud?.enableAudioVolumeEvaluation(0);
         PrintfTestApiLog($"setAudioFrameCallback test");
         mTRTCCloud?.setAudioFrameCallback(null);
       }
-      
+
     }
 
     private void StartTest() {
@@ -119,8 +120,8 @@ namespace TRTCCUnityDemo {
     }
 
     private void OnStartTestClick() {
-      if(mIsTest == true) {
-         PrintfTestApiLog($"test have started");
+      if (mIsTest == true) {
+        PrintfTestApiLog($"test have started");
       }
       StartTest();
       mIsTest = true;
@@ -143,9 +144,9 @@ namespace TRTCCUnityDemo {
     }
 
     private void OnToggleEnableAudioCallback(bool isEnable) {
-     mIsRegisterAudioCallback = isEnable;
+      mIsRegisterAudioCallback = isEnable;
     }
-    
+
     private void CopyResources() {
       StartCoroutine(CopyFileFromAssetsToPersistent("16_1_audio.pcm"));
       StartCoroutine(CopyFileFromAssetsToPersistent("48_1_audio.pcm"));
@@ -183,7 +184,7 @@ namespace TRTCCUnityDemo {
       DataManager.GetInstance().ResetLocalAVFlag();
     }
 
-#region ITRTCCloudCallback
+    #region ITRTCCloudCallback
 
     public void onRecvCustomCmdMsg(string userId,
                                    int cmdID,
@@ -208,7 +209,7 @@ namespace TRTCCUnityDemo {
 
     public void onEnterRoom(int result) {
       PrintfTestCallbackLog($"onEnterRoom {result}");
-       mainSyncContext.Post((object state) => {
+      mainSyncContext.Post((object state) => {
         startLocalAudioTest();
         mEnterRoomTime = DateTime.UtcNow;
         mIsEnterRoom = true;
@@ -291,8 +292,8 @@ namespace TRTCCUnityDemo {
       PrintfTestCallbackLog($"onMicDidReady");
     }
 
-     public void onAudioRouteChanged(TRTCAudioRoute newRoute, TRTCAudioRoute oldRoute) {
-       PrintfTestCallbackLog($"onAudioRouteChanged newRoute: " + newRoute + ", oldRoute: " + oldRoute);
+    public void onAudioRouteChanged(TRTCAudioRoute newRoute, TRTCAudioRoute oldRoute) {
+      PrintfTestCallbackLog($"onAudioRouteChanged newRoute: " + newRoute + ", oldRoute: " + oldRoute);
     }
 
     public void onUserVoiceVolume(TRTCVolumeInfo[] userVolumes,
@@ -379,7 +380,7 @@ namespace TRTCCUnityDemo {
     }
 
     [Obsolete("use onSpeedTestResult(TRTCSpeedTestResult)")]
-    public void onSpeedTest(TRTCSpeedTestResult currentResult, int finishedCount, int totalCount) {}
+    public void onSpeedTest(TRTCSpeedTestResult currentResult, int finishedCount, int totalCount) { }
 
     public void onTestMicVolume(int volume) {
       PrintfTestCallbackLog($"onTestMicVolume {volume}");
@@ -425,14 +426,14 @@ namespace TRTCCUnityDemo {
       PrintfTestCallbackLog($"onSnapshotComplete {userId} , {type} , {length} , {width} , {height} , {format}");
     }
 
-#endregion
+    #endregion
 
 
 
-#region ITRTCAudioFrameCallback
+    #region ITRTCAudioFrameCallback
 
     public void onCapturedRawAudioFrame(TRTCAudioFrame frame) {
-      if(mApplicationPause) {
+      if (mApplicationPause) {
         return;
       }
       mainSyncContext.Post((object state) => {
@@ -443,7 +444,7 @@ namespace TRTCCUnityDemo {
     }
 
     public void onLocalProcessedAudioFrame(TRTCAudioFrame frame) {
-      if(mApplicationPause) {
+      if (mApplicationPause) {
         return;
       }
       mainSyncContext.Post((object state) => {
@@ -454,7 +455,7 @@ namespace TRTCCUnityDemo {
     }
 
     public void onMixedPlayAudioFrame(TRTCAudioFrame frame) {
-      if(mApplicationPause) {
+      if (mApplicationPause) {
         return;
       }
       mainSyncContext.Post((object state) => {
@@ -465,7 +466,7 @@ namespace TRTCCUnityDemo {
     }
 
     public void onPlayAudioFrame(TRTCAudioFrame frame, string userId) {
-      if(mApplicationPause) {
+      if (mApplicationPause) {
         return;
       }
       mainSyncContext.Post((object state) => {
@@ -476,7 +477,7 @@ namespace TRTCCUnityDemo {
     }
 
     public void onLoadProgress(int id, int progress) {
-      if(mApplicationPause) {
+      if (mApplicationPause) {
         return;
       }
       mainSyncContext.Post((object state) => {
@@ -485,7 +486,7 @@ namespace TRTCCUnityDemo {
     }
 
     public void onLoadError(int id, int errorCode) {
-      if(mApplicationPause) {
+      if (mApplicationPause) {
         return;
       }
       mainSyncContext.Post((object state) => {
@@ -497,9 +498,9 @@ namespace TRTCCUnityDemo {
       mApplicationPause = pauseStatus;
     }
 
-#endregion
+    #endregion
 
-#region UI
+    #region UI
     [SerializeField]
     private Text lblBtnClickLog;
     [SerializeField]
@@ -523,7 +524,7 @@ namespace TRTCCUnityDemo {
     private string logStringForCallback = "";
 
     private void PrintfTestCallbackLog(string log) {
-      if(lblCallBackLog == null) {
+      if (lblCallBackLog == null) {
         return;
       }
 
@@ -537,7 +538,7 @@ namespace TRTCCUnityDemo {
       lblCallBackLog.text = logStringForCallback;
     }
 
-#endregion
+    #endregion
 
     class MusicPlayObserver : ITXMusicPlayObserver {
       private AutoTestScript _testScript;
@@ -609,7 +610,7 @@ namespace TRTCCUnityDemo {
     }
 
     public void startPlayMusicTest() {
-      mTXAudioEffectManager ?.setMusicObserver(13, new MusicPlayObserver(this, mainSyncContext));
+      mTXAudioEffectManager?.setMusicObserver(13, new MusicPlayObserver(this, mainSyncContext));
 
       var musicParam = new AudioMusicParam {
         id = 13,
@@ -621,7 +622,7 @@ namespace TRTCCUnityDemo {
             "https://imgcache.qq.com/operation/dianshi/other/daoxiang.72c46ee085f15dc72603b0ba154409879cbeb15e.mp3"
       };
       mTXAudioEffectManager?.startPlayMusic(musicParam);
-     
+
     }
 
     public void stopPlayMusicTest() {

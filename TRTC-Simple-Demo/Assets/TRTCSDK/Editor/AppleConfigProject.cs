@@ -17,7 +17,7 @@ namespace TRTCSDK.Editor {
     public static void OnPostProcessBuild(BuildTarget buildTarget, string buildPath) {
       if (buildTarget == BuildTarget.iOS) {
         Debug.Log("--ios--start buildPath:" + buildPath);
-        var projPath = buildPath + "/Unity-Iphone.xcodeproj/project.pbxproj";
+        var projPath = buildPath + "/Unity-iPhone.xcodeproj/project.pbxproj";
         Debug.Log("projPath:" + projPath);
         var proj = new PBXProject();
         proj.ReadFromFile(projPath);
@@ -28,6 +28,8 @@ namespace TRTCSDK.Editor {
         var frameTarget = proj.GetUnityFrameworkTargetGuid();
         
         proj.SetBuildProperty(frameTarget, "ENABLE_BITCODE", "NO");
+        proj.AddBuildProperty(frameTarget, "OTHER_LDFLAGS", "-lz");
+        proj.AddBuildProperty(frameTarget, "OTHER_LDFLAGS", "-lsqlite3");
 
         proj.AddFrameworkToProject(frameTarget, Utf8string("IOSurface.framework"), true);
         proj.AddFrameworkToProject(frameTarget, Utf8string("Accelerate.framework"), true);
@@ -42,15 +44,20 @@ namespace TRTCSDK.Editor {
         proj.AddFrameworkToProject(frameTarget, Utf8string("OpenGLES.framework"), true);
         proj.AddFrameworkToProject(frameTarget, Utf8string("CoreImage.framework"), true);
         proj.AddFrameworkToProject(frameTarget, Utf8string("MobileCoreServices.framework"), true);
+        proj.AddFrameworkToProject(frameTarget, Utf8string("GLKit.framework"), true);
+        proj.AddFrameworkToProject(frameTarget, Utf8string("CoreML.framework"), true);
+        proj.AddFrameworkToProject(frameTarget, Utf8string("MetalPerformanceShaders.framework"), true);
 
         var mainTarget = proj.GetUnityMainTargetGuid();
         
         proj.SetBuildProperty(mainTarget, "ENABLE_BITCODE", "NO");
         proj.AddBuildProperty(mainTarget, "OTHER_LDFLAGS", "-ObjC");
+        proj.AddBuildProperty(mainTarget, "OTHER_LDFLAGS", "-lz");
+        proj.AddBuildProperty(mainTarget, "OTHER_LDFLAGS", "-lsqlite3");
         proj.AddBuildProperty(
             mainTarget, "LD_RUNPATH_SEARCH_PATHS",
             "@executable_path/Frameworks $(PROJECT_DIR)/lib/$(CONFIGURATION) $(inherited)");
-        proj.AddBuildProperty(mainTarget, "FRAMERWORK_SEARCH_PATHS",
+        proj.AddBuildProperty(mainTarget, "FRAMEWORK_SEARCH_PATHS",
                               "$(inherited) $(PROJECT_DIR) $(PROJECT_DIR)/Frameworks");
         proj.AddBuildProperty(mainTarget, "ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES", "YES");
         proj.AddBuildProperty(mainTarget, "DYLIB_INSTALL_NAME_BASE", "@rpath");
@@ -69,6 +76,9 @@ namespace TRTCSDK.Editor {
         proj.AddFrameworkToProject(mainTarget, Utf8string("OpenGLES.framework"), true);
         proj.AddFrameworkToProject(mainTarget, Utf8string("CoreImage.framework"), true);
         proj.AddFrameworkToProject(mainTarget, Utf8string("MobileCoreServices.framework"), true);
+        proj.AddFrameworkToProject(mainTarget, Utf8string("GLKit.framework"), true);
+        proj.AddFrameworkToProject(mainTarget, Utf8string("CoreML.framework"), true);
+        proj.AddFrameworkToProject(mainTarget, Utf8string("MetalPerformanceShaders.framework"), true);
 
         proj.WriteToFile(projPath);
         Debug.Log("--ios-- build complete");

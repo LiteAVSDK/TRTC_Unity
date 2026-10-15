@@ -39,7 +39,11 @@ namespace trtc {
     private TRTCVideoFrame _videoFrame;
     private UnityEngine.Object _videoFrameLock = new UnityEngine.Object();
     private TRTCVideoBufferType _videoBufferType = TRTCVideoBufferType.TRTCVideoBufferType_Buffer;
+#if UNITY_OPENHARMONY
+    private TRTCVideoPixelFormat _videoFormat = TRTCVideoPixelFormat.TRTCVideoPixelFormat_BGRA32;
+#else
     private TRTCVideoPixelFormat _videoFormat = TRTCVideoPixelFormat.TRTCVideoPixelFormat_RGBA32;
+#endif
 #else
     public class TRTCVideoRender : ITRTCVideoRenderCallback {
     private string _userId = "";

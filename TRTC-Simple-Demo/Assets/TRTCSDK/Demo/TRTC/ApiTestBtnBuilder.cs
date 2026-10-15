@@ -52,7 +52,7 @@ namespace TRTCCUnityDemo {
 
         new ApiFuncObj("ConnectOtherRoom", "ConnectOtherRoomClick", "请求跨房通话-1908-345"),
         new ApiFuncObj("disconnectOtherRoom", "disconnectOtherRoomClick", "关闭跨房连麦"),
-        new ApiFuncObj("switchRoom", "switchRoomClick", "切换房间-1907"), 
+        new ApiFuncObj("switchRoom", "switchRoomClick", "切换房间-1907"),
         new ApiFuncObj("enableSmallVideoStream-true", "enableSmallVideoStreamClick",
                        "开启大小画面双路编码模式"),
         new ApiFuncObj("enableSmallVideoStream-false", "disEnableSmallVideoStreamClick",
@@ -62,11 +62,39 @@ namespace TRTCCUnityDemo {
         new ApiFuncObj("setDefaultStreamRecvMode-disAuto", "setDefaultStreamRecvModeDisAutoClick",
                        "手动订阅远端音视频(进房前调)")
       });
+      apiList.Add("合唱相关接口函数", new[] {
+        new ApiFuncObj("createChorusPlayer", "createChorusPlayerClick", "创建合唱播放器实例"),
+        new ApiFuncObj("destroyChorusPlayer", "destroyChorusPlayerClick", "销毁合唱播放器实例"),
+        new ApiFuncObj("setChorusRole", "setChorusRoleLeadSingerClick", "设置合唱角色-主唱"),
+        new ApiFuncObj("setChorusRole", "setChorusRoleBackSingerClick", "设置合唱角色-副唱"),
+        new ApiFuncObj("setChorusRole", "setChorusRoleAnchorClick", "设置合唱角色-主播"),
+        new ApiFuncObj("setChorusRole", "setChorusRoleAudienceClick", "设置合唱角色-观众"),
+        new ApiFuncObj("loadExternalMusic", "loadExternalMusicClick", "加载外部音乐"),
+        new ApiFuncObj("start", "startChorusClick", "开始合唱"),
+        new ApiFuncObj("stop", "stopChorusClick", "结束合唱"),
+        new ApiFuncObj("pause", "pauseChorusClick", "暂停合唱"),
+        new ApiFuncObj("resume", "resumeChorusClick", "恢复合唱"),
+        new ApiFuncObj("seek", "seekChorusClick", "跳转播放进度-30000ms"),
+        new ApiFuncObj("switchMusicTrack", "switchMusicTrackAccompanimentClick", "切换伴唱/原唱-伴唱"),
+        new ApiFuncObj("switchMusicTrack", "switchMusicTrackOriginalSongClick", "切换伴唱/原唱-原唱"),
+        new ApiFuncObj("setPlayoutVolume", "setChorusPlayoutVolume0Click", "设置本地播放音量-0"),
+        new ApiFuncObj("setPlayoutVolume", "setChorusPlayoutVolume100Click", "设置本地播放音量-100"),
+        new ApiFuncObj("setPublishVolume", "setChorusPublishVolume0Click", "设置远端播放音量-0"),
+        new ApiFuncObj("setPublishVolume", "setChorusPublishVolume100Click", "设置远端播放音量-100"),
+        new ApiFuncObj("setMusicPitch", "setMusicPitchPositiveClick", "设置音乐升降调-+2.0"),
+        new ApiFuncObj("setMusicPitch", "setMusicPitchNegativeClick", "设置音乐升降调--2.0"),
+        new ApiFuncObj("setMusicPitch", "setMusicPitchZeroClick", "设置音乐升降调-0.0(原调)"),
+        new ApiFuncObj("callExperimentalAPI", "chorusCallExperimentalAPIClick", "调用实验性接口"),
+      });
       apiList.Add("startPublishMediaStream相关接口", new[] {
         new ApiFuncObj("BigStreamToCdn", "TRTCPublishBigStreamToCdnClick", "将主路流推到cdn"),
         new ApiFuncObj("MixStreamToRoom", "TRTCPublishMixStreamToRoomClick", "将当前用户及用户345流推到房间678"),
         new ApiFuncObj("updatePublishMediaStream", "updatePublishMediaStreamClick", "更新发布媒体流"),
         new ApiFuncObj("stopPublishMediaStream", "stopPublishMediaStreamClick", "停止发布媒体流")
+      });
+      apiList.Add("3D音效相关接口函数", new[] {
+        new ApiFuncObj("enable3DSpatialAudioEffect-true", "enable3DSpatialAudioEffectTrueClick", "开启3D音效"),
+        new ApiFuncObj("enable3DSpatialAudioEffect-false", "enable3DSpatialAudioEffectFalseClick", "关闭3D音效"),
       });
       apiList.Add("音频相关接口函数", new[] {
         new ApiFuncObj("startLocalAudio", "startLocalAudioClick", "开启本地音频"),
@@ -203,6 +231,8 @@ namespace TRTCCUnityDemo {
         new ApiFuncObj("setSystemVolumeType", "setSystemVolumeTypeAuto", "系统音量类型-Auto"),
         new ApiFuncObj("setAudioRoute", "setAudioRouteSpeakerphone", "设置音频路由-扬声器"),
         new ApiFuncObj("setAudioRoute", "setAudioRouteEarpiece", "设置音频路由-听筒"),
+        new ApiFuncObj("setBluetoothHeadsetMode", "setBluetoothHeadsetModeA2DP", "设置蓝牙耳机模式-A2DP"),
+        new ApiFuncObj("setBluetoothHeadsetMode", "setBluetoothHeadsetModeHFP", "设置蓝牙耳机模式-HFP"),
 
         new ApiFuncObj("getDevicesList", "getDevicesListTypeMicClick", "获取设备列表-Mic"),
         new ApiFuncObj("getDevicesList", "getDevicesListTypeSpeakerClick", "获取设备列表-Speaker"),
@@ -223,7 +253,7 @@ namespace TRTCCUnityDemo {
                        "获取当前正在使用的设备-Camera"),
       });
       apiList.Add("视频相关接口函数", new[] {
-        new ApiFuncObj("startLocalPreview", "startLocalPreviewClick", "开启本地视频的预览画面"),
+        new ApiFuncObj("startLocalPreview", "startLocalPreviewClick", "开启本地视频的后置预览画面"),
         new ApiFuncObj("stopLocalPreview", "stopLocalPreviewClick", "停止本地视频采集及预览"),
         new ApiFuncObj("setBeautyStyle-9", "setBeautyStyleClick9",
                        "设置美颜、美白、红润效果级别。"),
@@ -300,9 +330,10 @@ namespace TRTCCUnityDemo {
         type.InvokeMember(
             functionName,
             System.Reflection.BindingFlags.Default | System.Reflection.BindingFlags.InvokeMethod,
-            null, instance, new object[] {});
+            null, instance, new object[] { });
         // lblBtnClickLog.text += Environment.NewLine +"function call  " + functionName + " end";
-      } else {
+      }
+      else {
         // lblBtnClickLog.text += Environment.NewLine + "function  " + functionName + " not find";
       }
     }
@@ -313,7 +344,7 @@ namespace TRTCCUnityDemo {
         GameObject obj = insertBtn(strFn, content, font, width, height, x, y);
         Button btn = obj.GetComponent<Button>();
 
-        btn.onClick.AddListener(delegate() {
+        btn.onClick.AddListener(delegate () {
           string fn = item.HandleClickName;
           // lblBtnClickLog.text += Environment.NewLine + "start call  "+ fn;
           invokeInstanceFunction(fn, context);

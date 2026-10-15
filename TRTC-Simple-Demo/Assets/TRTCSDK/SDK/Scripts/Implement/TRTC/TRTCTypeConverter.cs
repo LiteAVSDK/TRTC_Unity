@@ -23,6 +23,8 @@ namespace trtc {
 
     public UInt32 renderMode;
 
+    public UInt32 cornerRadius;
+
     public UInt32 soundLevel;
 
     public string image;
@@ -48,6 +50,7 @@ namespace trtc {
       innerMixUser.pureAudio = (byte)(user.pureAudio ? 1 : 0);
       innerMixUser.inputType = user.inputType;
       innerMixUser.renderMode = user.renderMode;
+      innerMixUser.cornerRadius = user.cornerRadius;
       innerMixUser.soundLevel = user.soundLevel;
       innerMixUser.image = user.image;
       return innerMixUser;
@@ -84,6 +87,7 @@ namespace trtc {
           videoLayoutList[i].rect = config.videoLayoutList[i].rect;
           videoLayoutList[i].zOrder = config.videoLayoutList[i].zOrder;
           videoLayoutList[i].fillMode = config.videoLayoutList[i].fillMode;
+          videoLayoutList[i].cornerRadius = config.videoLayoutList[i].cornerRadius;
           videoLayoutList[i].backgroundColor = config.videoLayoutList[i].backgroundColor;
           videoLayoutList[i].placeHolderImage = config.videoLayoutList[i].placeHolderImage;
           videoLayoutList[i].fixedVideoStreamType = config.videoLayoutList[i].fixedVideoStreamType;
@@ -172,6 +176,47 @@ namespace trtc {
       innerTranscodingConfig.videoSeiParams = config.videoSeiParams;
 
       return innerTranscodingConfig;
+    }
+
+    public static TRTCVideoFrame ConvertToTRTCVideoFrame(VideoFrame videoFrame) {
+      var trtcVideoFrame = new TRTCVideoFrame {
+        videoFormat = videoFrame.videoFormat,
+        bufferType = videoFrame.bufferType,
+        data = videoFrame.data,
+        length = videoFrame.length,
+        width = videoFrame.width,
+        height = videoFrame.height,
+        timestamp = videoFrame.timestamp,
+        rotation = videoFrame.rotation
+      };
+      if (videoFrame.texture != IntPtr.Zero) {
+        var nativeTexture = Marshal.PtrToStructure<Texture>(videoFrame.texture);
+        trtcVideoFrame.texture = new TRTCTexture {
+          glTextureId = nativeTexture.glTextureId,
+          glContext = nativeTexture.glContext,
+          d3d11TextureId = nativeTexture.d3d11TextureId
+        };
+      }
+      return trtcVideoFrame;
+    }
+
+    public static void ConvertToVideoFrame(TRTCVideoFrame trtcVideoFrame, ref VideoFrame videoFrame) {
+      videoFrame.videoFormat = trtcVideoFrame.videoFormat;
+      videoFrame.bufferType = trtcVideoFrame.bufferType;
+      videoFrame.data = trtcVideoFrame.data;
+      videoFrame.length = trtcVideoFrame.length;
+      videoFrame.width = trtcVideoFrame.width;
+      videoFrame.height = trtcVideoFrame.height;
+      videoFrame.timestamp = trtcVideoFrame.timestamp;
+      videoFrame.rotation = trtcVideoFrame.rotation;
+      if (videoFrame.texture != IntPtr.Zero) {
+        var nativeTexture = new Texture {
+          glTextureId = trtcVideoFrame.texture.glTextureId,
+          glContext = trtcVideoFrame.texture.glContext,
+          d3d11TextureId = trtcVideoFrame.texture.d3d11TextureId
+        };
+        Marshal.StructureToPtr(nativeTexture, videoFrame.texture, false);
+      }
     }
 
     public static IntPtr StringToNativeUtf8Ptr(string inputStr) {

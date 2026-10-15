@@ -1,4 +1,4 @@
-﻿
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -55,6 +55,12 @@ namespace TRTCCUnityDemo {
     private int mLocalVideostreamTypeIndex = 0;
     private TRTCRenderIndex mTRTCRenderIndex = new TRTCRenderIndex(0, 0, 0, 0);
     private bool mEnableLocalVideoCustomProcess = false;
+    private int mCustomVideoProcessMode = 0;
+    private int mCustomVideoCaptureMode = 0;   // 0=关闭, 1=纹理传输, 2=数据Buffer传输
+
+    private int mCameraCaptureModeIndex = 0;
+    private int mCameraCaptureWidth = 640;
+    private int mCameraCaptureHeight = 360;
     public TRTCAppScene appScene { get; set; }
 
     public delegate void ChangeRoleHandler();
@@ -189,8 +195,10 @@ namespace TRTCCUnityDemo {
       earMonitorVolume = 100;
       videoEncParam = new TRTCVideoEncParam() {
         videoResolution = TRTCVideoResolution.TRTCVideoResolution_640_360,
-        resMode = TRTCVideoResolutionMode.TRTCVideoResolutionModeLandscape, videoFps = 15,
-        videoBitrate = 600, minVideoBitrate = 200
+        resMode = TRTCVideoResolutionMode.TRTCVideoResolutionModeLandscape,
+        videoFps = 15,
+        videoBitrate = 600,
+        minVideoBitrate = 200
       };
 
       qosParams = new TRTCNetworkQosParam() {
@@ -240,5 +248,39 @@ namespace TRTCCUnityDemo {
     public bool GetBitrateInfoEnableLocalVideoCustomProcess() {
       return mEnableLocalVideoCustomProcess;
     }
+
+    /// <summary>
+    /// 保存自定义美颜下拉框的选项值（0=关闭，1=Texture，2=Buffer）。
+    /// 同步更新旧的 bool 状态（mEnableLocalVideoCustomProcess）以保持兼容。
+    /// </summary>
+    public void SetCustomVideoProcessMode(int value) {
+      mCustomVideoProcessMode = value;
+      mEnableLocalVideoCustomProcess = (value != 0);
+    }
+
+    /// <summary>
+    /// 读取上次设置的自定义美颜模式（默认 0 = 不开启）。
+    /// </summary>
+    public int GetCustomVideoProcessMode() {
+      return mCustomVideoProcessMode;
+    }
+
+    public void SetCustomVideoCaptureMode(int value) {
+      mCustomVideoCaptureMode = value;
+    }
+    
+    public int GetCustomVideoCaptureMode() {
+      return mCustomVideoCaptureMode;
+    }
+
+    public void SetCameraCaptureParam(int modeIndex, int width, int height) {
+      mCameraCaptureModeIndex = modeIndex;
+      mCameraCaptureWidth = width;
+      mCameraCaptureHeight = height;
+    }
+
+    public int GetCameraCaptureModeIndex() { return mCameraCaptureModeIndex; }
+    public int GetCameraCaptureWidth() { return mCameraCaptureWidth; }
+    public int GetCameraCaptureHeight() { return mCameraCaptureHeight; }
   }
 }

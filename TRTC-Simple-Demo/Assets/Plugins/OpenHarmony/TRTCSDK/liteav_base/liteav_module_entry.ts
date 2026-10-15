@@ -4,6 +4,7 @@
 import { LiteavLog } from './liteav_log';
 import { LiteavSystemInfo } from './liteav_system_info';
 import { LiteavAudioRoutingManager } from "./liteav_audio_routing_manager";
+import { LiteavAudioHardwareEarMonitor } from "./liteav_audio_hardware_ear_monitor";
 import { LiteavAudioEventMonitor } from './liteav_audio_event_monitor';
 import { LiteavAudioPermissionRequester } from "./liteav_audio_permission_requester";
 import { LiteavAppRotationMonitor } from "./liteav_app_rotation_monitor";
@@ -16,6 +17,7 @@ let classes: Record<string, Function> = {};
 registerExtraClass(LiteavLog);
 registerExtraClass(LiteavSystemInfo);
 registerExtraClass(LiteavAudioRoutingManager);
+registerExtraClass(LiteavAudioHardwareEarMonitor);
 registerExtraClass(LiteavAudioEventMonitor);
 registerExtraClass(LiteavAudioPermissionRequester);
 registerExtraClass(LiteavAppRotationMonitor);

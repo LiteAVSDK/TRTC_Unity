@@ -647,6 +647,7 @@ enum AVCodecID {
     AV_CODEC_ID_APTX_HD,
     AV_CODEC_ID_SBC,
     AV_CODEC_ID_ATRAC9,
+    AV_CODEC_ID_AVS3_AUDIO,        // AVS3-P3 3D Audio/Audio Vivid Audio Codec ID
 
     /* subtitle codecs */
     AV_CODEC_ID_FIRST_SUBTITLE = 0x17000,          ///< A dummy ID pointing at the start of subtitle codecs.
@@ -3228,6 +3229,9 @@ typedef struct AVCodecContext {
 
 #define FF_PROFILE_AVS3_MAIN                        1
 #define FF_PROFILE_AVS3_MAIN_10                     2
+
+#define FF_PROFILE_AV3A_MAIN                        0
+#define FF_PROFILE_AV3A_LOW                         1
 
     /**
      * level

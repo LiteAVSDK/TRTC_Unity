@@ -298,6 +298,11 @@ namespace trtc {
          */
         public abstract int stopSpeakerDeviceTest();
 
+        /**
+         * 2.22 设置摄像头采集偏好。
+         */
+        public abstract void setCameraCapturerParam(TXCameraCaptureParam param);
+
         /////////////////////////////////////////////////////////////////////////////////
         //
         //                    弃用接口（建议使用对应的新接口）

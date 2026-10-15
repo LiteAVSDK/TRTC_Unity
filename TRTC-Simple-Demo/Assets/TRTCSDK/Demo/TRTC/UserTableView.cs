@@ -21,11 +21,12 @@ namespace TRTCCUnityDemo {
     }
 
     public string GetUserId() { return _userID; }
+    public TRTCVideoStreamType GetStreamType() { return _streamType; }
   }
 
   public class UserTableView : MonoBehaviour {
     public delegate void MuteAudioHandler(string userId, bool mute);
-    public delegate void MuteVideoHandler(string userId, bool mute);
+    public delegate void MuteVideoHandler(string userId, TRTCVideoStreamType streamType, bool mute);
 
     public event MuteAudioHandler DoMuteAudio;
     public event MuteVideoHandler DoMuteVideo;
@@ -38,7 +39,7 @@ namespace TRTCCUnityDemo {
     bool audioVolumeVisible = false;
     bool userStatisVisible = false;
 
-    void Start() {}
+    void Start() { }
 
     public void AddUser(string userId, TRTCVideoStreamType streamType) {
       var key = new UserRenderKey(userId, streamType);
@@ -76,7 +77,7 @@ namespace TRTCCUnityDemo {
     public GameObject GetVideoView(string userId,
                                      TRTCVideoStreamType streamType) {
       var key = new UserRenderKey(userId, streamType);
-      if (!userViewCells.ContainsKey(key)) { 
+      if (!userViewCells.ContainsKey(key)) {
         return null;
       }
       UserTableViewCell tableViewCellScript = userViewCells[key];
@@ -85,14 +86,19 @@ namespace TRTCCUnityDemo {
 
     public void UpdateVideoAvailable(string userId,
                                      TRTCVideoStreamType streamType,
-                                     bool available) {
+                                     bool available, bool isMe = false) {
       var key = new UserRenderKey(userId, streamType);
       if (!userViewCells.ContainsKey(key))
         return;
 
       UserTableViewCell tableViewCellScript = userViewCells[key];
       tableViewCellScript.IsVideoAvailable = available;
-      tableViewCellScript.IsVideoMute = !available;
+      if (isMe) {
+        tableViewCellScript.IsVideoMute = available;
+      }
+      else {
+        tableViewCellScript.IsVideoMute = !available;
+      }
     }
 
     public void UpdateAudioAvailable(string userId,
@@ -148,9 +154,9 @@ namespace TRTCCUnityDemo {
       }
     }
 
-    private void TableViewDoMuteVideo(string userId, bool mute) {
+    private void TableViewDoMuteVideo(string userId, TRTCVideoStreamType streamType, bool mute) {
       if (DoMuteVideo != null) {
-        DoMuteVideo(userId, mute);
+        DoMuteVideo(userId, streamType, mute);
       }
     }
   }
